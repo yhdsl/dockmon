@@ -40,7 +40,7 @@ export function BulkTagModal({ isOpen, onClose, mode, selectedContainers, onConf
     }
 
     // Allow alphanumeric + dash, underscore, colon, dot
-    const validPattern = /^[a-zA-Z0-9\-_:.]+$/
+    const validPattern = /^[a-zA-Z0-9\p{L}\p{N}\-_:.]+$/u
     if (!validPattern.test(tag)) {
       return { valid: false, error: 'Tag can only contain alphanumeric characters, dash, underscore, colon, and dot' }
     }

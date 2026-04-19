@@ -33,7 +33,7 @@ export function validateTag(
   }
 
   // Allow alphanumeric + dash, underscore, colon, dot
-  const validPattern = /^[a-zA-Z0-9\-_:.]+$/
+  const validPattern = /^[a-zA-Z0-9\p{L}\p{N}\-_:.]+$/u
   if (!validPattern.test(trimmed)) {
     return { valid: false, error: 'Invalid characters (alphanumeric, -, _, :, . only)' }
   }

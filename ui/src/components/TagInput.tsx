@@ -66,14 +66,14 @@ export function TagInput({
       .toLowerCase()
       .trim()
       .replace(/\s+/g, '-')
-      .replace(/[^a-z0-9-_:]/g, '') // Allow colons for compose:project format
+      .replace(/[^a-z0-9-\p{L}\p{N}_:]/gu, '') // Allow colons for compose:project format
   }
 
   // Validate tag format
   const isValidTag = (tag: string): boolean => {
     if (!tag || tag.length === 0) return false
     if (tag.length > 50) return false // Max length per tag
-    return /^[a-z0-9][a-z0-9-_:]*$/.test(tag)
+    return /^[a-z0-9\p{L}\p{N}][a-z0-9-\p{L}\p{N}_:]*$/u.test(tag)
   }
 
   // Add tag
