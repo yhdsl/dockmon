@@ -73,7 +73,7 @@ export function DockMonUpdateBanner({ isCollapsed }: DockMonUpdateBannerProps) {
     if (!settings?.latest_available_version) return
 
     const version = settings.latest_available_version.replace(/^v/, '')
-    const url = `https://github.com/darthnorse/dockmon/releases/tag/v${version}`
+    const url = `https://github.com/yhdsl/dockmon/releases/tag/v${version}`
     window.open(url, '_blank', 'noopener,noreferrer')
   }
 

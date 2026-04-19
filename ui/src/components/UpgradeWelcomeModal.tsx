@@ -14,7 +14,7 @@ export function UpgradeWelcomeModal({
   onClose
 }: UpgradeWelcomeModalProps) {
   const { version } = useAppVersion();
-  const githubReleasesUrl = `https://github.com/darthnorse/dockmon/releases/tag/v${version}`;
+  const githubReleasesUrl = `https://github.com/yhdsl/dockmon/releases/tag/v${version}`;
   const [dismissing, setDismissing] = useState(false);
 
   const handleDismiss = async () => {
@@ -119,7 +119,7 @@ export function UpgradeWelcomeModal({
                         <li>
                           On each remote host, download the updated script:
                           <div className="mt-1 bg-background/50 p-2 rounded font-mono text-xs overflow-x-auto">
-                            curl -O https://raw.githubusercontent.com/darthnorse/dockmon/main/scripts/setup-docker-mtls.sh
+                            curl -O https://raw.githubusercontent.com/yhdsl/dockmon/main/scripts/setup-docker-mtls.sh
                           </div>
                         </li>
                         <li>

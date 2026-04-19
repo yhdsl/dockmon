@@ -155,7 +155,7 @@ export function HostAgentTab({ hostId }: HostAgentTabProps) {
                 variant="outline"
                 size="sm"
                 onClick={() => window.open(
-                  `https://github.com/darthnorse/dockmon/releases/tag/agent-v${agent.version}`,
+                  `https://github.com/yhdsl/dockmon/releases/tag/agent-v${agent.version}`,
                   '_blank'
                 )}
               >

@@ -18,7 +18,7 @@ interface UserMenuProps {
 
 export function UserMenu({ isCollapsed }: UserMenuProps) {
   const { version } = useAppVersion()
-  const githubReleasesUrl = `https://github.com/darthnorse/dockmon/releases/tag/v${version}`
+  const githubReleasesUrl = `https://github.com/yhdsl/dockmon/releases/tag/v${version}`
   const { user, logout } = useAuth()
   const [showMenu, setShowMenu] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
