@@ -831,7 +831,7 @@ class ContainerOperations:
             )
 
             logger.info(f"Successfully deleted container {actual_container_name} ({container_id}) from host {host_name}")
-            return {"success": True, "message": f"Container {actual_container_name} deleted successfully"}
+            return {"success": True, "message": f"容器 {actual_container_name} 已成功删除"}
 
         except HTTPException:
             raise
@@ -938,7 +938,7 @@ class ContainerOperations:
             )
 
             logger.info(f"Successfully deleted container {container_name} ({container_id}) via agent on host {host_name}")
-            return {"success": True, "message": f"Container {container_name} deleted successfully"}
+            return {"success": True, "message": f"容器 {container_name} 已成功删除"}
 
         except HTTPException:
             raise

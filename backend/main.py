@@ -204,7 +204,7 @@ async def lifespan(app: FastAPI):
             logger.error(f"Background task failed: {e}", exc_info=True)
 
     await monitor.event_logger.start()
-    monitor.event_logger.log_system_event("DockMon Backend Starting", "DockMon backend is initializing", EventSeverity.INFO, LogEventType.STARTUP)
+    monitor.event_logger.log_system_event("DockMon 后端启动中", "DockMon 后端正在初始化", EventSeverity.INFO, LogEventType.STARTUP)
 
     # Connect security audit logger to event logger
     security_audit.set_event_logger(monitor.event_logger)
@@ -274,7 +274,7 @@ async def lifespan(app: FastAPI):
     yield
     # Shutdown
     logger.info("Shutting down DockMon backend...")
-    monitor.event_logger.log_system_event("DockMon Backend Shutting Down", "DockMon backend is shutting down", EventSeverity.INFO, LogEventType.SHUTDOWN)
+    monitor.event_logger.log_system_event("DockMon 后端已关闭", "DockMon 后端正在关闭", EventSeverity.INFO, LogEventType.SHUTDOWN)
 
     # Cancel and await background tasks to ensure clean shutdown
     if monitor.monitoring_task:
@@ -859,7 +859,7 @@ async def test_host_connection(config: DockerHostConfig, current_user: dict = De
             logger.info(f"Connection test successful for {config.url}")
             return {
                 "success": True,
-                "message": "Connection successful",
+                "message": "已成功连接",
                 "docker_version": version_info.get('Version', 'unknown'),
                 "api_version": version_info.get('ApiVersion', 'unknown')
             }
@@ -912,7 +912,7 @@ async def remove_host(host_id: str, request: Request, current_user: dict = Depen
             "data": {"host_id": host_id}
         })
 
-        return {"status": "success", "message": f"Host {host_id} removed"}
+        return {"status": "success", "message": f"主机 {host_id} 已被删除"}
     except ValueError as e:
         # Host not found or invalid host_id format
         logger.warning(f"Failed to remove host {host_id}: {e}")
@@ -1209,7 +1209,7 @@ async def trigger_agent_update(host_id: str, request: Request, current_user: dic
 
         return {
             "success": True,
-            "message": "Agent update initiated",
+            "message": "已成功启动代理更新",
             "current_version": agent.version,
             "target_version": latest_version
         }
@@ -1722,7 +1722,7 @@ async def delete_host_volume(
 
         return {
             "success": True,
-            "message": f"Volume '{volume_name}' deleted"
+            "message": f"卷 '{volume_name}' 已被删除"
         }
 
     except HTTPException:
@@ -2184,7 +2184,7 @@ async def delete_image_cache_entry(cache_key: str, current_user: dict = Depends(
         session.delete(entry)
         session.commit()
 
-        return {"message": f"Deleted cache entry: {cache_key}"}
+        return {"message": f"已成功删除缓存条目: {cache_key}"}
 
 
 @app.post("/api/hosts/{host_id}/containers/{container_id}/check-update", tags=["container-updates"], dependencies=[Depends(require_capability("containers.update"))])
@@ -2346,7 +2346,7 @@ async def execute_container_update(
         _safe_audit(current_user, log_container_action, AuditAction.CONTAINER_UPDATE, host_id, short_id, container_name, request, details={'previous_image': update_record.current_image, 'new_image': update_record.latest_image})
         return {
             "status": "success",
-            "message": f"Container successfully updated to {update_record.latest_image}",
+            "message": f"容器已成功更新至 {update_record.latest_image}",
             "previous_image": update_record.current_image,
             "new_image": update_record.latest_image,
         }
@@ -2355,8 +2355,8 @@ async def execute_container_update(
         # The update_container method automatically rolls back on failure and emits UPDATE_FAILED event
         return {
             "status": "failed",
-            "message": "Container update failed (automatically rolled back to previous version)",
-            "detail": "The update failed during execution, possibly due to health check timeout or startup issues. Your container has been automatically restored to its previous working state. Check the Events tab for detailed error information."
+            "message": "容器更新失败 (已自动回滚至先前的版本)",
+            "detail": "执行更新操作时失败，可能是由于健康检查超时或者启动期间存在问题。此容器已自动回滚至先前的正常状态。请查看事件页面以获取详细的错误信息。"
         }
 
 
@@ -3488,7 +3488,7 @@ async def dismiss_upgrade_notice(current_user: dict = Depends(get_current_user),
                 _, display_name = get_auditable_user_info(current_user)
                 logger.info(f"User '{display_name}' dismissed upgrade notice")
                 return {"success": True}
-            return {"success": False, "error": "Settings not found"}
+            return {"success": False, "error": "未找到设置"}
     except Exception as e:
         logger.error(f"Failed to dismiss upgrade notice: {e}")
         return {"success": False, "error": str(e)}
@@ -3784,17 +3784,17 @@ async def test_http_health_check(
             # Check if status code matches
             is_success = response.status_code in expected_codes
             if not is_success:
-                error_message = f"Status {response.status_code}"
+                error_message = f"状态码 {response.status_code}"
 
         except (httpx.TimeoutException, httpx.ConnectError, Exception) as e:
             response_time_ms = int((time.time() - start_time) * 1000)
             is_success = False
             if isinstance(e, httpx.TimeoutException):
-                error_message = f"Timeout after {config.timeout_seconds}s"
+                error_message = f"{config.timeout_seconds}s 后超时"
             elif isinstance(e, httpx.ConnectError):
-                error_message = f"Connection failed: {str(e)[:100]}"
+                error_message = f"连接失败: {str(e)[:100]}"
             else:
-                error_message = f"Error: {str(e)[:100]}"
+                error_message = f"错误: {str(e)[:100]}"
 
         # Update database with test result (if health check exists)
         # Truncate container_id to 12 chars (UI may send 64-char full ID)
@@ -3845,9 +3845,9 @@ async def test_http_health_check(
                 "status_code": status_code,
                 "response_time_ms": response_time_ms,
                 "is_healthy": is_success,
-                "message": f"Received status {status_code}" + (
-                    " (matches expected)" if is_success else f" (expected: {config.expected_status_codes})"
-                ) if status_code > 0 else error_message or "Test failed"
+                "message": f"返回的状态码 {status_code}" + (
+                    " (符合预期)" if is_success else f" (预期: {config.expected_status_codes})"
+                ) if status_code > 0 else error_message or "测试失败"
             }
         }
 
@@ -4053,7 +4053,7 @@ async def delete_alert_rule_v2(
                 triggered_by=display_name
             )
 
-        return {"success": True, "message": "Alert rule deleted"}
+        return {"success": True, "message": "告警规则已删除"}
     except HTTPException:
         raise
     except Exception as e:
@@ -4127,58 +4127,58 @@ async def get_template_variables(current_user: dict = Depends(get_current_user))
     return {
         "variables": [
             # Basic entity info
-            {"name": "{CONTAINER_NAME}", "description": "Name of the container"},
-            {"name": "{CONTAINER_ID}", "description": "Short container ID (12 characters)"},
-            {"name": "{HOST_NAME}", "description": "Name of the Docker host"},
-            {"name": "{HOST_ID}", "description": "ID of the Docker host"},
-            {"name": "{IMAGE}", "description": "Docker image name"},
+            {"name": "{CONTAINER_NAME}", "description": "容器名称"},
+            {"name": "{CONTAINER_ID}", "description": "容器 ID (前 12 个字符)"},
+            {"name": "{HOST_NAME}", "description": "Docker 主机名称"},
+            {"name": "{HOST_ID}", "description": "Docker 主机 ID"},
+            {"name": "{IMAGE}", "description": "Docker 镜像名称"},
 
             # State changes (event-driven alerts)
-            {"name": "{OLD_STATE}", "description": "Previous state of the container"},
-            {"name": "{NEW_STATE}", "description": "New state of the container"},
-            {"name": "{EVENT_TYPE}", "description": "Docker event type (if applicable)"},
-            {"name": "{EXIT_CODE}", "description": "Container exit code (if applicable)"},
+            {"name": "{OLD_STATE}", "description": "容器先前的状态"},
+            {"name": "{NEW_STATE}", "description": "容器当前的状态"},
+            {"name": "{EVENT_TYPE}", "description": "Docker 事件类型 (如果存在)"},
+            {"name": "{EXIT_CODE}", "description": "容器退出码 (如果存在)"},
 
             # Container updates
-            {"name": "{UPDATE_STATUS}", "description": "Update status (Available, Succeeded, Failed)"},
-            {"name": "{CURRENT_IMAGE}", "description": "Current image tag"},
-            {"name": "{LATEST_IMAGE}", "description": "Latest available image tag"},
-            {"name": "{CURRENT_VERSION}", "description": "Current version from OCI label (e.g., v1.0.2)"},
-            {"name": "{LATEST_VERSION}", "description": "Latest version from OCI label (e.g., v1.1.0)"},
-            {"name": "{CURRENT_DIGEST}", "description": "Current image digest (SHA256)"},
-            {"name": "{LATEST_DIGEST}", "description": "Latest image digest (SHA256)"},
-            {"name": "{PREVIOUS_IMAGE}", "description": "Image before update (for completed updates)"},
-            {"name": "{NEW_IMAGE}", "description": "Image after update (for completed updates)"},
-            {"name": "{CHANGELOG_URL}", "description": "Changelog/release notes URL (GitHub releases, etc.)"},
-            {"name": "{ERROR_MESSAGE}", "description": "Error message (for failed updates or health checks)"},
-            {"name": "{ACTION_URL}", "description": "One-click action URL (e.g., update container from notification)"},
+            {"name": "{UPDATE_STATUS}", "description": "更新状态 (更新可用, 更新成功, 更新失败)"},
+            {"name": "{CURRENT_IMAGE}", "description": "当前镜像标签"},
+            {"name": "{LATEST_IMAGE}", "description": "最新可用的镜像标签"},
+            {"name": "{CURRENT_VERSION}", "description": "来自 OCI 标签的当前版本号 (例如 v1.0.2)"},
+            {"name": "{LATEST_VERSION}", "description": "来自 OCI 标签的最新版本号 (例如 v1.1.0)"},
+            {"name": "{CURRENT_DIGEST}", "description": "当前镜像哈希 (SHA256)"},
+            {"name": "{LATEST_DIGEST}", "description": "最新镜像哈希 (SHA256)"},
+            {"name": "{PREVIOUS_IMAGE}", "description": "更新前的镜像 (适用于已完成的更新)"},
+            {"name": "{NEW_IMAGE}", "description": "更新后的镜像 (适用于已完成的更新)"},
+            {"name": "{CHANGELOG_URL}", "description": "变更日志/发行说明的 URL (GitHub releases 等)"},
+            {"name": "{ERROR_MESSAGE}", "description": "错误信息 (适用于更新失败或者健康检查失败)"},
+            {"name": "{ACTION_URL}", "description": "快速操作的 URL (例如在通知中一键更新容器)"},
 
             # Health checks (HTTP/HTTPS monitoring)
-            {"name": "{HEALTH_CHECK_URL}", "description": "Health check URL being monitored"},
-            {"name": "{CONSECUTIVE_FAILURES}", "description": "Number of consecutive failures vs threshold"},
-            {"name": "{FAILURE_THRESHOLD}", "description": "Failure threshold before marking unhealthy"},
-            {"name": "{RESPONSE_TIME}", "description": "HTTP response time in milliseconds"},
+            {"name": "{HEALTH_CHECK_URL}", "description": "健康检查的 URL"},
+            {"name": "{CONSECUTIVE_FAILURES}", "description": "连续健康检查失败的次数 (相对于阈值)"},
+            {"name": "{FAILURE_THRESHOLD}", "description": "判定为不健康前的失败阈值"},
+            {"name": "{RESPONSE_TIME}", "description": "HTTP 响应时间 (ms)"},
 
             # Metrics (metric-driven alerts)
-            {"name": "{CURRENT_VALUE}", "description": "Current metric value (e.g., 92.5 for CPU)"},
-            {"name": "{THRESHOLD}", "description": "Threshold that was breached (e.g., 90)"},
-            {"name": "{KIND}", "description": "Alert kind (cpu_high, memory_high, unhealthy, etc.)"},
-            {"name": "{SEVERITY}", "description": "Alert severity (info, warning, critical)"},
-            {"name": "{SCOPE_TYPE}", "description": "Alert scope (host, container, group)"},
+            {"name": "{CURRENT_VALUE}", "description": "当前指标数值 (例如 CPU 指标数值 92.5)"},
+            {"name": "{THRESHOLD}", "description": "当前指标阈值 (例如 90)"},
+            {"name": "{KIND}", "description": "告警类型 (CPU占用高, 内存占用高, 不健康等)"},
+            {"name": "{SEVERITY}", "description": "告警严重程度 (通知, 警告, 严重)"},
+            {"name": "{SCOPE_TYPE}", "description": "告警范围 (主机, 容器, 群组)"},
 
             # Temporal info
-            {"name": "{TIMESTAMP}", "description": "Full timestamp (YYYY-MM-DD HH:MM:SS)"},
-            {"name": "{TIME}", "description": "Time only (HH:MM:SS)"},
-            {"name": "{DATE}", "description": "Date only (YYYY-MM-DD)"},
-            {"name": "{FIRST_SEEN}", "description": "When alert first triggered"},
+            {"name": "{TIMESTAMP}", "description": "完整的时间戳 (YYYY-MM-DD HH:MM:SS)"},
+            {"name": "{TIME}", "description": "仅包含时间的时间戳 (HH:MM:SS)"},
+            {"name": "{DATE}", "description": "仅包含日期的时间戳 (YYYY-MM-DD)"},
+            {"name": "{FIRST_SEEN}", "description": "首次告警触发时间"},
 
             # Rule context
-            {"name": "{RULE_NAME}", "description": "Name of the alert rule"},
-            {"name": "{RULE_ID}", "description": "ID of the alert rule"},
-            {"name": "{TRIGGERED_BY}", "description": "What triggered the alert"},
+            {"name": "{RULE_NAME}", "description": "告警规则的名称"},
+            {"name": "{RULE_ID}", "description": "告警规则的 ID"},
+            {"name": "{TRIGGERED_BY}", "description": "触发告警的原因"},
 
             # Tags/Labels
-            {"name": "{LABELS}", "description": "Container/host labels as JSON (env=prod, app=web, etc.)"},
+            {"name": "{LABELS}", "description": "容器/主机的标签，采用 JSON 格式 (env=prod, app=web 等)"},
         ],
         "default_templates": {
             "default": ns._get_default_template_v2(None),
@@ -4188,21 +4188,21 @@ async def get_template_variables(current_user: dict = Depends(get_current_user))
             "update": ns._get_default_template_v2("update_completed"),  # Any update kind
         },
         "examples": {
-            "simple": "Alert: {CONTAINER_NAME} on {HOST_NAME} - {KIND} ({SEVERITY})",
-            "metric_based": """⚠️ **Metric Alert**
+            "simple": "警告: 位于 {HOST_NAME} 上的 {CONTAINER_NAME} - {KIND} ({SEVERITY})",
+            "metric_based": """⚠️ **告警指标**
 {SCOPE_TYPE}: {CONTAINER_NAME}
-Metric: {KIND}
-Current: {CURRENT_VALUE} | Threshold: {THRESHOLD}
-Severity: {SEVERITY}
-First seen: {FIRST_SEEN}""",
-            "state_change": """🔴 **State Change Alert**
-Container: {CONTAINER_NAME} ({CONTAINER_ID})
-Host: {HOST_NAME}
-Status: {OLD_STATE} → {NEW_STATE}
-Image: {IMAGE}
-Time: {TIMESTAMP}
-Rule: {RULE_NAME}""",
-            "minimal": "{CONTAINER_NAME}: {KIND} at {TIME}"
+指标: {KIND}
+当前数值: {CURRENT_VALUE} | 阈值: {THRESHOLD}
+严重程度: {SEVERITY}
+首次告警触发时间: {FIRST_SEEN}""",
+            "state_change": """🔴 **状态发生改变**
+容器: {CONTAINER_NAME} ({CONTAINER_ID})
+主机: {HOST_NAME}
+状态变化: {OLD_STATE} → {NEW_STATE}
+镜像: {IMAGE}
+时间: {TIMESTAMP}
+告警规则: {RULE_NAME}""",
+            "minimal": "{CONTAINER_NAME}: {KIND} ({TIME})"
         }
     }
 
@@ -4333,7 +4333,7 @@ async def delete_notification_channel(channel_id: int, request: Request, current
 
         return {
             "status": "success",
-            "message": f"Channel {channel_id} deleted"
+            "message": f"通知频道 {channel_id} 已删除"
         }
     except HTTPException:
         raise
@@ -5304,15 +5304,15 @@ async def cleanup_old_events(request: Request, days: int = 30, current_user: dic
                     **get_client_info(request))
 
         monitor.event_logger.log_system_event(
-            "Event Cleanup Completed",
-            f"Cleaned up {deleted_count} events older than {days} days",
+            "已成功清除事件",
+            f"已清除 {deleted_count} 条超过 {days} 天的事件",
             EventSeverity.INFO,
             EventType.SYSTEM_STARTUP
         )
 
         return {
             "status": "success",
-            "message": f"Cleaned up {deleted_count} events older than {days} days",
+            "message": f"已成功清除 {deleted_count} 条超过 {days} 天的事件",
             "deleted_count": deleted_count
         }
     except HTTPException:
@@ -5419,8 +5419,8 @@ async def create_registry_credential(
             logger.info(f"Created registry credential for {registry_url} (username: {username})")
 
             monitor.event_logger.log_system_event(
-                "Registry Credential Created",
-                f"Added credentials for registry: {registry_url}",
+                "注册表登录凭证已创建",
+                f"已为注册表 {registry_url} 添加登录凭证",
                 EventSeverity.INFO,
                 LogEventType.CONFIG_CHANGED
             )
@@ -5496,8 +5496,8 @@ async def update_registry_credential(
             logger.info(f"Updated registry credential for {credential.registry_url}")
 
             monitor.event_logger.log_system_event(
-                "Registry Credential Updated",
-                f"Updated credentials for registry: {credential.registry_url}",
+                "注册表登录凭证已更新",
+                f"已为注册表 {credential.registry_url} 更新登录凭证",
                 EventSeverity.INFO,
                 LogEventType.CONFIG_CHANGED
             )
@@ -5556,8 +5556,8 @@ async def delete_registry_credential(
             logger.info(f"Deleted registry credential for {registry_url}")
 
             monitor.event_logger.log_system_event(
-                "Registry Credential Deleted",
-                f"Deleted credentials for registry: {registry_url}",
+                "注册表登录凭证已删除",
+                f"已为注册表 {registry_url} 删除登录凭证",
                 EventSeverity.INFO,
                 LogEventType.CONFIG_CHANGED
             )
@@ -5568,7 +5568,7 @@ async def delete_registry_credential(
 
         return {
             "success": True,
-            "message": f"Deleted credentials for {registry_url}"
+            "message": f"已删除 {registry_url} 的登录凭证"
         }
 
     except HTTPException:
@@ -5794,7 +5794,7 @@ async def websocket_endpoint(websocket: WebSocket, session_id: Optional[str] = C
     # Authenticate before accepting connection
     if not session_id:
         logger.warning("WebSocket connection attempted without session cookie")
-        await websocket.close(code=1008, reason="Authentication required")
+        await websocket.close(code=1008, reason="需要身份验证")
         return
 
     # Validate session using v2 auth
@@ -5804,7 +5804,7 @@ async def websocket_endpoint(websocket: WebSocket, session_id: Optional[str] = C
 
     if not session_data:
         logger.warning(f"WebSocket connection with invalid session from {client_ip}")
-        await websocket.close(code=1008, reason="Invalid or expired session")
+        await websocket.close(code=1008, reason="会话无效或过期")
         return
 
     ws_user_id = session_data.get("user_id")

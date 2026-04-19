@@ -282,7 +282,7 @@ class HttpHealthChecker:
                     config,
                     is_healthy=is_healthy,
                     response_time_ms=response_time_ms,
-                    error_message=None if is_healthy else f"Status {response.status_code}"
+                    error_message=None if is_healthy else f"状态 {response.status_code}"
                 )
 
             except (httpx.TimeoutException, httpx.ConnectError, Exception) as e:
@@ -290,11 +290,11 @@ class HttpHealthChecker:
 
                 # Generate appropriate error message based on exception type
                 if isinstance(e, httpx.TimeoutException):
-                    error_message = f"Timeout after {config['timeout_seconds']}s"
+                    error_message = f"{config['timeout_seconds']}s 后超时"
                 elif isinstance(e, httpx.ConnectError):
-                    error_message = f"Connection failed: {str(e)[:100]}"
+                    error_message = f"连接时失败: {str(e)[:100]}"
                 else:
-                    error_message = f"Error: {str(e)[:100]}"
+                    error_message = f"错误: {str(e)[:100]}"
 
                 await self._update_check_state(
                     config,

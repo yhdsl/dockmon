@@ -115,15 +115,15 @@ def main():
             with open(full_path, 'w') as f:
                 f.write(content)
 
-            print(f"✅ {file_path}: {count} replacements")
+            print(f"✅ {file_path}: {count} 已被替换")
             total_replaced += count
 
         except FileNotFoundError:
-            print(f"❌ {file_path}: File not found")
+            print(f"❌ {file_path}: 未找到文件")
         except Exception as e:
-            print(f"❌ {file_path}: Error - {e}")
+            print(f"❌ {file_path}: 错误 - {e}")
 
-    print(f"\n🎉 Total replacements: {total_replaced}")
+    print(f"\n🎉 替换完成，总共替换 {total_replaced} 次")
 
 
 if __name__ == '__main__':

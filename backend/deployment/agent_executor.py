@@ -50,18 +50,18 @@ def validate_compose_for_agent(compose_content: str) -> tuple[bool, Optional[str
     try:
         compose = yaml.safe_load(compose_content)
     except yaml.YAMLError as e:
-        return False, f"Invalid YAML: {e}"
+        return False, f"无效的 YAML 格式: {e}"
 
     if not compose or "services" not in compose:
-        return False, "Compose file must contain 'services' section"
+        return False, "Compose 文件必须包含 'services' 节"
 
     # Check for build directives - reject with clear message
     for service_name, service_config in compose.get("services", {}).items():
         if isinstance(service_config, dict) and "build" in service_config:
             return False, (
-                f"Service '{service_name}' uses 'build:' directive. "
-                "Build directives are not supported for agent deployments. "
-                "Please build your image and push to a registry, then use 'image:' instead."
+                f"服务 '{service_name}' 使用了 'build:' 指令。 "
+                "但是在部署代理时，不支持 'build:' 指令。 "
+                "请手动构建并推送至注册表中，然后使用 'image:' 指令代替。"
             )
 
     return True, None
@@ -411,7 +411,7 @@ class AgentDeploymentExecutor:
         """
         deployment_id = payload.get("deployment_id")
         stage = payload.get("stage", "executing")
-        message = payload.get("message", "Deploying...")
+        message = payload.get("message", "部署中...")
         services = payload.get("services")  # Phase 3: per-service progress
 
         logger.debug(f"handle_deploy_progress called: deployment_id={deployment_id}, stage={stage}, message={message}")

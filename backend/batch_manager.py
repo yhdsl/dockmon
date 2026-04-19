@@ -352,7 +352,7 @@ class BatchJobManager:
                 if not container:
                     return {
                         'status': 'error',
-                        'message': 'Container not found'
+                        'message': '未找到指定容器'
                     }
 
                 # Check if action is needed (idempotency)
@@ -360,31 +360,31 @@ class BatchJobManager:
                     if container.state == 'running':
                         return {
                             'status': 'skipped',
-                            'message': 'Already running'
+                            'message': '容器已在运行'
                         }
                 elif action == 'stop':
                     if container.state in ['exited', 'stopped', 'created']:
                         return {
                             'status': 'skipped',
-                            'message': 'Already stopped'
+                            'message': '容器已被停止'
                         }
 
             # Execute the action via monitor (using short_id for consistency)
             if action == 'start':
                 await self.monitor.start_container(host_id, short_id)
-                message = 'Started successfully'
+                message = '已成功启动'
             elif action == 'stop':
                 await self.monitor.stop_container(host_id, short_id)
-                message = 'Stopped successfully'
+                message = '已成功停止'
             elif action == 'restart':
                 await self.monitor.restart_container(host_id, short_id)
-                message = 'Restarted successfully'
+                message = '已成功重启'
             elif action == 'add-tags' or action == 'remove-tags':
                 # Tag operations require params
                 if not params or 'tags' not in params:
                     return {
                         'status': 'error',
-                        'message': 'Missing tags parameter'
+                        'message': '缺失标签参数'
                     }
 
                 tags = params['tags']
@@ -400,15 +400,15 @@ class BatchJobManager:
                 )
 
                 tag_count = len(tags)
-                tag_text = f"{tag_count} tag{'s' if tag_count != 1 else ''}"
-                action_text = 'Added' if action == 'add-tags' else 'Removed'
+                tag_text = f"{tag_count} 个标签"
+                action_text = '已添加' if action == 'add-tags' else '已删除'
                 message = f'{action_text} {tag_text}'
             elif action == 'set-auto-restart':
                 # Auto-restart requires params
                 if not params or 'enabled' not in params:
                     return {
                         'status': 'error',
-                        'message': 'Missing enabled parameter'
+                        'message': '缺失启用参数'
                     }
 
                 enabled = params['enabled']
@@ -418,13 +418,13 @@ class BatchJobManager:
                     container_name,
                     enabled
                 )
-                message = f"Auto-restart {'enabled' if enabled else 'disabled'}"
+                message = f"自动重启{'已启用' if enabled else '已禁用'}"
             elif action == 'set-auto-update':
                 # Auto-update requires params
                 if not params or 'enabled' not in params:
                     return {
                         'status': 'error',
-                        'message': 'Missing enabled parameter'
+                        'message': '缺失启用参数'
                     }
 
                 enabled = params['enabled']
@@ -434,7 +434,7 @@ class BatchJobManager:
                 if floating_tag_mode not in ['exact', 'patch', 'minor', 'latest']:
                     return {
                         'status': 'error',
-                        'message': f'Invalid floating_tag_mode: {floating_tag_mode}'
+                        'message': f'无效的 floating_tag_mode 参数: {floating_tag_mode}'
                     }
 
                 self.monitor.update_container_auto_update(
@@ -444,21 +444,27 @@ class BatchJobManager:
                     enabled,
                     floating_tag_mode
                 )
-                mode_text = f" ({floating_tag_mode} mode)" if enabled else ""
-                message = f"Auto-update {'enabled' if enabled else 'disabled'}{mode_text}"
+                floating_tag_mode_zh = {
+                    "exact": '精确',
+                    "patch": '补丁',
+                    "minor": '小型更新',
+                    "latest": '保持最新',
+                }
+                mode_text = f" ({floating_tag_mode_zh[floating_tag_mode]}模式)" if enabled else ""
+                message = f"自动更新{'已启用' if enabled else '已禁用'}{mode_text}"
             elif action == 'set-desired-state':
                 # Desired state requires params
                 if not params or 'desired_state' not in params:
                     return {
                         'status': 'error',
-                        'message': 'Missing desired_state parameter'
+                        'message': '缺失 desired_state 参数'
                     }
 
                 desired_state = params['desired_state']
                 if desired_state not in ['should_run', 'on_demand', 'unspecified']:
                     return {
                         'status': 'error',
-                        'message': f'Invalid desired_state: {desired_state}'
+                        'message': f'无效的 desired_state 参数: {desired_state}'
                     }
 
                 self.monitor.update_container_desired_state(
@@ -467,25 +473,25 @@ class BatchJobManager:
                     container_name,
                     desired_state
                 )
-                state_text = 'Should Run' if desired_state == 'should_run' else 'On-Demand'
-                message = f"Desired state set to {state_text}"
+                state_text = '始终运行' if desired_state == 'should_run' else '按需运行'
+                message = f"期望状态已设置为 '{state_text}'"
             elif action == 'check-updates':
                 # Check for newer image version
                 # Note: bypass_cache=False (default) - bulk checks should respect cache
                 # to avoid rate limiting (Issue #101)
                 checker = get_update_checker(self.db, self.monitor)
                 await checker.check_single_container(host_id, short_id)
-                message = 'Update check completed'
+                message = '已完成更新检查'
             elif action == 'delete-containers':
                 # Delete container and clean up database records
                 remove_volumes = params.get('remove_volumes', False) if params else False
                 await self._delete_container(host_id, short_id, container_name, remove_volumes)
-                message = 'Deleted successfully'
+                message = '已成功删除'
             elif action == 'delete-images':
                 # Delete image from host
                 force = params.get('force', False) if params else False
                 await self._delete_image(host_id, short_id, container_name, force)
-                message = 'Deleted successfully'
+                message = '已成功删除'
             elif action == 'update-containers':
                 # Update container with new image version
                 # Get update record from database
@@ -499,7 +505,7 @@ class BatchJobManager:
                     if not update_record:
                         return {
                             'status': 'error',
-                            'message': 'No update available for this container'
+                            'message': '此容器没有找到可用更新'
                         }
 
                 # Use update executor to handle the layered progress
@@ -510,16 +516,16 @@ class BatchJobManager:
                 success = await executor.update_container(host_id, short_id, update_record, force=False, force_warn=force_warn)
 
                 if success:
-                    message = 'Update completed successfully'
+                    message = '已成功完成更新'
                 else:
                     return {
                         'status': 'error',
-                        'message': 'Container update failed'
+                        'message': '容器更新失败'
                     }
             else:
                 return {
                     'status': 'error',
-                    'message': f'Unknown action: {action}'
+                    'message': f'未知操作: {action}'
                 }
 
             return {
@@ -528,7 +534,7 @@ class BatchJobManager:
             }
 
         except Exception as e:
-            logger.error(f"Error executing {action} on {container_name}: {e}")
+            logger.error(f"在 {container_name} 中执行操作 {action} 时失败: {e}")
             return {
                 'status': 'error',
                 'message': str(e)

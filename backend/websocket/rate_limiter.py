@@ -61,21 +61,21 @@ class WebSocketRateLimiter:
             self.violations[connection_id] += 1
             logger.warning(f"WebSocket rate limit exceeded for {connection_id}: "
                          f"{messages_last_second} msgs/sec (limit: {self.limits['messages_per_second']})")
-            return False, f"Rate limit exceeded: {messages_last_second} messages per second"
+            return False, f"已超出速率限制: {messages_last_second} 条消息每秒"
 
         # Check per-minute limit
         if messages_last_minute > self.limits["messages_per_minute"]:
             self.violations[connection_id] += 1
             logger.warning(f"WebSocket rate limit exceeded for {connection_id}: "
                          f"{messages_last_minute} msgs/min (limit: {self.limits['messages_per_minute']})")
-            return False, f"Rate limit exceeded: {messages_last_minute} messages per minute"
+            return False, f"已超出速率限制: {messages_last_minute} 条消息每分钟"
 
         # Check per-hour limit
         if messages_last_hour > self.limits["messages_per_hour"]:
             self.violations[connection_id] += 1
             logger.warning(f"WebSocket rate limit exceeded for {connection_id}: "
                          f"{messages_last_hour} msgs/hour (limit: {self.limits['messages_per_hour']})")
-            return False, f"Rate limit exceeded: {messages_last_hour} messages per hour"
+            return False, f"已超出速率限制: {messages_last_hour} 条消息每小时"
 
         # Reset violations on successful request
         if connection_id in self.violations:

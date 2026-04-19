@@ -273,7 +273,7 @@ class UpdateExecutor:
             if container_name_lower == 'dockmon' or (
                 container_name_lower.startswith('dockmon-') and 'agent' not in container_name_lower
             ):
-                error_message = "DockMon cannot update itself. Please update manually."
+                error_message = "DockMon 无法更新自身。请改为手动操作。"
                 logger.warning(f"Blocked self-update for DockMon container '{container_name}'")
                 await self.event_emitter.emit_failed(host_id, container_id, container_name, error_message)
                 return False
@@ -351,7 +351,7 @@ class UpdateExecutor:
                 # Emit failure event
                 await self.event_emitter.emit_failed(
                     host_id, container_id, container_name,
-                    result.error_message or "Update failed"
+                    result.error_message or "更新失败"
                 )
 
                 if result.rollback_performed:
@@ -508,7 +508,7 @@ class UpdateExecutor:
             else:
                 return UpdateResult(
                     success=False,
-                    error_message=result.error or "Update failed",
+                    error_message=result.error or "更新失败",
                     rollback_performed=result.rolled_back,
                 )
 
@@ -524,7 +524,7 @@ class UpdateExecutor:
             )
         except Exception as e:
             logger.error(f"Unexpected error during Go update: {e}", exc_info=True)
-            return UpdateResult.failure_result(f"Update failed: {e}")
+            return UpdateResult.failure_result(f"更新时失败: {e}")
 
     async def _broadcast_pull_progress(
         self,

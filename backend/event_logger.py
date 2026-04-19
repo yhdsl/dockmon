@@ -455,11 +455,11 @@ class EventLogger:
 
         # Add context to message if user-initiated
         if triggered_by == "user":
-            title = f"Container {container_name} state changed (user action)"
-            message = f"Container '{container_name}' on host '{host_name}' state changed from {old_state} to {new_state} (user action)"
+            title = f"容器 {container_name} 状态发生改变 (用户操作)"
+            message = f"容器 '{container_name}' (位于主机 '{host_name}') 的状态从 {old_state} 改变至 {new_state} (用户操作)"
         else:
-            title = f"Container {container_name} state changed"
-            message = f"Container '{container_name}' on host '{host_name}' state changed from {old_state} to {new_state}"
+            title = f"容器 {container_name} 状态发生改变"
+            message = f"容器 '{container_name}' (位于主机 '{host_name}') 的状态从 {old_state} 改变至 {new_state}"
 
         self.log_event(
             category=EventCategory.CONTAINER,
@@ -486,8 +486,8 @@ class EventLogger:
                            correlation_id: Optional[str] = None):
         """Log container action (start, stop, restart, etc.)"""
         severity = EventSeverity.ERROR if not success else EventSeverity.INFO
-        title = f"Container {action} {'succeeded' if success else 'failed'}"
-        message = f"Container '{container_name}' on host '{host_name}' {action} {'completed successfully' if success else 'failed'}"
+        title = f"容器操作 {action} {'已成功执行' if success else '执行失败'}"
+        message = f"容器 '{container_name}' (位于主机 '{host_name}') 的操作 {action} {'已成功执行' if success else '执行失败'}"
 
         if error_message:
             message += f": {error_message}"
@@ -524,8 +524,8 @@ class EventLogger:
                                 correlation_id: Optional[str] = None):
         """Log auto-restart attempt"""
         severity = EventSeverity.ERROR if not success else EventSeverity.INFO
-        title = f"Auto-restart attempt {attempt}/{max_attempts}"
-        message = f"Auto-restart attempt {attempt} of {max_attempts} for container '{container_name}' on host '{host_name}' {'succeeded' if success else 'failed'}"
+        title = f"尝试自动重启 {attempt}/{max_attempts}"
+        message = f"尝试自动重启 {attempt}/{max_attempts} 次容器 '{container_name}' (位于主机 '{host_name}') {'已成功' if success else '已失败'}"
 
         if error_message:
             message += f": {error_message}"
@@ -558,8 +558,8 @@ class EventLogger:
         """Log host connection/disconnection"""
         severity = EventSeverity.WARNING if not connected else EventSeverity.INFO
         event_type = EventType.CONNECTION if connected else EventType.DISCONNECTION
-        title = f"Host {host_name} {'connected' if connected else 'disconnected'}"
-        message = f"Docker host {host_name} ({host_url}) {'connected successfully' if connected else 'disconnected'}"
+        title = f"主机 {host_name} {'已连接' if connected else '已断开连接'}"
+        message = f"Docker 主机 {host_name} ({host_url}) {'已成功连接' if connected else '已断开连接'}"
 
         if error_message:
             message += f": {error_message}"
@@ -593,8 +593,8 @@ class EventLogger:
                           correlation_id: Optional[str] = None):
         """Log alert rule trigger"""
         severity = EventSeverity.WARNING if new_state in ['exited', 'dead'] else EventSeverity.INFO
-        title = f"Alert rule '{rule_name}' triggered"
-        message = f"Alert rule triggered for {container_name} state change ({old_state} → {new_state}). Notified {channels_notified}/{total_channels} channels."
+        title = f"告警规则 '{rule_name}' 已触发"
+        message = f"容器 {container_name} 状态已发生改变 ({old_state} → {new_state})，已触发告警规则。已通知 {channels_notified}/{total_channels} 个频道"
 
         context = EventContext(
             correlation_id=correlation_id,
@@ -625,8 +625,8 @@ class EventLogger:
                             correlation_id: Optional[str] = None):
         """Log notification attempt"""
         severity = EventSeverity.ERROR if not success else EventSeverity.INFO
-        title = f"Notification {'sent' if success else 'failed'} via {channel_name}"
-        message = f"Notification via {channel_name} ({channel_type}) {'sent successfully' if success else 'failed'}"
+        title = f"通知{'已发送' if success else '发送失败'} (频道 {channel_name})"
+        message = f"向频道 {channel_name} ({channel_type}) {'发送通知成功' if success else '发送通知失败'}"
 
         if error_message:
             message += f": {error_message}"
@@ -660,9 +660,9 @@ class EventLogger:
         self.log_event(
             category=EventCategory.HOST,
             event_type=EventType.HOST_ADDED,
-            title=f"Host {host_name} added",
+            title=f"已成功添加主机 {host_name}",
             severity=EventSeverity.INFO,
-            message=f"Docker host '{host_name}' ({host_url}) was added to monitoring",
+            message=f"Docker 主机 '{host_name}' ({host_url}) 已成功添加并开始监控",
             context=context,
             triggered_by=triggered_by,
             details={'url': host_url}
@@ -681,9 +681,9 @@ class EventLogger:
         self.log_event(
             category=EventCategory.HOST,
             event_type=EventType.HOST_REMOVED,
-            title=f"Host {host_name} removed",
+            title=f"已成功删除主机 {host_name}",
             severity=EventSeverity.INFO,
-            message=f"Docker host '{host_name}' was removed from monitoring",
+            message=f"Docker 主机 '{host_name}' 已成功删除并中止监控",
             context=context,
             triggered_by=triggered_by
         )
@@ -698,9 +698,9 @@ class EventLogger:
         self.log_event(
             category=EventCategory.ALERT,
             event_type=EventType.RULE_CREATED,
-            title=f"Alert rule '{rule_name}' created",
+            title=f"已成功创建告警规则 '{rule_name}'",
             severity=EventSeverity.INFO,
-            message=f"New alert rule '{rule_name}' created with {container_count} container(s) and {len(channels)} notification channel(s)",
+            message=f"新的告警规则 '{rule_name}' 已成功创建，监控 {container_count} 个容器并使用 {len(channels)} 个通知频道",
             triggered_by=triggered_by,
             details={'rule_id': rule_id, 'container_count': container_count, 'channels': channels}
         )
@@ -713,9 +713,9 @@ class EventLogger:
         self.log_event(
             category=EventCategory.ALERT,
             event_type=EventType.RULE_DELETED,
-            title=f"Alert rule '{rule_name}' deleted",
+            title=f"已成功删除告警规则 '{rule_name}'",
             severity=EventSeverity.INFO,
-            message=f"Alert rule '{rule_name}' was deleted",
+            message=f"告警规则 '{rule_name}' 已被删除",
             triggered_by=triggered_by,
             details={'rule_id': rule_id}
         )
@@ -728,9 +728,9 @@ class EventLogger:
         self.log_event(
             category=EventCategory.NOTIFICATION,
             event_type=EventType.CHANNEL_CREATED,
-            title=f"Notification channel '{channel_name}' created",
+            title=f"已成功创建通知频道 '{channel_name}'",
             severity=EventSeverity.INFO,
-            message=f"New notification channel '{channel_name}' ({channel_type}) was created",
+            message=f"新的通知频道 '{channel_name}' ({channel_type}) 已成功创建",
             triggered_by=triggered_by,
             details={'channel_name': channel_name, 'channel_type': channel_type}
         )
@@ -775,9 +775,9 @@ class PerformanceTimer:
             self.event_logger.log_event(
                 category=EventCategory.SYSTEM,
                 event_type=EventType.PERFORMANCE,
-                title=f"{self.operation_name} completed",
+                title=f"{self.operation_name} 已成功完成",
                 severity=EventSeverity.DEBUG,
-                message=f"Operation '{self.operation_name}' completed in {duration_ms}ms",
+                message=f"操作 '{self.operation_name}' 已在 {duration_ms}ms 内成功完成",
                 context=self.context,
                 duration_ms=duration_ms
             )
@@ -786,9 +786,9 @@ class PerformanceTimer:
             self.event_logger.log_event(
                 category=EventCategory.SYSTEM,
                 event_type=EventType.ERROR,
-                title=f"{self.operation_name} failed",
+                title=f"{self.operation_name} 执行失败",
                 severity=EventSeverity.ERROR,
-                message=f"Operation '{self.operation_name}' failed after {duration_ms}ms: {exc_val}",
+                message=f"操作 '{self.operation_name}' 在 {duration_ms}ms 后失败: {exc_val}",
                 context=self.context,
                 duration_ms=duration_ms,
                 details={'error_type': exc_type.__name__ if exc_type else None, 'error_message': str(exc_val)}

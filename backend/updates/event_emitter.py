@@ -139,7 +139,7 @@ class UpdateEventEmitter:
                 host_id=host_id,
                 host_name=self._get_host_name(host_id),
                 data={
-                    'message': f"Auto-update skipped: {warning_message}",
+                    'message': f"已跳过自动更新: {warning_message}",
                     'category': 'update_validation',
                     'reason': warning_message
                 }

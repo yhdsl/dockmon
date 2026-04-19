@@ -605,7 +605,7 @@ class AlertEvaluationService:
             if self.event_logger:
                 try:
                     event_type = EventType.RULE_TRIGGERED
-                    event_message = f"Alert triggered: {alert.message}"
+                    event_message = f"触发告警: {alert.message}"
 
                     # Create event context
                     event_context = EventContext(
@@ -1014,10 +1014,10 @@ class AlertEvaluationService:
                 # Determine event type based on alert state
                 if alert.state == "open":
                     event_type = EventType.RULE_TRIGGERED
-                    event_message = f"Alert triggered: {alert.message}"
+                    event_message = f"触发告警: {alert.message}"
                 elif alert.state == "resolved":
                     event_type = EventType.RULE_TRIGGERED  # Using same type for now
-                    event_message = f"Alert resolved: {alert.resolved_reason or 'Condition cleared'}"
+                    event_message = f"解决告警: {alert.resolved_reason or '触发条件已恢复'}"
                 else:
                     event_type = EventType.RULE_TRIGGERED
                     event_message = alert.message

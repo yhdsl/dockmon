@@ -264,7 +264,7 @@ class SecurityAuditLogger:
             event_type="PASSWORD_CHANGE",
             client_ip=client_ip,
             user_agent=user_agent,
-            details={"username": username, "message": f"Password changed for user: {username}"},
+            details={"username": username, "message": f"已修改用户的密码: {username}"},
             risk_level="LOW"
         )
 
@@ -275,7 +275,7 @@ class SecurityAuditLogger:
                 category=EventCategory.USER,
                 event_type=EventType.CONFIG_CHANGED,
                 title="Password Changed",
-                message=f"User '{username}' changed their password from IP: {client_ip}",
+                message=f"User '{username}' 修改了自身的密码，来自 IP: {client_ip}",
                 severity=EventSeverity.INFO,
                 details={"username": username, "client_ip": client_ip, "user_agent": user_agent}
             )
@@ -290,7 +290,7 @@ class SecurityAuditLogger:
             details={
                 "old_username": old_username,
                 "new_username": new_username,
-                "message": f"Username changed from {old_username} to {new_username}"
+                "message": f"用户的用户名已从 {old_username} 修改为 {new_username}"
             },
             risk_level="LOW"
         )
@@ -302,7 +302,7 @@ class SecurityAuditLogger:
                 category=EventCategory.USER,
                 event_type=EventType.CONFIG_CHANGED,
                 title="Username Changed",
-                message=f"Username changed from '{old_username}' to '{new_username}' from IP: {client_ip}",
+                message=f"用户的用户名已从 '{old_username}' 修改为 '{new_username}'，来自 IP: {client_ip}",
                 severity=EventSeverity.INFO,
                 details={"old_username": old_username, "new_username": new_username, "client_ip": client_ip, "user_agent": user_agent}
             )

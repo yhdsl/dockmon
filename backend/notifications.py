@@ -92,11 +92,11 @@ class NotificationService:
             # Look up host name from host_id in database
             try:
                 host = self.db.get_host(event.host_id)
-                return host.name if host else 'Unknown Host'
+                return host.name if host else '未知主机'
             except Exception:
-                return 'Unknown Host'
+                return '未知主机'
         else:
-            return 'Unknown Host'
+            return '未知主机'
 
     # V1 methods removed: process_docker_event, _send_event_notification, send_alert,
     # _get_matching_rules, _should_send_alert, _send_rule_notifications, _send_to_channel,
@@ -171,7 +171,7 @@ class NotificationService:
             if action_url:
                 payload['reply_markup'] = {
                     'inline_keyboard': [[
-                        {'text': 'Update Now', 'url': action_url}
+                        {'text': '立即更新', 'url': action_url}
                     ]]
                 }
 
@@ -215,7 +215,7 @@ class NotificationService:
 
             # Add action URL as link if provided (Discord webhook buttons require application)
             if action_url:
-                discord_message += f"\n\n[Update Now]({action_url})"
+                discord_message += f"\n\n[立即更新]({action_url})"
 
             payload = {
                 'content': discord_message,
@@ -281,7 +281,7 @@ class NotificationService:
 
             # Use action_url if provided, otherwise fall back to config URL
             url = action_url if action_url else config.get('url', '')
-            url_title = 'Update Now' if action_url else 'Open DockMon'
+            url_title = '立即更新' if action_url else '打开 DockMon'
 
             payload = {
                 'token': app_token,
@@ -344,7 +344,7 @@ class NotificationService:
             attachment = {
                 'color': color,
                 'fallback': slack_message,
-                'title': '🚨 DockMon Alert',
+                'title': '🚨 DockMon 告警通知',
                 'text': slack_message,
                 'mrkdwn_in': ['text'],
                 'footer': 'DockMon',
@@ -355,7 +355,7 @@ class NotificationService:
             if action_url:
                 attachment['actions'] = [{
                     'type': 'button',
-                    'text': 'Update Now',
+                    'text': '立即更新',
                     'url': action_url,
                     'style': 'primary'
                 }]
@@ -387,7 +387,7 @@ class NotificationService:
             logger.error(f"Failed to send Slack notification: {e}")
             return False
 
-    async def _send_gotify(self, config: Dict[str, Any], message: str, event=None, title: str = "DockMon Alert", action_url: str = '') -> bool:
+    async def _send_gotify(self, config: Dict[str, Any], message: str, event=None, title: str = "DockMon 告警通知", action_url: str = '') -> bool:
         """Send notification via Gotify
 
         Args:
@@ -465,7 +465,7 @@ class NotificationService:
             logger.error(f"Failed to send Gotify notification: {e}")
             return False
 
-    async def _send_ntfy(self, config: Dict[str, Any], message: str, event=None, title: str = "DockMon Alert", action_url: str = '') -> bool:
+    async def _send_ntfy(self, config: Dict[str, Any], message: str, event=None, title: str = "DockMon 告警通知", action_url: str = '') -> bool:
         """Send notification via ntfy (https://ntfy.sh or self-hosted)
 
         ntfy is a simple HTTP-based pub-sub notification service.
@@ -544,7 +544,7 @@ class NotificationService:
                 payload['actions'] = [
                     {
                         "action": "view",
-                        "label": "Update Now",
+                        "label": "立即更新",
                         "url": action_url
                     }
                 ]
@@ -580,7 +580,7 @@ class NotificationService:
             logger.error(f"Failed to send ntfy notification: {e}")
             return False
 
-    async def _send_smtp(self, config: Dict[str, Any], message: str, event=None, title: str = "DockMon Alert", action_url: str = '') -> bool:
+    async def _send_smtp(self, config: Dict[str, Any], message: str, event=None, title: str = "DockMon 告警通知", action_url: str = '') -> bool:
         """Send notification via SMTP (Email)
 
         Args:
@@ -646,7 +646,7 @@ class NotificationService:
                 return False
 
             # Determine subject: use event container name if available, otherwise use provided title
-            subject = f"DockMon Alert: {event.container_name}" if event and hasattr(event, 'container_name') else title
+            subject = f"DockMon 告警通知: {event.container_name}" if event and hasattr(event, 'container_name') else title
 
             # Create multipart email
             msg = MIMEMultipart('alternative')
@@ -669,7 +669,7 @@ class NotificationService:
             if action_url:
                 action_button_html = f'''
         <div style="margin-top:20px;text-align:center;">
-            <a href="{action_url}" style="display:inline-block;padding:12px 24px;background:#3b82f6;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:500;font-size:14px;">Update Now</a>
+            <a href="{action_url}" style="display:inline-block;padding:12px 24px;background:#3b82f6;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:500;font-size:14px;">立即更新</a>
         </div>'''
 
             html_body = f"""<!DOCTYPE html>
@@ -684,7 +684,7 @@ class NotificationService:
             {html_text}
         </div>{action_button_html}
         <div style="margin-top:20px;padding-top:20px;border-top:1px solid #e0e0e0;font-size:12px;color:#666;">
-            Sent by DockMon Container Monitoring
+            由 DockMon 容器监视服务发送
         </div>
     </div>
 </body>
@@ -770,7 +770,7 @@ class NotificationService:
 
             # Append action URL as link if provided
             if action_url:
-                teams_message += f"\n\n[Update Now]({action_url})"
+                teams_message += f"\n\n[立即更新]({action_url})"
 
             # Teams expects a simple payload with 'text' field
             payload = {"text": teams_message}
@@ -796,7 +796,7 @@ class NotificationService:
             logger.error(f"Failed to send Teams notification: {e}")
             return False
 
-    async def _send_webhook(self, config: Dict[str, Any], message: str, event=None, title: str = "DockMon Alert", action_url: str = '') -> bool:
+    async def _send_webhook(self, config: Dict[str, Any], message: str, event=None, title: str = "DockMon 告警通知", action_url: str = '') -> bool:
         """Send notification via webhook (HTTP POST/PUT)
 
         Allows users to integrate DockMon alerts with any custom endpoint or service.
@@ -930,7 +930,7 @@ class NotificationService:
             with self.db.get_session() as session:
                 channel = session.query(NotificationChannel).filter_by(id=channel_id).first()
                 if not channel:
-                    return {"success": False, "error": f"Channel {channel_id} not found"}
+                    return {"success": False, "error": f"未找到通知频道 {channel_id}"}
 
                 # Extract channel data while session is open
                 channel_type = channel.type
@@ -938,7 +938,7 @@ class NotificationService:
 
             # Session is now closed - safe for async notification sends
             # Create a test message
-            test_message = "🧪 **DockMon Test Notification**\n\nThis is a test message from DockMon to verify your notification channel is configured correctly."
+            test_message = "🧪 **DockMon 通知测试**\n\nThis is a test message from DockMon to verify your notification channel is configured correctly.\n这是一条来自 DockMon 的测试信息，用于验证你的通知频道是否配置正确。"
 
             # Create a mock event object for the send methods
             class TestEvent:
@@ -971,12 +971,12 @@ class NotificationService:
             elif channel_type == 'teams':
                 success = await self._send_teams(channel_config, test_message, test_event)
             else:
-                return {"success": False, "error": f"Unsupported channel type: {channel_type}"}
+                return {"success": False, "error": f"不支持的频道类型: {channel_type}"}
 
             if success:
                 return {"success": True}
             else:
-                return {"success": False, "error": "Failed to send test message (check logs for details)"}
+                return {"success": False, "error": "无法发送测试信息 (请查看日志以获取更多信息)"}
 
         except Exception as e:
             logger.error(f"Error testing channel {channel_id}: {e}", exc_info=True)
@@ -1272,67 +1272,67 @@ class NotificationService:
         """Get built-in default template for v2 alerts - with kind-specific fallbacks"""
         # Update alerts get a specialized template
         if kind in ['update_available', 'update_completed', 'update_failed']:
-            return """🔄 **Container Update - {UPDATE_STATUS}**
+            return """🔄 **容器更新 - {UPDATE_STATUS}**
 
-**Container:** `{CONTAINER_NAME}`
-**Host:** {HOST_NAME}
-**Image:** {CURRENT_IMAGE}
-**Current Digest:** {CURRENT_DIGEST}
-**Latest Digest:** {LATEST_DIGEST}
-**Changelog:** {CHANGELOG_URL}
-**Time:** {TIMESTAMP}
-**Rule:** {RULE_NAME}"""
+**容器名称:** `{CONTAINER_NAME}`
+**主机名称:** {HOST_NAME}
+**当前镜像名称:** {CURRENT_IMAGE}
+**当前镜像摘要:** {CURRENT_DIGEST}
+**最新镜像摘要:** {LATEST_DIGEST}
+**更新日志:** {CHANGELOG_URL}
+**时间戳:** {TIMESTAMP}
+**告警规则:** {RULE_NAME}"""
 
         # Health check alerts (Docker native HEALTHCHECK and HTTP/HTTPS checks)
         if kind in ['container_unhealthy', 'container_healthy', 'health_check_failed']:
-            return """🏥 **{SEVERITY} Alert: Health Check Failed**
+            return """🏥 **{SEVERITY}等级告警: 更新检查失败**
 
-**Container:** {CONTAINER_NAME}
-**Host:** {HOST_NAME}
-**Status:** {OLD_STATE} → {NEW_STATE}
+**容器名称:** {CONTAINER_NAME}
+**主机名称:** {HOST_NAME}
+**状态:** {OLD_STATE} → {NEW_STATE}
 {HEALTH_CHECK_URL}{ERROR_MESSAGE}{CONSECUTIVE_FAILURES}{RESPONSE_TIME}
-**Time:** {TIMESTAMP}
-**Rule:** {RULE_NAME}"""
+**时间戳:** {TIMESTAMP}
+**告警规则:** {RULE_NAME}"""
 
         # State change alerts (stopped, started, paused, restarted, died, killed)
         if kind in ['container_stopped', 'container_started', 'container_paused', 'container_restart', 'container_restarted',
                     'container_died', 'container_killed']:
-            return """🚨 **{SEVERITY} Alert: {KIND}**
+            return """🚨 **{SEVERITY}等级告警: {KIND}**
 
-**Container:** {CONTAINER_NAME}
-**Host:** {HOST_NAME}
-**State change:** {OLD_STATE} to {NEW_STATE}
-**Exit code:** {EXIT_CODE}
-**Time:** {TIMESTAMP}
-**Rule:** {RULE_NAME}"""
+**容器名称:** {CONTAINER_NAME}
+**主机名称:** {HOST_NAME}
+**状态更改:** 由 {OLD_STATE} 变为 {NEW_STATE}
+**退出码:** {EXIT_CODE}
+**时间戳:** {TIMESTAMP}
+**告警规则:** {RULE_NAME}"""
 
         # Metric alerts (cpu, memory, disk, network, etc.)
         if kind in ['cpu_high', 'memory_high', 'disk_high', 'disk_low', 'network_high', 'cpu_low', 'memory_low']:
-            return """🚨 **{SEVERITY} Alert: {KIND}**
+            return """🚨 **{SEVERITY}等级告警: {KIND}**
 
-**Container:** {CONTAINER_NAME}
-**Host:** {HOST_NAME}
-**Current Value:** {CURRENT_VALUE} (threshold: {THRESHOLD})
-**Time:** {TIMESTAMP}
-**Rule:** {RULE_NAME}"""
+**容器名称:** {CONTAINER_NAME}
+**主机名称:** {HOST_NAME}
+**当前数值:** {CURRENT_VALUE} (阈值: {THRESHOLD})
+**时间戳:** {TIMESTAMP}
+**告警规则:** {RULE_NAME}"""
 
         # Generic fallback for all other alerts
-        return """🚨 **{SEVERITY} Alert: {KIND}**
+        return """🚨 **{SEVERITY}等级告警: {KIND}**
 
 **{TITLE}**
 {MESSAGE}
 
-**Host:** {HOST_NAME}
-**Current Value:** {CURRENT_VALUE} (threshold: {THRESHOLD})
-**Time:** {TIMESTAMP}
-**Rule:** {RULE_NAME}"""
+**主机名称:** {HOST_NAME}
+**当前数值:** {CURRENT_VALUE} (阈值: {THRESHOLD})
+**时间戳:** {TIMESTAMP}
+**告警规则:** {RULE_NAME}"""
 
     def _get_update_status(self, kind: str) -> str:
         """Map alert kind to human-readable update status"""
         status_map = {
-            'update_available': 'Available',
-            'update_completed': 'Succeeded',
-            'update_failed': 'Failed',
+            'update_available': '更新可用',
+            'update_completed': '更新成功',
+            'update_failed': '更新失败',
         }
         return status_map.get(kind, '')
 
@@ -1341,25 +1341,25 @@ class NotificationService:
         try:
             code = int(exit_code)
             if code == 0:
-                return "0 (Clean exit)"
+                return "0 (正常退出)"
             elif code == 137:
-                return "137 (SIGKILL - Force killed / OOM)"
+                return "137 (SIGKILL - 强制终止 / 内存不足)"
             elif code == 143:
-                return "143 (SIGTERM - Graceful stop)"
+                return "143 (SIGTERM - 正常终止)"
             elif code == 130:
-                return "130 (SIGINT - Interrupted)"
+                return "130 (SIGINT - 中断终止)"
             elif code == 126:
-                return "126 (Command cannot execute)"
+                return "126 (无法执行命令)"
             elif code == 127:
-                return "127 (Command not found)"
+                return "127 (未找到命令)"
             elif code == 128:
-                return "128 (Invalid exit code)"
+                return "128 (无效的退出码)"
             elif 129 <= code <= 255:
                 # Signal = code - 128
                 signal = code - 128
-                return f"{code} (Signal {signal})"
+                return f"{code} (信号 {signal})"
             elif 1 <= code <= 127:
-                return f"{code} (Application error)"
+                return f"{code} (应用程序错误)"
             else:
                 return str(code)
         except (ValueError, TypeError):
@@ -1403,6 +1403,39 @@ class NotificationService:
             if ' - ' in alert.title:
                 host_name = alert.title.split(' - ', 1)[1]
 
+        try:
+            severity = {'info': "通知", 'warning': "警告", 'error': "错误", 'critical': "严重"}[alert.severity]
+        except KeyError:
+            severity = alert.severity
+
+        try:
+            kind = {
+                  'cpu_high': 'CPU占用高',
+                  'memory_high': '内存占用高',
+                  'disk_low': '磁盘可用低',
+                  'container_unhealthy': '容器不健康(内置)',
+                  'health_check_failed': '容器不健康',
+                  'container_stopped': '容器已停止',
+                  'container_restart': '容器已重启',
+                  'host_down': '主机离线',
+                  'update_available': '更新可用',
+                  'update_completed': '更新完成',
+                  'update_failed': '更新失败',
+                  'system_error': '系统错误',
+                }[alert.kind]
+        except KeyError:
+            kind = alert.kind
+
+        try:
+            scope_type = {'host': "主机", 'container': "容器", 'group': "群组"}[alert.scope_type]
+        except KeyError:
+            scope_type = alert.scope_type
+
+        try:
+            state = {'open': "未解决", 'snoozed': "稍后解决", 'resolved': "已解决"}[alert.state]
+        except KeyError:
+            state = alert.state
+
         variables = {
             # Basic entity info
             '{CONTAINER_NAME}': alert.container_name or 'N/A',
@@ -1411,13 +1444,13 @@ class NotificationService:
             '{HOST_ID}': alert.scope_id if alert.scope_type == 'host' else 'N/A',
 
             # Alert info
-            '{SEVERITY}': alert.severity.upper(),
-            '{KIND}': alert.kind,
+            '{SEVERITY}': severity,
+            '{KIND}': kind,
             '{TITLE}': alert.title,
             '{MESSAGE}': alert.message,
-            '{SCOPE_TYPE}': alert.scope_type.capitalize(),
+            '{SCOPE_TYPE}': scope_type,
             '{SCOPE_ID}': alert.scope_id,
-            '{STATE}': alert.state,
+            '{STATE}': state,
 
             # Temporal info
             '{FIRST_SEEN}': first_seen_local.strftime('%Y-%m-%d %H:%M:%S'),
@@ -1520,7 +1553,7 @@ class NotificationService:
 
                 # Changelog URL (v2.0.1+)
                 changelog_url = event_context.get('changelog_url', '') or ''
-                variables['{CHANGELOG_URL}'] = changelog_url if changelog_url else 'Not found'
+                variables['{CHANGELOG_URL}'] = changelog_url if changelog_url else '暂未找到'
 
                 # Format error message with conditional display
                 error_message = event_context.get('error_message', '') or ''

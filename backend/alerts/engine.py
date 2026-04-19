@@ -1140,10 +1140,10 @@ class AlertEngine:
         """Generate alert title"""
         if context.scope_type == "container":
             container_name = context.container_name or context.scope_id
-            host_name = context.host_name or "unknown host"
-            return f"{rule.name} - {container_name} on {host_name}"
+            host_name = context.host_name or "未知主机"
+            return f"{rule.name} - 容器 {container_name} (位于主机 {host_name})"
         elif context.scope_type == "host":
-            return f"{rule.name} - {context.host_name or context.scope_id}"
+            return f"{rule.name} - 主机 {context.host_name or context.scope_id}"
         else:
             return rule.name
 
@@ -1160,12 +1160,20 @@ class AlertEngine:
             parts.append(rule.description)
 
         if rule.metric and rule.threshold and rule.operator:
-            if current_value is not None:
-                parts.append(f"{rule.metric} is {current_value:.1f} (threshold: {rule.operator} {rule.threshold})")
+            if rule.metric == "cpu_percent":
+                rule_metric = "CPU 占用率"
+            elif rule.metric == "memory_percent":
+                rule_metric = "内存占用率"
+            elif rule.metric == "disk_percent":
+                rule_metric = "磁盘占用率"
             else:
-                parts.append(f"{rule.metric} {rule.operator} {rule.threshold}")
+                rule_metric = rule.metric
+            if current_value is not None:
+                parts.append(f"{rule_metric}当前为{current_value:.1f} (阈值: {rule.operator} {rule.threshold})")
+            else:
+                parts.append(f"{rule_metric} {rule.operator} {rule.threshold}")
 
-        return " • ".join(parts) if parts else "Alert condition met"
+        return " • ".join(parts) if parts else "满足告警条件"
 
     def _snapshot_rule(self, rule: AlertRuleV2) -> str:
         """Create JSON snapshot of rule for audit trail"""

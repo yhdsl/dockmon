@@ -336,102 +336,102 @@ class EventBus:
     def _generate_event_message(self, event: Event) -> tuple[str, str]:
         """Generate human-readable title and message for event"""
         if event.event_type == EventType.UPDATE_AVAILABLE:
-            title = f"Update Available: {event.scope_name}"
+            title = f"更新可用: {event.scope_name}"
             current = event.data.get('current_image', '?')
             latest = event.data.get('latest_image', '?')
-            message = f"Update available: {current} → {latest}"
+            message = f"更新可用: {current} → {latest}"
 
         elif event.event_type == EventType.UPDATE_STARTED:
-            title = f"Update Started: {event.scope_name}"
+            title = f"开始更新: {event.scope_name}"
             target_image = event.data.get('target_image', '?')
-            message = f"Starting container update to {target_image}"
+            message = f"开始更新容器至 {target_image}"
 
         elif event.event_type == EventType.UPDATE_PULL_COMPLETED:
-            title = f"Image Pull Completed: {event.scope_name}"
+            title = f"已完成镜像拉取: {event.scope_name}"
             image = event.data.get('image', '?')
             size = event.data.get('size_mb')
             if size:
-                message = f"Successfully pulled {image} ({size:.1f} MB)"
+                message = f"已成功拉取镜像 {image} ({size:.1f} MB)"
             else:
-                message = f"Successfully pulled {image}"
+                message = f"已成功拉取镜像 {image}"
 
         elif event.event_type == EventType.BACKUP_CREATED:
-            title = f"Backup Created: {event.scope_name}"
+            title = f"已成功创建备份: {event.scope_name}"
             backup_name = event.data.get('backup_name', '?')
-            message = f"Created backup {backup_name} for rollback capability"
+            message = f"已成功为回滚操作创建备份 {backup_name}"
 
         elif event.event_type == EventType.UPDATE_COMPLETED:
-            title = f"Container Update: {event.scope_name}"
+            title = f"已完成容器更新: {event.scope_name}"
             previous = event.data.get('previous_image', '?')
             new = event.data.get('new_image', '?')
-            message = f"Container successfully updated from {previous} to {new}"
+            message = f"已成功从 {previous} 更新容器至 {new}"
 
         elif event.event_type == EventType.UPDATE_FAILED:
-            title = f"Container Update Failed: {event.scope_name}"
-            error = event.data.get('error_message', 'Unknown error')
-            message = f"Container update failed: {error}"
+            title = f"容器更新失败: {event.scope_name}"
+            error = event.data.get('error_message', '未知错误')
+            message = f"容器更新失败: {error}"
 
         elif event.event_type == EventType.ROLLBACK_COMPLETED:
-            title = f"Rollback Completed: {event.scope_name}"
-            message = f"Successfully rolled back {event.scope_name} to previous version"
+            title = f"已完成回滚: {event.scope_name}"
+            message = f"已成功回滚 {event.scope_name} 至先前的状态"
 
         elif event.event_type == EventType.CONTAINER_STARTED:
-            title = f"Container Started: {event.scope_name}"
-            message = f"Container {event.scope_name} started"
+            title = f"已成功启动容器: {event.scope_name}"
+            message = f"容器 {event.scope_name} 已成功启动"
 
         elif event.event_type == EventType.CONTAINER_RESTARTED:
-            title = f"Container Restarted: {event.scope_name}"
-            message = f"Container {event.scope_name} restarted"
+            title = f"已成功重启容器: {event.scope_name}"
+            message = f"容器 {event.scope_name} 已成功重启"
 
         elif event.event_type == EventType.CONTAINER_STOPPED:
-            title = f"Container Stopped: {event.scope_name}"
+            title = f"已成功停止容器: {event.scope_name}"
             # Issue #23: Include exit code when present (from 'die' events)
             exit_code = event.data.get('exit_code')
             if exit_code is not None:
-                message = f"Container {event.scope_name} stopped with exit code {exit_code}"
+                message = f"容器 {event.scope_name} 已成功停止 (退出码 {exit_code})"
             else:
                 # Fallback to state change message (from 'stop' events)
                 old_state = event.data.get('old_state', 'unknown')
                 new_state = event.data.get('new_state', 'stopped')
-                message = f"Container {event.scope_name} changed state: {old_state} → {new_state}"
+                message = f"容器 {event.scope_name} 发生状态改变: {old_state} → {new_state}"
 
         elif event.event_type == EventType.CONTAINER_DIED:
-            title = f"Container Died: {event.scope_name}"
+            title = f"容器已死亡: {event.scope_name}"
             exit_code = event.data.get('exit_code')
             if exit_code is not None:
-                message = f"Container {event.scope_name} died with exit code {exit_code}"
+                message = f"容器 {event.scope_name} 已死亡 (退出码 {exit_code})"
             else:
-                message = f"Container {event.scope_name} died"
+                message = f"容器 {event.scope_name} 已死亡"
 
         elif event.event_type == EventType.CONTAINER_DELETED:
-            title = f"Container Deleted: {event.scope_name}"
+            title = f"已成功删除容器: {event.scope_name}"
             removed_volumes = event.data.get('removed_volumes', False)
             if removed_volumes:
-                message = f"Container {event.scope_name} deleted (volumes removed)"
+                message = f"容器 {event.scope_name} 已成功删除 (包括卷)"
             else:
-                message = f"Container {event.scope_name} deleted"
+                message = f"容器 {event.scope_name} 已成功删除"
 
         elif event.event_type == EventType.CONTAINER_HEALTH_CHANGED:
-            title = f"Container Health Changed: {event.scope_name}"
+            title = f"容器健康状态发生改变: {event.scope_name}"
             old_state = event.data.get('old_state', 'unknown')
             new_state = event.data.get('new_state', 'unknown')
-            message = f"Container {event.scope_name} health status: {old_state} → {new_state}"
+            message = f"容器 {event.scope_name} 健康状态发生改变: {old_state} → {new_state}"
 
         elif event.event_type == EventType.HOST_DISCONNECTED:
-            title = f"Host Disconnected: {event.host_name or event.scope_name}"
-            error = event.data.get('error', 'Connection lost')
-            message = f"Host disconnected: {error}"
+            title = f"主机已断开连接: {event.host_name or event.scope_name}"
+            error = event.data.get('error', '连接丢失')
+            message = f"主机已断开连接: {error}"
 
         elif event.event_type == EventType.HOST_CONNECTED:
-            title = f"Host Connected: {event.host_name or event.scope_name}"
+            title = f"主机已连接: {event.host_name or event.scope_name}"
             url = event.data.get('url', 'unknown')
-            message = f"Host {event.host_name or event.scope_name} reconnected ({url})"
+            message = f"主机 {event.host_name or event.scope_name} 已重新连接 ({url})"
 
         elif event.event_type == EventType.HOST_MIGRATED:
             old_host_name = event.data.get('old_host_name', 'unknown')
             new_host_name = event.data.get('new_host_name', 'unknown')
-            title = f"Host Migrated: {old_host_name} → {new_host_name}"
-            message = f"Host '{old_host_name}' has been migrated to agent-based connection as '{new_host_name}'. Container settings preserved."
+            title = f"已成功迁移主机: {old_host_name} → {new_host_name}"
+            message = f"主机 '{old_host_name}' 已迁移至代理模式，新主机名为 '{new_host_name}'。原有的容器设置已保留。"
 
         else:
             title = f"{event.event_type.value}: {event.scope_name}"
