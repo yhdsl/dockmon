@@ -425,3 +425,4 @@ func (h *ScanHandler) ReadComposeFile(ctx context.Context, req ReadComposeFileRe
 		EnvContent: envContent,
 	}
 }
+

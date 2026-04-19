@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/darthnorse/dockmon-agent/internal/config"
-	"github.com/darthnorse/dockmon-agent/internal/docker"
-	"github.com/darthnorse/dockmon-shared/compose"
+	"github.com/yhdsl/dockmon-agent/internal/config"
+	"github.com/yhdsl/dockmon-agent/internal/docker"
+	"github.com/yhdsl/dockmon-shared/compose"
 	"github.com/docker/compose/v2/pkg/api"
 	"github.com/sirupsen/logrus"
 )
@@ -711,3 +711,4 @@ services:
 		t.Logf("  %s: %s (%s)", name, svc.Status, svc.ContainerID)
 	}
 }
+

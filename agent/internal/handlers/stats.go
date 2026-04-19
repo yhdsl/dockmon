@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	sharedDocker "github.com/darthnorse/dockmon-shared/docker"
-	"github.com/darthnorse/dockmon-agent/internal/docker"
+	sharedDocker "github.com/yhdsl/dockmon-shared/docker"
+	"github.com/yhdsl/dockmon-agent/internal/docker"
 	"github.com/docker/docker/api/types/container"
 	"github.com/sirupsen/logrus"
 )
@@ -167,3 +167,4 @@ func (h *StatsHandler) processStats(stat *container.StatsResponse, containerID, 
 		h.log.Errorf("Failed to send stats for %s: %v", safeShortID(containerID), err)
 	}
 }
+

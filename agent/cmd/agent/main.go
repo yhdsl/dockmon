@@ -9,9 +9,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/darthnorse/dockmon-agent/internal/client"
-	"github.com/darthnorse/dockmon-agent/internal/config"
-	"github.com/darthnorse/dockmon-agent/internal/docker"
+	"github.com/yhdsl/dockmon-agent/internal/client"
+	"github.com/yhdsl/dockmon-agent/internal/config"
+	"github.com/yhdsl/dockmon-agent/internal/docker"
 	"github.com/sirupsen/logrus"
 )
 
@@ -193,3 +193,4 @@ func (f *TimestampFirstJSONFormatter) Format(entry *logrus.Entry) ([]byte, error
 	b.WriteString("}\n")
 	return b.Bytes(), nil
 }
+

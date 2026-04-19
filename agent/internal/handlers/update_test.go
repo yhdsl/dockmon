@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/darthnorse/dockmon-agent/internal/docker"
+	"github.com/yhdsl/dockmon-agent/internal/docker"
 )
 
 func TestUpdateRequestUnmarshal(t *testing.T) {
@@ -157,3 +157,4 @@ func TestUpdateRequestDefaults(t *testing.T) {
 		t.Errorf("expected health_timeout 0 from unmarshal, got %d", req.HealthTimeout)
 	}
 }
+

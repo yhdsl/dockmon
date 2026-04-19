@@ -379,3 +379,4 @@ func (h *HealthCheckHandler) sendResult(config *HealthCheckConfig, healthy bool,
 		}).Warn("Health check failed")
 	}
 }
+

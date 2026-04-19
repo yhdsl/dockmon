@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/darthnorse/dockmon-shared/compose"
+	"github.com/yhdsl/dockmon-shared/compose"
 	"github.com/docker/compose/v2/pkg/api"
 )
 
@@ -513,3 +513,4 @@ func TestEmptyRegistryURLCredential(t *testing.T) {
 		t.Errorf("RegistryURL should be empty string, got %q", cred.RegistryURL)
 	}
 }
+

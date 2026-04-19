@@ -11,11 +11,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/darthnorse/dockmon-agent/internal/config"
-	"github.com/darthnorse/dockmon-agent/internal/docker"
-	"github.com/darthnorse/dockmon-agent/internal/handlers"
-	"github.com/darthnorse/dockmon-agent/internal/protocol"
-	"github.com/darthnorse/dockmon-agent/pkg/types"
+	"github.com/yhdsl/dockmon-agent/internal/config"
+	"github.com/yhdsl/dockmon-agent/internal/docker"
+	"github.com/yhdsl/dockmon-agent/internal/handlers"
+	"github.com/yhdsl/dockmon-agent/internal/protocol"
+	"github.com/yhdsl/dockmon-agent/pkg/types"
 	"github.com/gorilla/websocket"
 	"github.com/sirupsen/logrus"
 )
@@ -1324,3 +1324,4 @@ func (c *WebSocketClient) closeConnection() {
 
 	c.registered = false
 }
+

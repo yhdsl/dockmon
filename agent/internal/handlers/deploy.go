@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/darthnorse/dockmon-agent/internal/docker"
-	"github.com/darthnorse/dockmon-shared/compose"
-	sharedDocker "github.com/darthnorse/dockmon-shared/docker"
+	"github.com/yhdsl/dockmon-agent/internal/docker"
+	"github.com/yhdsl/dockmon-shared/compose"
+	sharedDocker "github.com/yhdsl/dockmon-shared/docker"
 	"github.com/sirupsen/logrus"
 )
 
@@ -180,3 +180,4 @@ func (h *DeployHandler) HasComposeSupport() bool {
 func (h *DeployHandler) GetComposeCommand() string {
 	return compose.GetComposeCommand()
 }
+

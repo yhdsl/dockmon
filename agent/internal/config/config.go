@@ -149,3 +149,4 @@ func detectContainerSocket() string {
 	// Fallback to Docker default (will error if not available, but that's expected)
 	return "unix:///var/run/docker.sock"
 }
+

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/darthnorse/dockmon-agent/pkg/types"
+	"github.com/yhdsl/dockmon-agent/pkg/types"
 )
 
 // EncodeMessage encodes a message to JSON bytes
@@ -56,3 +56,4 @@ func ParseCommand(msg *types.Message, target interface{}) error {
 
 	return json.Unmarshal(data, target)
 }
+

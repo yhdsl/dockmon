@@ -109,3 +109,4 @@ func TestRegistryAuthStructOptionalFields(t *testing.T) {
 		t.Errorf("expected empty password, got %q", auth.Password)
 	}
 }
+

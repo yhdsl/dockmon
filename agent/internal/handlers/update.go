@@ -3,8 +3,8 @@ package handlers
 import (
 	"context"
 
-	"github.com/darthnorse/dockmon-agent/internal/docker"
-	"github.com/darthnorse/dockmon-shared/update"
+	"github.com/yhdsl/dockmon-agent/internal/docker"
+	"github.com/yhdsl/dockmon-shared/update"
 	"github.com/sirupsen/logrus"
 )
 
@@ -190,3 +190,4 @@ func (h *UpdateHandler) sendLayerProgress(event update.PullProgressEvent) {
 		h.log.WithError(err).Debug("Failed to send layer progress")
 	}
 }
+

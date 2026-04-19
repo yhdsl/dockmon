@@ -6,8 +6,8 @@ import (
 	"io"
 	"sync"
 
-	"github.com/darthnorse/dockmon-agent/internal/docker"
-	"github.com/darthnorse/dockmon-agent/pkg/types"
+	"github.com/yhdsl/dockmon-agent/internal/docker"
+	"github.com/yhdsl/dockmon-agent/pkg/types"
 	dockertypes "github.com/docker/docker/api/types"
 	"github.com/sirupsen/logrus"
 )
@@ -277,3 +277,4 @@ func (h *ShellHandler) CloseAll() {
 	h.sessions = make(map[string]*ShellSession)
 	h.log.Info("Closed all shell sessions")
 }
+

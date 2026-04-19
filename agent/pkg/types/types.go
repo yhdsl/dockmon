@@ -116,3 +116,4 @@ type ShellDataEvent struct {
 	Data      string `json:"data,omitempty"`     // Base64-encoded terminal output
 	Error     string `json:"error,omitempty"`    // Error message (for action=error)
 }
+
