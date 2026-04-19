@@ -287,7 +287,7 @@ class AgentUpdateExecutor:
                     logger.warning("Could not resolve 'latest' - failed to fetch from GitHub")
 
             # Agent releases use agent-v* tag pattern (e.g., agent-v1.0.0)
-            binary_url = f"https://github.com/darthnorse/dockmon/releases/download/agent-v{version}/dockmon-agent-{agent_os}-{agent_arch}"
+            binary_url = f"https://github.com/yhdsl/dockmon/releases/download/agent-v{version}/dockmon-agent-{agent_os}-{agent_arch}"
 
             # Fetch checksum for binary verification (security)
             checksum = None

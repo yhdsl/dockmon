@@ -45,7 +45,7 @@ class DockMonUpdateChecker:
     """Check GitHub for DockMon and Agent application updates"""
 
     # Hardcoded constants
-    GITHUB_REPO = "darthnorse/dockmon"
+    GITHUB_REPO = "yhdsl/dockmon"
     GITHUB_RELEASES_URL = f"https://api.github.com/repos/{GITHUB_REPO}/releases"
     GITHUB_LATEST_URL = f"https://api.github.com/repos/{GITHUB_REPO}/releases/latest"
     CHECK_INTERVAL_HOURS = 6  # Hardcoded: Check every 6 hours

@@ -1171,7 +1171,7 @@ async def trigger_agent_update(host_id: str, request: Request, current_user: dic
         command_executor = get_agent_command_executor()
 
         # Construct self-update command
-        binary_url = f"https://github.com/darthnorse/dockmon/releases/download/agent-v{latest_version}/dockmon-agent-{agent_os}-{agent_arch}"
+        binary_url = f"https://github.com/yhdsl/dockmon/releases/download/agent-v{latest_version}/dockmon-agent-{agent_os}-{agent_arch}"
 
         # Fetch checksum for security
         checksum = None
@@ -1186,7 +1186,7 @@ async def trigger_agent_update(host_id: str, request: Request, current_user: dic
             "type": "command",
             "command": "self_update",
             "payload": {
-                "image": f"ghcr.io/darthnorse/dockmon-agent:{latest_version}",
+                "image": f"ghcr.io/yhdsl/dockmon-agent:{latest_version}",
                 "version": latest_version,
                 "binary_url": binary_url,
                 "checksum": checksum,
