@@ -1,6 +1,6 @@
 # DockMon 代理 (DockMon Agent)
 
-DockMon 代理 (DockMon Agent) 是一个极其轻量的基于 Go 编写的代理服务，可以通过 WebSocket 将远程 Docker 主机连接到你的 DockMon 实例。无需暴露 Docker 守护进程端口或者配置 mTLS 证书。
+DockMon 代理 (DockMon Agent) 是一个基于 Go 编写的极其轻量的代理服务，可以通过 WebSocket 将远程 Docker 主机连接到你的 DockMon 实例。无需暴露 Docker 守护进程端口或者配置 mTLS 证书。
 
 ## 特色功能
 
@@ -16,7 +16,7 @@ DockMon 代理 (DockMon Agent) 是一个极其轻量的基于 Go 编写的代理
 ### 前置条件
 
 - 远程主机已安装 Docker
-- 包含能够访问你的 DockMon 实例的网络连接
+- 已配置能够访问你的 DockMon 实例的网络连接
 - 来自 DockMon 的注册令牌
 
 ### 安装步骤
