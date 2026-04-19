@@ -1168,3 +1168,4 @@ func TestIntegration_ContainerRestartAlwaysExits(t *testing.T) {
 
 	t.Log("Container with restart:always behavior verified: OK")
 }
+

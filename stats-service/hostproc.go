@@ -265,3 +265,4 @@ func (h *HostProcReader) getMemoryStats() (used, total uint64, percent float64, 
 
 	return memUsed, memTotal, percent, nil
 }
+

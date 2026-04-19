@@ -65,3 +65,4 @@ func main() {
 
 	log.Info("Compose service stopped")
 }
+

@@ -655,3 +655,4 @@ func TestBuildEndpointConfig_EmptyConfig(t *testing.T) {
 		t.Error("Expected nil Links for empty data")
 	}
 }
+

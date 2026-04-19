@@ -242,3 +242,4 @@ func TestCreateComposeService_RemoteHost(t *testing.T) {
 	// Verify remote host was configured
 	assert.Contains(t, cli.Client().DaemonHost(), "192.168.1.50:2376")
 }
+

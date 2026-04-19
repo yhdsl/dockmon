@@ -4,7 +4,7 @@
 # https://github.com/darthnorse/dockmon
 #
 # Usage (run as root):
-#   curl -fsSL https://raw.githubusercontent.com/darthnorse/dockmon/main/scripts/install-agent.sh | \
+#   curl -fsSL https://raw.githubusercontent.com/yhdsl/dockmon/main/scripts/install-agent.sh | \
 #     DOCKMON_URL=https://your-server REGISTRATION_TOKEN=your-token bash
 #
 # Optional environment variables:
@@ -81,7 +81,7 @@ fi
 if [ -z "$AGENT_VERSION" ]; then
     log_info "Finding latest agent release..."
     # Query GitHub API for latest agent-v* release
-    LATEST_TAG=$(curl -fsSL "https://api.github.com/repos/darthnorse/dockmon/releases" | \
+    LATEST_TAG=$(curl -fsSL "https://api.github.com/repos/yhdsl/dockmon/releases" | \
         grep -o '"tag_name": "agent-v[^"]*"' | head -1 | cut -d'"' -f4)
 
     if [ -n "$LATEST_TAG" ]; then
@@ -97,7 +97,7 @@ fi
 
 # Download binary
 log_info "Downloading DockMon agent v${AGENT_VERSION}..."
-DOWNLOAD_URL="https://github.com/darthnorse/dockmon/releases/download/agent-v${AGENT_VERSION}/dockmon-agent-linux-${ARCH}"
+DOWNLOAD_URL="https://github.com/yhdsl/dockmon/releases/download/agent-v${AGENT_VERSION}/dockmon-agent-linux-${ARCH}"
 
 if ! curl -fsSL -o "$INSTALL_PATH" "$DOWNLOAD_URL"; then
     log_warn "Release download failed, trying to extract from Docker image..."
@@ -113,9 +113,9 @@ if ! curl -fsSL -o "$INSTALL_PATH" "$DOWNLOAD_URL"; then
         DOCKER_TAG="latest"
     fi
 
-    log_info "Pulling Docker image ghcr.io/darthnorse/dockmon-agent:${DOCKER_TAG}..."
-    docker pull "ghcr.io/darthnorse/dockmon-agent:${DOCKER_TAG}"
-    docker create --name temp-dockmon-agent "ghcr.io/darthnorse/dockmon-agent:${DOCKER_TAG}"
+    log_info "Pulling Docker image ghcr.io/yhdsl/dockmon-agent:${DOCKER_TAG}..."
+    docker pull "ghcr.io/yhdsl/dockmon-agent:${DOCKER_TAG}"
+    docker create --name temp-dockmon-agent "ghcr.io/yhdsl/dockmon-agent:${DOCKER_TAG}"
     docker cp temp-dockmon-agent:/app/dockmon-agent "$INSTALL_PATH"
     docker rm temp-dockmon-agent
 fi
@@ -149,7 +149,7 @@ log_info "Creating systemd service..."
 cat > "$SERVICE_FILE" << EOF
 [Unit]
 Description=DockMon Agent
-Documentation=https://github.com/darthnorse/dockmon
+Documentation=https://github.com/yhdsl/dockmon
 After=network-online.target docker.service
 Wants=network-online.target
 Requires=docker.service

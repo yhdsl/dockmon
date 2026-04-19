@@ -282,3 +282,4 @@ func GetImageLabels(ctx context.Context, cli *client.Client, imageRef string) (m
 
 	return img.Config.Labels, nil
 }
+

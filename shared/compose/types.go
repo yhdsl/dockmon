@@ -155,3 +155,4 @@ type ServiceStatus struct {
 	Image   string `json:"image,omitempty"`
 	Message string `json:"message,omitempty"`
 }
+

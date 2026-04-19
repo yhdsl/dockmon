@@ -210,3 +210,4 @@ func TestRewriteBindMountPaths_TmpfsUnchanged(t *testing.T) {
 		t.Errorf("Source = %q, want empty", project.Services["web"].Volumes[0].Source)
 	}
 }
+

@@ -1,4 +1,4 @@
-module github.com/darthnorse/dockmon-shared
+module github.com/yhdsl/dockmon-shared
 
 go 1.24.9
 

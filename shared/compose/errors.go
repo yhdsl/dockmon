@@ -167,3 +167,4 @@ func CategorizeErrorString(errMsg string) string {
 		return "other"
 	}
 }
+

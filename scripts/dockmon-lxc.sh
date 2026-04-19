@@ -41,7 +41,7 @@ DEBIAN_12_TEMPLATE="debian-12-standard_12.2-1_amd64.tar.zst"
 DEBIAN_13_TEMPLATE="debian-13-standard_13.0-1_amd64.tar.zst"
 
 # GitHub repository
-GITHUB_REPO="https://github.com/darthnorse/dockmon.git"
+GITHUB_REPO="https://github.com/yhdsl/dockmon.git"
 
 # Function to print colored output
 print_info() {
@@ -625,7 +625,7 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y nginx git curl python3 python3
 # Clone DockMon repository
 echo "Cloning DockMon repository..."
 cd /opt
-git clone https://github.com/darthnorse/dockmon.git
+git clone https://github.com/yhdsl/dockmon.git
 
 # Set up Python backend
 echo "Setting up DockMon backend..."
@@ -818,7 +818,7 @@ if [ ! -d "/opt/dockmon" ]; then
     print_error "DockMon directory not found at /opt/dockmon"
     print_info "Attempting to clone repository..."
     cd /opt
-    git clone https://github.com/darthnorse/dockmon.git
+    git clone https://github.com/yhdsl/dockmon.git
     if [ \$? -ne 0 ]; then
         print_error "Failed to clone DockMon repository"
         exit 1

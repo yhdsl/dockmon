@@ -124,3 +124,4 @@ func (eb *EventBroadcaster) CloseAll() {
 
 	log.Println("Closed all event WebSocket connections")
 }
+

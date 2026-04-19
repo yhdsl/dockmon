@@ -121,3 +121,4 @@ func RoundToDecimal(value float64, places int) float64 {
 	}
 	return float64(int(value*shift+0.5)) / shift
 }
+

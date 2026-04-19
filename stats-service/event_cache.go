@@ -104,3 +104,4 @@ func (ec *EventCache) GetStats() (hostCount int, totalEvents int) {
 	}
 	return
 }
+

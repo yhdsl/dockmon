@@ -392,3 +392,4 @@ type dockerClient interface {
 	ContainerList(ctx context.Context, options container.ListOptions) ([]types.Container, error)
 	ContainerInspect(ctx context.Context, containerID string) (types.ContainerJSON, error)
 }
+

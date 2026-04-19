@@ -132,3 +132,4 @@ func (m *Metrics) Reset() {
 	atomic.StoreInt32(&m.ActiveUpdates, 0)
 	m.recentDurations = m.recentDurations[:0]
 }
+

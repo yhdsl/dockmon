@@ -352,3 +352,4 @@ func DeleteStackDir(stacksDir, projectName string, log *logrus.Logger) error {
 
 	return nil
 }
+

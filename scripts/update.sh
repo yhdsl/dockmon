@@ -73,7 +73,7 @@ if [ ! -d "/opt/dockmon" ]; then
     print_error "DockMon directory not found at /opt/dockmon"
     print_info "Attempting to clone repository..."
     cd /opt
-    git clone https://github.com/darthnorse/dockmon.git
+    git clone https://github.com/yhdsl/dockmon.git
     if [ $? -ne 0 ]; then
         print_error "Failed to clone DockMon repository"
         exit 1

@@ -67,7 +67,7 @@ func (u *Updater) Update(ctx context.Context, req UpdateRequest) *UpdateResult {
 	}
 
 	// Capture original running state to restore after update
-	// See: https://github.com/darthnorse/dockmon/issues/90
+	// See: https://github.com/yhdsl/dockmon/issues/90
 	wasRunning := oldContainer.State.Running
 
 	// Step 3: Get image labels for label filtering
@@ -516,3 +516,4 @@ func abs(x int) int {
 	}
 	return x
 }
+

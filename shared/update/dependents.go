@@ -189,3 +189,4 @@ func recreateDependentContainer(
 	log.Infof("Successfully recreated dependent container: %s (new ID: %s)", dep.Name, truncateID(newDepID))
 	return nil
 }
+

@@ -116,3 +116,4 @@ type UpdaterOptions struct {
 	// SupportsNetworkingConfig indicates if API >= 1.44 (can set network at creation)
 	SupportsNetworkingConfig bool
 }
+

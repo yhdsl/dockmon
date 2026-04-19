@@ -283,3 +283,4 @@ func (c *StatsCache) GetStats() (containerCount, hostCount int) {
 
 	return len(c.containerStats), len(c.hostStats)
 }
+

@@ -178,3 +178,4 @@ func IsServiceResultHealthy(service ServiceResult) bool {
 
 	return false
 }
+

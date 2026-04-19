@@ -7,3 +7,4 @@ func TruncateID(id string, length int) string {
 	}
 	return id[:length]
 }
+

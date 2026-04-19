@@ -53,12 +53,12 @@ ARG APP_VERSION=dev
 # OCI Image labels (https://github.com/opencontainers/image-spec/blob/main/annotations.md)
 LABEL org.opencontainers.image.title="DockMon"
 LABEL org.opencontainers.image.description="Self-hosted Docker monitoring and management platform with multi-host support, container updates, health checks, and alerts"
-LABEL org.opencontainers.image.authors="darthnorse"
-LABEL org.opencontainers.image.source="https://github.com/darthnorse/dockmon"
-LABEL org.opencontainers.image.url="https://github.com/darthnorse/dockmon"
-LABEL org.opencontainers.image.documentation="https://github.com/darthnorse/dockmon"
+LABEL org.opencontainers.image.authors="yhdsl"
+LABEL org.opencontainers.image.source="https://github.com/yhdsl/dockmon"
+LABEL org.opencontainers.image.url="https://github.com/yhdsl/dockmon"
+LABEL org.opencontainers.image.documentation="https://github.com/yhdsl/dockmon"
 LABEL org.opencontainers.image.licenses="MIT"
-LABEL org.opencontainers.image.vendor="darthnorse"
+LABEL org.opencontainers.image.vendor="yhdsl"
 LABEL org.opencontainers.image.version="${APP_VERSION}"
 
 # Install runtime dependencies and build dependencies (temporarily for Python packages with C extensions)

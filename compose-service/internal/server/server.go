@@ -9,9 +9,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/darthnorse/dockmon-shared/compose"
-	sharedDocker "github.com/darthnorse/dockmon-shared/docker"
-	"github.com/darthnorse/dockmon-shared/update"
+	"github.com/yhdsl/dockmon-shared/compose"
+	sharedDocker "github.com/yhdsl/dockmon-shared/docker"
+	"github.com/yhdsl/dockmon-shared/update"
 	"github.com/docker/docker/client"
 	"github.com/dockmon/compose-service/internal/metrics"
 	"github.com/sirupsen/logrus"
@@ -672,3 +672,4 @@ func (s *Server) handleUpdateSSE(w http.ResponseWriter, r *http.Request, req Upd
 		}
 	}
 }
+

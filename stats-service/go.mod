@@ -3,12 +3,12 @@ module github.com/dockmon/stats-service
 go 1.24.9
 
 require (
-	github.com/darthnorse/dockmon-shared v0.0.0
+	github.com/yhdsl/dockmon-shared v0.0.0
 	github.com/docker/docker v28.5.2+incompatible
 	github.com/gorilla/websocket v1.5.3
 )
 
-replace github.com/darthnorse/dockmon-shared => ../shared
+replace github.com/yhdsl/dockmon-shared => ../shared
 
 require github.com/docker/go-connections v0.6.0 // indirect
 

@@ -387,3 +387,4 @@ func isImportantEvent(action string) bool {
 	}
 	return importantEvents[action]
 }
+

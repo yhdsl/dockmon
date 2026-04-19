@@ -3,7 +3,7 @@ module github.com/dockmon/compose-service
 go 1.24.9
 
 require (
-	github.com/darthnorse/dockmon-shared v0.0.0
+	github.com/yhdsl/dockmon-shared v0.0.0
 	github.com/docker/docker v28.5.2+incompatible
 	github.com/sirupsen/logrus v1.9.3
 )
@@ -189,4 +189,4 @@ require (
 )
 
 // Use local shared package
-replace github.com/darthnorse/dockmon-shared => ../shared
+replace github.com/yhdsl/dockmon-shared => ../shared

@@ -109,3 +109,4 @@ func getAPIVersion(ctx context.Context, cli *client.Client) (string, error) {
 	}
 	return version.APIVersion, nil
 }
+
