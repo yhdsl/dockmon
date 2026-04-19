@@ -121,21 +121,21 @@ docker build -t dockmon-agent:dev \
 
 1. 请检查 `DOCKMON_URL` 是否正确 (HTTPS 下使用 wss://，而 HTTP 使用 ws://)
 2. 验证网络的连通性: `curl -v <DOCKMON_URL>`
-3. 检查注册令牌是否有效
+3. 请检查注册令牌是否有效
 4. 查看代理的日志: `docker logs dockmon-agent`
 
-### 容器操作执行失败
+### 容器操作失败
 
-1. 确认已挂载 Docker 套接字: `docker exec dockmon-agent ls -l /var/run/docker.sock`
-2. 检查代理是否具有 Docker 套接字权限
-3. 审阅 DockMon 后端的日志获取详细的错误信息
+1. 请确认已挂载 Docker 套接字: `docker exec dockmon-agent ls -l /var/run/docker.sock`
+2. 请检查代理是否具有 Docker 套接字权限
+3. 审阅 DockMon 后端的日志以获取详细的错误信息
 
 ### 代理频繁断开
 
-1. 检查网络的稳定性
-2. 审阅重连日志
+1. 请检查网络的稳定性
+2. 审阅重连相关的日志
 3. 确认 DockMon 正在运行且运行状态健康
-4. 检查是否有存在防火墙或者代理干扰
+4. 请检查是否存在防火墙或代理软件干扰
 
 ## 版本历史
 
@@ -146,6 +146,6 @@ docker build -t dockmon-agent:dev \
   - Self-update capability
   - Multi-architecture support
 
-## 证书
+## 许可证
 
-与 DockMon 主项目相同
+与 DockMon 主项目的许可证相同
