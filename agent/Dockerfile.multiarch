@@ -22,7 +22,7 @@ COPY agent/ ./agent/
 WORKDIR /build/agent
 
 # Fix the replace directive to point to ../shared
-RUN sed -i 's|replace github.com/darthnorse/dockmon-shared => ../shared|replace github.com/darthnorse/dockmon-shared => /build/shared|g' go.mod
+RUN sed -i 's|replace github.com/yhdsl/dockmon-shared => ../shared|replace github.com/yhdsl/dockmon-shared => /build/shared|g' go.mod
 
 # Download dependencies
 RUN go mod download
@@ -42,9 +42,9 @@ ARG VERSION=dev
 LABEL org.opencontainers.image.title="DockMon Agent"
 LABEL org.opencontainers.image.description="Remote monitoring agent for DockMon"
 LABEL org.opencontainers.image.version="${VERSION}"
-LABEL org.opencontainers.image.source="https://github.com/darthnorse/dockmon"
+LABEL org.opencontainers.image.source="https://github.com/yhdsl/dockmon"
 LABEL org.opencontainers.image.licenses="MIT"
-LABEL org.opencontainers.image.vendor="darthnorse"
+LABEL org.opencontainers.image.vendor="yhdsl"
 
 # Install runtime dependencies
 RUN apk add --no-cache ca-certificates tzdata

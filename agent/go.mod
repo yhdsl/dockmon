@@ -1,9 +1,9 @@
-module github.com/darthnorse/dockmon-agent
+module github.com/yhdsl/dockmon-agent
 
 go 1.24.9
 
 require (
-	github.com/darthnorse/dockmon-shared v0.0.0
+	github.com/yhdsl/dockmon-shared v0.0.0
 	github.com/docker/compose/v2 v2.40.2
 	github.com/docker/docker v28.5.2+incompatible
 	github.com/gorilla/websocket v1.5.1
@@ -11,7 +11,7 @@ require (
 	gopkg.in/yaml.v3 v3.0.1
 )
 
-replace github.com/darthnorse/dockmon-shared => ../shared
+replace github.com/yhdsl/dockmon-shared => ../shared
 
 require (
 	github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c // indirect
