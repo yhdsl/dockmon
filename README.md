@@ -68,100 +68,51 @@
 ## 技术栈
 
 ### 后端
-- **Python 3.13** with FastAPI and async/await
-- **Alpine Linux 3.x** container base (reduced attack surface)
-- **OpenSSL 3.x** for modern cryptography
-- **SQLAlchemy 2.0** with Alembic migrations
-- **Go 1.23** stats service for real-time metrics streaming
+- 使用 **Python 3.13**，结合 FastAPI 与 async/await
+- 基于 **Alpine Linux 3.x** 构建的容器 (降低攻击面)
+- 使用 **OpenSSL 3.x** 提供现代加密能力
+- 采用 **SQLAlchemy 2.0** 与 Alembic 实现数据库迁移管理
+- 使用 **Go 1.23** 构建统计服务，实现实时指标传输
 
 ### 前端
-- **React 18.3** with TypeScript (strict mode, zero `any`)
-- **Vite** for fast development builds
-- **TanStack Table** for data tables
-- **React Grid Layout** for dashboard customization
-- **Tailwind CSS** for styling
+- 使用 **React 18.3 + TypeScript** (严格模式，零 `any`)
+- 通过 **Vite** 提供快速开发构建
+- 使用 **TanStack Table** 构建数据表格
+- 使用 **React Grid Layout** 实现自定义仪表盘布局
+- 采用 **Tailwind CSS** 进行样式设计
 
 ### 基础设施
-- **Multi-stage Docker build** - Go stats + React frontend + Python backend
-- **Supervisor** for process management
-- **Nginx** reverse proxy with SSL/TLS
-- **WebSocket** for real-time updates
-- **Health checks** for all services
+- **多阶段 Docker 构建**: 整合 Go 统计服务 + React 前端 + Python 后端
+- 使用 **Supervisor** 进行进程管理
+- 通过 **Nginx** 作为反向代理并支持 SSL/TLS
+- 使用 **WebSocket** 实现实时更新
+- 为所有服务配置**健康检查**功能
 
-## Upgrading from v1 to v2
-
-### Breaking Changes
-- **Alert Rules**: Old alert rules must be recreated using the new alert system
-- **mTLS Certificates**: Regenerate certificates due to Alpine's stricter OpenSSL 3.x requirements
-- **Database Schema**: Automatic one-time migration from v1.1.3 to v2.0.0
-
-### Data Preserved
-- ✅ Hosts and their configurations
-- ✅ Containers and container history
-- ✅ Event logs and audit trail
-- ✅ User accounts and preferences
-
-### Post-Upgrade Steps
-1. Regenerate mTLS certificates for remote hosts (see [mTLS Setup Guide](https://github.com/darthnorse/dockmon/wiki/Security-Guide#mtls-setup))
-2. Recreate alert rules using the new alert system
-3. Verify host connections after upgrade
-
-See the [Migration Guide](https://github.com/darthnorse/dockmon/wiki/Migration-Guide) for detailed instructions.
-
-## 贡献
+## 贡献 (原项目)
 
 Contributions are welcome! **No CLA required** - just submit a PR!
+欢迎贡献！无需签署 **CLA 协议** - 只需提交 PR 即可！
 
-- Report bugs via [GitHub Issues](https://github.com/darthnorse/dockmon/issues)
-- Suggest features in [Discussions](https://github.com/darthnorse/dockmon/discussions)
-- Improve documentation (edit the [Wiki](https://github.com/darthnorse/dockmon/wiki))
-- Submit pull requests (see [Contributing Guide](https://github.com/darthnorse/dockmon/wiki/Contributing))
+- 通过 [GitHub Issues](https://github.com/darthnorse/dockmon/issues) 报告 Bug
+- 在 [Discussions](https://github.com/darthnorse/dockmon/discussions) 中提出功能建议
+- 改进文档 (编辑 [Wiki](https://github.com/darthnorse/dockmon/wiki))
+- 提交 Pull Request (参见 [Contributing Guide](https://github.com/darthnorse/dockmon/wiki/Contributing) 页面)
 
-By contributing, you agree your contributions are licensed under the same BSL 1.1 terms as the project.
+提交贡献即表示你同意: 你的贡献将按照与原项目相同的 BSL 1.1 许可条款进行授权。
 
 ## 开发
 
-Want to contribute code or run DockMon in development mode?
+想参与代码贡献或在开发模式下运行 DockMon？
 
-See [Development Setup](https://github.com/darthnorse/dockmon/wiki/Development-Setup) for:
-- Local development environment setup
-- Architecture overview
-- Running tests
-- Building from source
+请查看 [Development Setup](https://github.com/darthnorse/dockmon/wiki/Development-Setup) 页面以了解:
+- 如何配置本地开发环境
+- 项目架构概览
+- 运行测试
+- 从源码构建
 
 ## 许可证
 
 **Business Source License 1.1** - see [LICENSE](LICENSE) file for full details.
-
-### What this means:
-
-✅ **You can use DockMon:**
-- For internal use in your company (any size)
-- For personal projects
-- To monitor your clients' infrastructure as part of consulting/MSP services
-- Fork, modify, and customize for your own use
-- Contribute improvements back to the project
-
-❌ **You cannot:**
-- Offer DockMon as a SaaS product to third parties
-- Embed DockMon in a commercial monitoring platform sold to others
-- Provide DockMon hosting as a standalone commercial service
-
-### Future Open Source:
-After 2 years (Change Date: 2027-01-01), each version automatically converts to **Apache License 2.0**, becoming fully permissive open source with explicit patent grants.
-
-### Commercial Licensing:
-Need to use DockMon in a way not permitted by BSL? Contact us for commercial licensing:
-- [Open an Issue](https://github.com/darthnorse/dockmon/issues)
-- Describe your use case
-- We'll work with you on licensing terms
-
-### Why BSL?
-BSL protects the project from direct commercial competition while remaining contributor-friendly:
-- **No CLAs required** - standard GitHub workflow
-- **Eventually becomes open source** - builds community trust
-- **Allows all legitimate uses** - only blocks competitive SaaS offerings
-- Used successfully by Sentry, CockroachDB, MariaDB, and other major projects
 
 ## 作者
 
