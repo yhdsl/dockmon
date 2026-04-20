@@ -5,6 +5,8 @@ Provides endpoints for managing custom user groups.
 Groups are organizational units that users can be assigned to.
 Admin-only endpoints for CRUD operations on groups and membership.
 """
+import re
+
 from datetime import datetime, timezone
 from typing import Optional
 
@@ -215,10 +217,12 @@ def _validate_group_name(name: str) -> str:
         )
 
     # Restrict to printable ASCII to prevent homoglyph attacks
-    if not all(32 <= ord(c) <= 126 for c in sanitized):
+    # if not all(32 <= ord(c) <= 126 for c in sanitized):
+    # 额外支持 CJK 字符
+    if not re.fullmatch(r'^[A-Za-z\u4E00-\u9FFF\u3400-\u4DBF\u3040-\u309F\u30A0-\u30FF\u31F0-\u31FF\uAC00-\uD7AF\u1100-\u11FF\uFF00-\uFFEF]+$', sanitized):
         raise HTTPException(
             status_code=400,
-            detail="Group name must contain only printable ASCII characters"
+            detail="Group name must contain only printable ASCII or CJK characters"
         )
 
     return sanitized

@@ -6,7 +6,7 @@
 
 1. 完全支持简体中文，包括通知内容
 2. 添加了 UTC+8 时区的支持
-3. 修正原版 DockMon 不支持非英文标签的问题
+3. 修正原版 DockMon 不支持非英文标签、用户组的问题
 
 ![DockMon](https://img.shields.io/badge/DockMon-v2.3.2-blue.svg)
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)
