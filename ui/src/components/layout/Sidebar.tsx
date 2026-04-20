@@ -51,14 +51,14 @@ interface NavItem {
 }
 
 const navigationItems: NavItem[] = [
-  { label: 'Dashboard', icon: LayoutDashboard, path: '/' },
-  { label: 'Hosts', icon: Server, path: '/hosts', capability: 'hosts.view' },
-  { label: 'Containers', icon: Container, path: '/containers', capability: 'containers.view' },
-  { label: 'Stacks', icon: Layers, path: '/stacks', capability: 'stacks.view' },
-  { label: 'Container Logs', icon: FileText, path: '/logs', capability: 'containers.logs' },
-  { label: 'Events', icon: Activity, path: '/events', capability: 'events.view' },
-  { label: 'Alerts', icon: Bell, path: '/alerts', capability: 'alerts.view' },
-  { label: 'Settings', icon: Settings, path: '/settings' },
+  { label: '仪表板', icon: LayoutDashboard, path: '/' },
+  { label: '主机', icon: Server, path: '/hosts', capability: 'hosts.view' },
+  { label: '容器', icon: Container, path: '/containers', capability: 'containers.view' },
+  { label: '堆栈', icon: Layers, path: '/stacks', capability: 'stacks.view' },
+  { label: '容器日志', icon: FileText, path: '/logs', capability: 'containers.logs' },
+  { label: '事件', icon: Activity, path: '/events', capability: 'events.view' },
+  { label: '告警', icon: Bell, path: '/alerts', capability: 'alerts.view' },
+  { label: '设置', icon: Settings, path: '/settings' },
 ]
 
 interface SidebarProps {
@@ -222,7 +222,9 @@ export function Sidebar({ isMobileMenuOpen = false, onMobileClose }: SidebarProp
             'mb-2 flex items-center gap-2 rounded-lg px-2 py-1.5',
             isCollapsed && 'md:justify-center'
           )}
-          title={`WebSocket: ${wsStatus}`}
+          title={`WebSocket 状态: ${
+            wsStatus === "connected" ? '已连接' : '重连中...'
+          }`}
         >
           {wsStatus === 'connected' ? (
             <Wifi className="h-3.5 w-3.5 text-success" />
@@ -231,11 +233,11 @@ export function Sidebar({ isMobileMenuOpen = false, onMobileClose }: SidebarProp
           )}
           {/* Mobile: always show, Desktop: conditional on collapsed state */}
           <span className="text-xs text-muted-foreground md:hidden">
-            {wsStatus === 'connected' ? 'Real-time updates' : 'Reconnecting...'}
+            {wsStatus === 'connected' ? '正在实时监控和更新' : '重新连接中...'}
           </span>
           {!isCollapsed && (
             <span className="hidden md:inline text-xs text-muted-foreground">
-              {wsStatus === 'connected' ? 'Real-time updates' : 'Reconnecting...'}
+              {wsStatus === 'connected' ? '正在实时监控和更新' : '重新连接中...'}
             </span>
           )}
         </div>

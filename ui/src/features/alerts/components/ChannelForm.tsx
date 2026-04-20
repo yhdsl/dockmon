@@ -74,72 +74,72 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
     const newErrors: Record<string, string> = {}
 
     if (!formData.name.trim()) {
-      newErrors.name = 'Channel name is required'
+      newErrors.name = '频道名称为必填项'
     }
 
     // Type-specific validation
     switch (formData.type) {
       case 'telegram':
         if (!formData.config.bot_token && !formData.config.token) {
-          newErrors['config.bot_token'] = 'Bot token is required'
+          newErrors['config.bot_token'] = 'Bot token 为必填项'
         }
         if (!formData.config.chat_id) {
-          newErrors['config.chat_id'] = 'Chat ID is required'
+          newErrors['config.chat_id'] = 'Chat ID 为必填项'
         }
         break
       case 'discord':
       case 'slack':
       case 'teams':
         if (!formData.config.webhook_url) {
-          newErrors['config.webhook_url'] = 'Webhook URL is required'
+          newErrors['config.webhook_url'] = 'Webhook URL 为必填项'
         }
         break
       case 'pushover':
         if (!formData.config.app_token) {
-          newErrors['config.app_token'] = 'App token is required'
+          newErrors['config.app_token'] = 'App token 为必填项'
         }
         if (!formData.config.user_key) {
-          newErrors['config.user_key'] = 'User key is required'
+          newErrors['config.user_key'] = 'User key 为必填项'
         }
         break
       case 'gotify':
         if (!formData.config.server_url) {
-          newErrors['config.server_url'] = 'Server URL is required'
+          newErrors['config.server_url'] = '服务器 URL 为必填项'
         }
         if (!formData.config.app_token) {
-          newErrors['config.app_token'] = 'App token is required'
+          newErrors['config.app_token'] = 'App token 为必填项'
         }
         break
       case 'ntfy':
         if (!formData.config.server_url) {
-          newErrors['config.server_url'] = 'Server URL is required'
+          newErrors['config.server_url'] = '服务器 URL 为必填项'
         }
         if (!formData.config.topic) {
-          newErrors['config.topic'] = 'Topic is required'
+          newErrors['config.topic'] = '主题名称为必填项'
         }
         break
       case 'smtp':
         if (!formData.config.smtp_host) {
-          newErrors['config.smtp_host'] = 'SMTP host is required'
+          newErrors['config.smtp_host'] = 'SMTP 主机名为必填项'
         }
         if (formData.config.smtp_user && !formData.config.smtp_password) {
-          newErrors['config.smtp_password'] = 'SMTP password is required when user is set'
+          newErrors['config.smtp_password'] = '提供用户名时 SMTP 密码为必填项'
         }
         if (formData.config.smtp_password && !formData.config.smtp_user) {
-          newErrors['config.smtp_user'] = 'SMTP user is required when password is set'
+          newErrors['config.smtp_user'] = '提供密码时 SMTP 用户名为必填项'
         }
         if (!formData.config.from_email) {
-          newErrors['config.from_email'] = 'From email is required'
+          newErrors['config.from_email'] = '发件人邮箱为必填项'
         }
         if (!formData.config.to_email) {
-          newErrors['config.to_email'] = 'To email is required'
+          newErrors['config.to_email'] = '收件人邮箱为必填项'
         }
         break
       case 'webhook':
         if (!formData.config.url) {
-          newErrors['config.url'] = 'Webhook URL is required'
+          newErrors['config.url'] = 'Webhook URL 为必填项'
         } else if (!formData.config.url.startsWith('http://') && !formData.config.url.startsWith('https://')) {
-          newErrors['config.url'] = 'URL must start with http:// or https://'
+          newErrors['config.url'] = 'URL 必须以 http:// 或 https:// 开头'
         }
 
         // Validate headers is valid JSON if provided
@@ -148,7 +148,7 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
             try {
               JSON.parse(formData.config.headers)
             } catch {
-              newErrors['config.headers'] = 'Headers must be valid JSON'
+              newErrors['config.headers'] = '请求头必须为一个合法的JSON'
             }
           }
         }
@@ -181,19 +181,19 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
       {/* Basic Info */}
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">Channel Name *</label>
+          <label className="block text-sm font-medium text-gray-300 mb-1">频道名称 *</label>
           <input
             type="text"
             value={formData.name}
             onChange={(e) => handleChange('name', e.target.value)}
-            placeholder="e.g., Production Alerts"
+            placeholder="例如: 生产环境告警"
             className={`w-full rounded-md border ${errors.name ? 'border-red-500' : 'border-gray-700'} bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500`}
           />
           {errors.name && <p className="mt-1 text-xs text-red-400">{errors.name}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">Channel Type *</label>
+          <label className="block text-sm font-medium text-gray-300 mb-1">频道类别 *</label>
           <Select
             value={formData.type}
             onValueChange={(value) => {
@@ -222,7 +222,7 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
             </SelectContent>
           </Select>
           {isEditing && (
-            <p className="mt-1 text-xs text-gray-400">Channel type cannot be changed after creation</p>
+            <p className="mt-1 text-xs text-gray-400">类别在频道创建后将无法更改</p>
           )}
         </div>
       </div>
@@ -231,7 +231,7 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
       <div className="space-y-4 rounded-lg border border-gray-700 bg-gray-800/30 p-4">
         <div className="flex items-center gap-2 mb-2">
           <IconComponent className="h-5 w-5 text-gray-400" />
-          <h3 className="text-sm font-semibold text-white">{selectedType?.label} Configuration</h3>
+          <h3 className="text-sm font-semibold text-white">{selectedType?.label} 配置</h3>
         </div>
 
         {formData.type === 'telegram' && (
@@ -246,7 +246,7 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
                 className={`w-full rounded-md border ${errors['config.bot_token'] ? 'border-red-500' : 'border-gray-700'} bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500`}
               />
               {errors['config.bot_token'] && <p className="mt-1 text-xs text-red-400">{errors['config.bot_token']}</p>}
-              <p className="mt-1 text-xs text-gray-400">Get from @BotFather on Telegram</p>
+              <p className="mt-1 text-xs text-gray-400">在 Telegram 中通过 @BotFather 机器人获得</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1">Chat ID *</label>
@@ -258,7 +258,7 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
                 className={`w-full rounded-md border ${errors['config.chat_id'] ? 'border-red-500' : 'border-gray-700'} bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500`}
               />
               {errors['config.chat_id'] && <p className="mt-1 text-xs text-red-400">{errors['config.chat_id']}</p>}
-              <p className="mt-1 text-xs text-gray-400">Use @userinfobot to get your chat ID. For topics: -1001234567890/topicID</p>
+              <p className="mt-1 text-xs text-gray-400">通过 @userinfobot 机器人获得你的 chat ID。对于 topics: -1001234567890/topicID</p>
             </div>
           </>
         )}
@@ -275,7 +275,7 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
             />
             {errors['config.webhook_url'] && <p className="mt-1 text-xs text-red-400">{errors['config.webhook_url']}</p>}
             <p className="mt-1 text-xs text-gray-400">
-              {formData.type === 'discord' ? 'Server Settings → Integrations → Webhooks' : 'Create Incoming Webhook in Slack'}
+              {formData.type === 'discord' ? '服务器设置 → 整合 → Webhooks' : '在 Slack 中创建传入 Webhook'}
             </p>
           </div>
         )}
@@ -292,7 +292,7 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
             />
             {errors['config.webhook_url'] && <p className="mt-1 text-xs text-red-400">{errors['config.webhook_url']}</p>}
             <p className="mt-1 text-xs text-gray-400">
-              Channel → Connectors → Incoming Webhook (or use Workflows)
+              频道 → 连接器 → 传入 Webhook (或者使用 Workflows)
             </p>
           </div>
         )}
@@ -322,7 +322,7 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
               {errors['config.user_key'] && <p className="mt-1 text-xs text-red-400">{errors['config.user_key']}</p>}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">DockMon URL (optional)</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">DockMon URL (可选)</label>
               <input
                 type="url"
                 value={formData.config.url || ''}
@@ -330,7 +330,7 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
                 placeholder="https://dockmon.example.com"
                 className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
-              <p className="mt-1 text-xs text-gray-400">Link to open in notifications</p>
+              <p className="mt-1 text-xs text-gray-400">提供以在通知中嵌入关联链接</p>
             </div>
           </>
         )}
@@ -338,7 +338,7 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
         {formData.type === 'gotify' && (
           <>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Server URL *</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">服务器 URL *</label>
               <input
                 type="url"
                 value={formData.config.server_url || ''}
@@ -358,7 +358,7 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
                 className={`w-full rounded-md border ${errors['config.app_token'] ? 'border-red-500' : 'border-gray-700'} bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500`}
               />
               {errors['config.app_token'] && <p className="mt-1 text-xs text-red-400">{errors['config.app_token']}</p>}
-              <p className="mt-1 text-xs text-gray-400">Create an app in Gotify to get token</p>
+              <p className="mt-1 text-xs text-gray-400">在 Gotify 中创建一个 APP 以获得 token</p>
             </div>
           </>
         )}
@@ -366,7 +366,7 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
         {formData.type === 'ntfy' && (
           <>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Server URL *</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">服务器 URL *</label>
               <input
                 type="url"
                 value={formData.config.server_url || ''}
@@ -375,10 +375,10 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
                 className={`w-full rounded-md border ${errors['config.server_url'] ? 'border-red-500' : 'border-gray-700'} bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500`}
               />
               {errors['config.server_url'] && <p className="mt-1 text-xs text-red-400">{errors['config.server_url']}</p>}
-              <p className="mt-1 text-xs text-gray-400">Use https://ntfy.sh or your self-hosted instance</p>
+              <p className="mt-1 text-xs text-gray-400">使用 https://ntfy.sh 或者自托管的 ntfy 实例</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Topic *</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">主题名称 *</label>
               <input
                 type="text"
                 value={formData.config.topic || ''}
@@ -387,10 +387,10 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
                 className={`w-full rounded-md border ${errors['config.topic'] ? 'border-red-500' : 'border-gray-700'} bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500`}
               />
               {errors['config.topic'] && <p className="mt-1 text-xs text-red-400">{errors['config.topic']}</p>}
-              <p className="mt-1 text-xs text-gray-400">The topic/channel name to publish to</p>
+              <p className="mt-1 text-xs text-gray-400">需要推送告警通知的主题/频道名称</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Access Token (optional)</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">访问令牌 (可选)</label>
               <input
                 type="password"
                 value={formData.config.access_token || ''}
@@ -398,7 +398,7 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
                 placeholder="tk_..."
                 className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
-              <p className="mt-1 text-xs text-gray-400">Required for authenticated servers (Settings &gt; Access tokens)</p>
+              <p className="mt-1 text-xs text-gray-400">用于访问需要身份验证的服务器 (设置 &gt; 访问令牌)</p>
             </div>
           </>
         )}
@@ -407,7 +407,7 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
           <>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">SMTP Host *</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1">SMTP 主机名 *</label>
                 <input
                   type="text"
                   value={formData.config.smtp_host || ''}
@@ -418,7 +418,7 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
                 {errors['config.smtp_host'] && <p className="mt-1 text-xs text-red-400">{errors['config.smtp_host']}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Port</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1">端口</label>
                 <input
                   type="number"
                   value={formData.config.smtp_port || 587}
@@ -430,7 +430,7 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">SMTP User</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1">SMTP 用户名</label>
                 <input
                   type="text"
                   value={formData.config.smtp_user || ''}
@@ -441,7 +441,7 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
                 {errors['config.smtp_user'] && <p className="mt-1 text-xs text-red-400">{errors['config.smtp_user']}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">SMTP Password</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1">SMTP 密码</label>
                 <input
                   type="password"
                   value={formData.config.smtp_password || ''}
@@ -454,7 +454,7 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">From Email *</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1">发件人邮箱 *</label>
                 <input
                   type="email"
                   value={formData.config.from_email || ''}
@@ -465,7 +465,7 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
                 {errors['config.from_email'] && <p className="mt-1 text-xs text-red-400">{errors['config.from_email']}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">To Email *</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1">收件人邮箱 *</label>
                 <input
                   type="email"
                   value={formData.config.to_email || ''}
@@ -484,7 +484,7 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
                   onChange={(e) => handleConfigChange('use_tls', e.target.checked)}
                   className="h-4 w-4 rounded border-gray-600 bg-gray-800 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0"
                 />
-                Use TLS/SSL (recommended)
+                使用 TLS/SSL (推荐)
               </label>
             </div>
           </>
@@ -502,11 +502,11 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
                 className={`w-full rounded-md border ${errors['config.url'] ? 'border-red-500' : 'border-gray-700'} bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500`}
               />
               {errors['config.url'] && <p className="mt-1 text-xs text-red-400">{errors['config.url']}</p>}
-              <p className="mt-1 text-xs text-gray-400">HTTPS recommended for production</p>
+              <p className="mt-1 text-xs text-gray-400">建议在生产环境中使用 HTTPS</p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">HTTP Method</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">HTTP 方法</label>
               <Select
                 value={formData.config.method || 'POST'}
                 onValueChange={(value) => handleConfigChange('method', value)}
@@ -519,11 +519,11 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
                   <SelectItem value="PUT">PUT</SelectItem>
                 </SelectContent>
               </Select>
-              <p className="mt-1 text-xs text-gray-400">HTTP method for webhook requests</p>
+              <p className="mt-1 text-xs text-gray-400">请求 webhook 时使用的 HTTP 方法</p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Payload Format</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">请求体格式</label>
               <Select
                 value={formData.config.payload_format || 'json'}
                 onValueChange={(value) => handleConfigChange('payload_format', value)}
@@ -533,14 +533,14 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="json">JSON</SelectItem>
-                  <SelectItem value="form">Form-encoded</SelectItem>
+                  <SelectItem value="form">表单编码</SelectItem>
                 </SelectContent>
               </Select>
-              <p className="mt-1 text-xs text-gray-400">Format of the webhook payload</p>
+              <p className="mt-1 text-xs text-gray-400">Webhook 请求体的格式</p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Custom Headers (JSON, optional)</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">自定义请求头 (JSON, 可选)</label>
               <textarea
                 value={typeof formData.config.headers === 'string' ? formData.config.headers : JSON.stringify(formData.config.headers || {}, null, 2)}
                 onChange={(e) => {
@@ -557,7 +557,7 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
                 className={`w-full rounded-md border ${errors['config.headers'] ? 'border-red-500' : 'border-gray-700'} bg-gray-800 px-3 py-2 text-white placeholder-gray-500 font-mono text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500`}
               />
               {errors['config.headers'] && <p className="mt-1 text-xs text-red-400">{errors['config.headers']}</p>}
-              <p className="mt-1 text-xs text-gray-400">Add custom HTTP headers (e.g., Authorization)</p>
+              <p className="mt-1 text-xs text-gray-400">添加自定义的 HTTP 请求头 (例如 Authorization)</p>
             </div>
           </>
         )}
@@ -572,7 +572,7 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
             onChange={(e) => handleChange('enabled', e.target.checked)}
             className="h-4 w-4 rounded border-gray-600 bg-gray-800 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0"
           />
-          Enable this channel
+          启用频道
         </label>
       </div>
 
@@ -585,7 +585,7 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
           onClick={onCancel}
           className="rounded-md bg-gray-800 px-4 py-2 text-sm font-medium text-gray-300 transition-colors hover:bg-gray-700"
         >
-          Cancel
+          取消
         </button>
         <fieldset disabled={disabled} className="inline-flex gap-3 disabled:opacity-60">
           {onTest && (
@@ -595,7 +595,7 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
               disabled={isTesting}
               className="rounded-md bg-gray-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-600 disabled:opacity-50"
             >
-              {isTesting ? 'Testing...' : 'Test Configuration'}
+              {isTesting ? '测试中...' : '测试配置'}
             </button>
           )}
           <button
@@ -603,7 +603,7 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
             disabled={isSubmitting}
             className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
           >
-            {isSubmitting ? 'Saving...' : isEditing ? 'Update Channel' : 'Create Channel'}
+            {isSubmitting ? '保存中...' : isEditing ? '更新频道' : '创建频道'}
           </button>
         </fieldset>
       </div>

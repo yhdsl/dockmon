@@ -137,7 +137,7 @@ export function useResolveAlert() {
 
   return useMutation({
     mutationFn: async ({ alertId, reason }: { alertId: string; reason?: string }) => {
-      return await apiClient.post(`/alerts/${alertId}/resolve`, { reason: reason || 'Manually resolved' })
+      return await apiClient.post(`/alerts/${alertId}/resolve`, { reason: reason || '已手动解决' })
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['alerts'] })

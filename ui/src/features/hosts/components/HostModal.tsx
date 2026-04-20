@@ -61,20 +61,20 @@ type InstallMethod = 'docker' | 'systemd'
 const hostSchema = z.object({
   name: z
     .string()
-    .min(1, 'Host name is required')
-    .max(100, 'Host name must be less than 100 characters')
-    .regex(/^[a-zA-Z0-9][a-zA-Z0-9 ._-]*$/, 'Host name contains invalid characters'),
+    .min(1, '主机名称为必填项')
+    .max(100, '主机名称不能超过 100 个字符')
+    .regex(/^[a-zA-Z0-9][a-zA-Z0-9 ._-]*$/, '主机名称包含非法字符'),
   url: z
     .string()
     .refine(
       (val) => val === '' || val === 'agent://' || /^(tcp|unix|http|https):\/\/.+/.test(val),
-      'URL must start with tcp://, unix://, http://, or https://'
+      'URL 必须以 tcp://、unix://、http:// 或 https:// 开头'
     ),
   enableTls: z.boolean(),
   tls_ca: z.string().optional(),
   tls_cert: z.string().optional(),
   tls_key: z.string().optional(),
-  description: z.string().max(1000, 'Description must be less than 1000 characters').optional(),
+  description: z.string().max(1000, '描述文本不能超过 1000 个字符').optional(),
 })
 
 type HostFormData = z.infer<typeof hostSchema>
@@ -232,14 +232,14 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
     const now = new Date()
     const diff = date.getTime() - now.getTime()
     const minutes = Math.ceil(diff / 60000)  // Round up so "14:59" shows as "15 minutes"
-    return `${minutes} minute${minutes !== 1 ? 's' : ''}`
+    return `${minutes} 分钟后`
   }
 
   const testConnection = async () => {
     const formData = watch()
 
     if (!formData.url) {
-      toast.error('Please enter an address/endpoint first')
+      toast.error('请先输入地址/端点')
       return
     }
 
@@ -252,13 +252,13 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
 
     if (showTlsFields) {
       if (hostHasCerts && !replaceCa && !replaceCert && !replaceKey) {
-        toast.info('Using existing certificates for test connection')
+        toast.info('正在使用现有证书测试连接')
         testConfig.tls_ca = null
         testConfig.tls_cert = null
         testConfig.tls_key = null
       } else {
         if (!formData.tls_ca || !formData.tls_cert || !formData.tls_key) {
-          toast.error('All three certificates are required for mTLS connection')
+          toast.error('使用 mTLS 连接时需要提供全部三个证书')
           return
         }
         testConfig.tls_ca = formData.tls_ca
@@ -268,7 +268,7 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
     }
 
     try {
-      toast.loading('Testing connection...', { id: 'test-connection' })
+      toast.loading('测试连接中...', { id: 'test-connection' })
 
       const response = await apiClient.post<{
         success: boolean
@@ -277,16 +277,16 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
         api_version: string
       }>('/hosts/test-connection', testConfig)
 
-      const dockerVersion = response.docker_version || 'unknown'
-      const apiVersion = response.api_version || 'unknown'
+      const dockerVersion = response.docker_version || '未知版本'
+      const apiVersion = response.api_version || '未知版本'
 
-      toast.success(`Connection successful! Docker ${dockerVersion} (API ${apiVersion})`, {
+      toast.success(`已成功连接l! Docker ${dockerVersion} (API ${apiVersion})`, {
         id: 'test-connection',
         duration: 5000
       })
     } catch (error: unknown) {
       const apiError = error as ApiError
-      const message = apiError.response?.data?.detail || apiError.message || 'Connection failed'
+      const message = apiError.response?.data?.detail || apiError.message || '连接失败'
       toast.error(message, { id: 'test-connection' })
     }
   }
@@ -354,10 +354,10 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
       {!token ? (
         <>
           <p className="text-sm text-muted-foreground">
-            Deploy a lightweight agent on your remote Docker host. The agent connects to DockMon via WebSocket - no need to expose Docker ports or configure mTLS certificates.
+            在你的远程 Docker 主机上部署一个轻量级的代理。该代理通过 WebSocket 连接到 DockMon - 无需暴露 Docker 端口或者配置 mTLS 证书。
           </p>
           <p className="text-sm font-medium text-green-600 dark:text-green-500">
-            Recommended: This is the preferred and most secure method
+            强烈推荐: 这是首选且最安全的使用方法
           </p>
 
           <div className="flex items-center gap-2 py-2">
@@ -369,12 +369,12 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
               className="h-4 w-4"
             />
             <label htmlFor="multiUse" className="text-sm">
-              Allow multiple agents to use this token
+              允许多个代理使用此令牌
             </label>
           </div>
           {multiUse && (
             <p className="text-xs text-muted-foreground -mt-1">
-              Useful for batch deployments. All agents must register within 15 minutes.
+              适用于批量主机注册。需要所有的代理在 15 分钟内完成注册。
             </p>
           )}
 
@@ -382,7 +382,7 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
             onClick={() => generateToken.mutate({ multiUse })}
             disabled={!canManageAgents || generateToken.isPending}
           >
-            {generateToken.isPending ? 'Generating Token...' : 'Generate Registration Token'}
+            {generateToken.isPending ? '生成令牌中...' : '生成注册令牌'}
           </Button>
         </>
       ) : (
@@ -390,14 +390,14 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
           <Alert>
             <Terminal className="h-4 w-4" />
             <AlertDescription>
-              {isMultiUse ? 'Multi-use token' : 'Token'} generated! Expires in{' '}
+              {isMultiUse ? '可复用令牌' : '令牌'}已成功生成! 将过期于{' '}
               <strong>{expiresAt && formatExpiry(expiresAt)}</strong>
-              {isMultiUse && ' — can be used by multiple agents'}
+              {isMultiUse && ' — 允许被多个代理使用'}
             </AlertDescription>
           </Alert>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Registration Token</label>
+            <label className="text-sm font-medium">注册令牌</label>
             <div className="flex gap-2">
               <code className="flex-1 rounded bg-muted px-3 py-2 text-sm font-mono break-all">
                 {token}
@@ -429,7 +429,7 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
                 )}
               >
                 <Container className="h-4 w-4" />
-                Docker Container
+                Docker 容器
               </button>
               <button
                 onClick={() => setInstallMethod('systemd')}
@@ -441,13 +441,13 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
                 )}
               >
                 <Server className="h-4 w-4" />
-                System Service
+                系统服务
               </button>
             </div>
 
             {installMethod === 'docker' && (
               <div className="space-y-2">
-                <label className="text-sm font-medium">Docker Run Command</label>
+                <label className="text-sm font-medium">Docker 容器部署命令</label>
                 <div className="relative">
                   <pre className="rounded bg-muted p-4 text-sm font-mono overflow-x-auto whitespace-pre-wrap">
                     {dockerCommand}
@@ -463,7 +463,7 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
                     ) : (
                       <Copy className="h-4 w-4 mr-1" />
                     )}
-                    Copy
+                    复制
                   </Button>
                 </div>
               </div>
@@ -471,9 +471,9 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
 
             {installMethod === 'systemd' && (
               <div className="space-y-2">
-                <label className="text-sm font-medium">Install Command</label>
+                <label className="text-sm font-medium">安装命令</label>
                 <p className="text-xs text-muted-foreground">
-                  Run this command as root on your remote host to install the agent as a systemd service:
+                  请在远程主机上以 root 权限运行此命令，以便于将代理安装为 systemd 服务:
                 </p>
                 <div className="relative">
                   <pre className="rounded bg-muted p-4 text-sm font-mono overflow-x-auto whitespace-pre-wrap">
@@ -490,7 +490,7 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
                     ) : (
                       <Copy className="h-4 w-4 mr-1" />
                     )}
-                    Copy
+                    复制
                   </Button>
                 </div>
               </div>
@@ -499,8 +499,8 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
 
           <Alert>
             <AlertDescription className="text-sm">
-              <strong>Note:</strong> If the <code>DOCKMON_URL</code> is not correct, please change it to the correct URL before running the command on the remote host.
-              The agent will connect via WebSocket and appear in your hosts list automatically.
+              <strong>注意:</strong> 如果 <code>DOCKMON_URL</code> 不正确，请在远程主机上运行命令之前将其更改为正确的 URL。
+              代理将通过 WebSocket 连接，并自动出现在主机列表中。
             </AlertDescription>
           </Alert>
 
@@ -511,7 +511,7 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
               onClose()
             }}
           >
-            Done
+            完成
           </Button>
         </div>
       )}
@@ -519,7 +519,7 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
       {generateToken.isError && (
         <Alert variant="destructive">
           <AlertDescription>
-            {generateToken.error?.message || 'Failed to generate token'}
+            {generateToken.error?.message || '无法生成令牌'}
           </AlertDescription>
         </Alert>
       )}
@@ -533,7 +533,7 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
         <fieldset disabled={!canManageHosts} className="space-y-4 disabled:opacity-60">
         <div>
           <label htmlFor="name" className="block text-sm font-medium mb-1">
-            Host Name <span className="text-destructive">*</span>
+            主机名称 <span className="text-destructive">*</span>
           </label>
           <Input
             id="name"
@@ -550,18 +550,18 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
         {/* Address/Endpoint */}
         <div>
           <label htmlFor="url" className="block text-sm font-medium mb-1">
-            Address / Endpoint {!isAgentHost && <span className="text-destructive">*</span>}
+            地址 / 端点 {!isAgentHost && <span className="text-destructive">*</span>}
           </label>
           {isAgentHost ? (
             <div className="w-full rounded-md border border-input bg-muted px-3 py-2 text-sm text-muted-foreground">
-              agent:// (managed by agent)
+              agent:// (由代理管理)
             </div>
           ) : (
             <>
               <Input
                 id="url"
                 {...register('url')}
-                placeholder="tcp://192.168.1.20:2376 or unix:///var/run/docker.sock"
+                placeholder="tcp://192.168.1.20:2376 或者 unix:///var/run/docker.sock"
                 className={errors.url ? 'border-destructive' : ''}
                 data-testid="host-url-input"
               />
@@ -576,7 +576,7 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
         {isAgentHost ? null : watchUrl?.startsWith('unix://') ? (
           <div className="rounded-lg border border-border p-3 bg-muted/10">
             <p className="text-sm text-muted-foreground">
-              Local UNIX socket — TLS not applicable
+              本地 UNIX 套接字 — 无法启用 TLS
             </p>
           </div>
         ) : (
@@ -596,7 +596,7 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
                   data-testid="host-enable-tls"
                 />
                 <label htmlFor="enableTls" className="text-sm font-medium">
-                  Enable mTLS (mutual TLS)
+                  启用 mTLS (双向 TLS)
                 </label>
               </div>
               {!showTlsFields && (
@@ -607,7 +607,7 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
                   onClick={testConnection}
                   className="h-7 text-xs"
                 >
-                  Test Connection
+                  测试连接
                 </Button>
               )}
             </div>
@@ -617,7 +617,7 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
               <div className="space-y-4 rounded-lg border border-border p-4 bg-muted/20">
                 <div className="flex items-center justify-between">
                   <p className="text-xs text-muted-foreground">
-                    All three certificates are required for secure mTLS connection.
+                    使用 mTLS 连接时需要提供以下三个证书。
                   </p>
                   <Button
                     type="button"
@@ -626,7 +626,7 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
                     onClick={testConnection}
                     className="h-7 text-xs"
                   >
-                    Test Connection
+                    测试连接
                   </Button>
                 </div>
 
@@ -634,7 +634,7 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
                 <div>
                   <div className="flex items-center justify-between mb-1">
                     <label htmlFor="tls_ca" className="block text-sm font-medium">
-                      CA Certificate <span className="text-destructive">*</span>
+                      CA 证书 <span className="text-destructive">*</span>
                     </label>
                     {hostHasCerts && !replaceCa && (
                       <Button
@@ -644,13 +644,13 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
                         onClick={() => setReplaceCa(true)}
                         className="h-7 text-xs"
                       >
-                        Replace
+                        替换
                       </Button>
                     )}
                   </div>
                   {hostHasCerts && !replaceCa ? (
                     <div className="w-full rounded-md border border-input bg-muted px-3 py-2 text-sm text-muted-foreground">
-                      Uploaded — •••
+                      上传 — •••
                     </div>
                   ) : (
                     <textarea
@@ -668,7 +668,7 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
                 <div>
                   <div className="flex items-center justify-between mb-1">
                     <label htmlFor="tls_cert" className="block text-sm font-medium">
-                      Client Certificate <span className="text-destructive">*</span>
+                      客户端证书 <span className="text-destructive">*</span>
                     </label>
                     {hostHasCerts && !replaceCert && (
                       <Button
@@ -678,13 +678,13 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
                         onClick={() => setReplaceCert(true)}
                         className="h-7 text-xs"
                       >
-                        Replace
+                        替换
                       </Button>
                     )}
                   </div>
                   {hostHasCerts && !replaceCert ? (
                     <div className="w-full rounded-md border border-input bg-muted px-3 py-2 text-sm text-muted-foreground">
-                      Uploaded — •••
+                      上传 — •••
                     </div>
                   ) : (
                     <textarea
@@ -702,7 +702,7 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
                 <div>
                   <div className="flex items-center justify-between mb-1">
                     <label htmlFor="tls_key" className="block text-sm font-medium">
-                      Client Private Key <span className="text-destructive">*</span>
+                      客户端私钥 <span className="text-destructive">*</span>
                     </label>
                     {hostHasCerts && !replaceKey && (
                       <Button
@@ -712,13 +712,13 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
                         onClick={() => setReplaceKey(true)}
                         className="h-7 text-xs"
                       >
-                        Replace
+                        替换
                       </Button>
                     )}
                   </div>
                   {hostHasCerts && !replaceKey ? (
                     <div className="w-full rounded-md border border-input bg-muted px-3 py-2 text-sm text-muted-foreground">
-                      Uploaded — •••
+                      上传 — •••
                     </div>
                   ) : (
                     <textarea
@@ -739,13 +739,13 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
         {/* Description */}
         <div>
           <label htmlFor="description" className="block text-sm font-medium mb-1">
-            Description
+            描述
           </label>
           <textarea
             id="description"
             {...register('description')}
             rows={3}
-            placeholder="Optional notes about this host..."
+            placeholder="可选的关于主机的笔记..."
             className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
             data-testid="host-description"
           />
@@ -765,7 +765,7 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
               data-testid="host-modal-delete"
             >
               <Trash2 className="h-4 w-4 mr-2" />
-              {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+              {deleteMutation.isPending ? '删除中...' : '删除'}
             </Button>
           ) : (
             <div></div>
@@ -773,10 +773,10 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
 
           <div className="flex gap-2">
             <Button type="button" variant="outline" onClick={onClose} data-testid="host-modal-cancel">
-              Cancel
+              取消
             </Button>
             <Button type="submit" disabled={!canManageHosts || isSubmitting} data-testid="host-modal-save">
-              {isSubmitting ? 'Saving...' : host ? 'Update Host' : 'Add Host'}
+              {isSubmitting ? '保存中...' : host ? '更新主机' : '添加主机'}
             </Button>
           </div>
         </div>
@@ -794,14 +794,14 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
         <div className="flex items-center justify-between p-6 pb-4 border-b">
           <div>
             <h2 className="text-xl font-semibold">
-              {host ? 'Edit Host' : 'Add Host'}
+              {host ? '编辑主机' : '添加主机'}
             </h2>
             <p className="text-sm text-muted-foreground mt-1">
               {host
                 ? isAgentHost
-                  ? 'Update name and description for this agent-managed host'
-                  : 'Update connection details for this Docker host'
-                : 'Choose how to connect your Docker host'}
+                  ? '更新由代理管理的主机名称和描述'
+                  : '更新 Docker 主机的连接配置'
+                : '选择如何连接至 Docker 主机'}
             </p>
           </div>
           <button
@@ -810,7 +810,7 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
             data-testid="host-modal-close"
           >
             <X className="h-4 w-4" />
-            <span className="sr-only">Close</span>
+            <span className="sr-only">关闭</span>
           </button>
         </div>
 
@@ -820,12 +820,12 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
             tabs={[
               {
                 id: 'agent',
-                label: 'Agent (recommended)',
+                label: '代理管理 (推荐)',
                 content: agentTabContent,
               },
               {
                 id: 'remote',
-                label: 'Legacy',
+                label: '传统连接',
                 content: remoteTabContent,
               },
             ]}
@@ -850,29 +850,29 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
                 <AlertTriangle className="h-6 w-6 text-red-500" />
               </div>
               <div className="flex-1">
-                <h3 className="text-lg font-semibold mb-2">Delete Host</h3>
+                <h3 className="text-lg font-semibold mb-2">删除主机</h3>
                 <p className="text-sm text-muted-foreground mb-3">
-                  Are you sure you want to delete <span className="font-semibold text-foreground">{host.name}</span>? This action cannot be undone.
+                  确定要删除主机 <span className="font-semibold text-foreground">{host.name}</span> 吗? 该操作将无法撤销。
                 </p>
 
                 <div className="rounded-lg border border-border bg-muted/20 p-3 space-y-2 text-sm">
-                  <p className="font-medium text-foreground mb-2">This will affect:</p>
+                  <p className="font-medium text-foreground mb-2">这将会影响:</p>
                   <div className="space-y-1.5 text-muted-foreground">
                     <div className="flex items-center justify-between">
-                      <span>Containers monitored:</span>
-                      <span className="font-semibold text-foreground">{containers.length}</span>
+                      <span>监控中的容器:</span>
+                      <span className="font-semibold text-foreground">{containers.length} 个</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span>Open alerts:</span>
-                      <span className="font-semibold text-foreground">{openAlerts.length} will be resolved</span>
+                      <span>未解决的告警:</span>
+                      <span className="font-semibold text-foreground">{openAlerts.length} 条将被标记为已解决</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span>Container settings:</span>
-                      <span className="font-semibold text-foreground">Will be deleted</span>
+                      <span>容器设置:</span>
+                      <span className="font-semibold text-foreground">将会被删除</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span>Event history:</span>
-                      <span className="font-semibold text-green-500">Preserved</span>
+                      <span>事件历史记录:</span>
+                      <span className="font-semibold text-green-500">仍会被保留</span>
                     </div>
                   </div>
                 </div>
@@ -884,14 +884,14 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
                 disabled={deleteMutation.isPending}
                 className="px-4 py-2 rounded-lg border border-border bg-background hover:bg-muted transition-colors text-sm disabled:opacity-50"
               >
-                Cancel
+                取消
               </button>
               <button
                 onClick={handleDeleteConfirm}
                 disabled={deleteMutation.isPending}
                 className="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white transition-colors text-sm disabled:opacity-50"
               >
-                {deleteMutation.isPending ? 'Deleting...' : 'Delete Host'}
+                {deleteMutation.isPending ? '删除中...' : '删除主机'}
               </button>
             </div>
           </div>

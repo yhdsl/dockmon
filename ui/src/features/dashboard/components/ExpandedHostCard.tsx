@@ -216,17 +216,17 @@ export function ExpandedHostCard({ host, cardRef, onHostClick, onViewDetails, on
   const getSortLabel = (key: ContainerSortKey) => {
     switch (key) {
       case 'name':
-        return 'Name (A–Z)'
+        return '名称 (A–Z)'
       case 'state':
-        return 'State (Running first)'
+        return '状态 (运行优先)'
       case 'cpu':
-        return 'CPU (High to Low)'
+        return 'CPU (从高到低)'
       case 'memory':
-        return 'Memory (High to Low)'
+        return '内存 (从高到低)'
       case 'start_time':
-        return 'Start Time (Newest first)'
+        return '启动时间 (最新优先)'
       default:
-        return 'Sort by'
+        return '排序依据'
     }
   }
 
@@ -279,19 +279,19 @@ export function ExpandedHostCard({ host, cardRef, onHostClick, onViewDetails, on
           >
             {onViewDetails && (
               <DropdownMenuItem onClick={() => onViewDetails(host.id)} icon={<Info className="h-3.5 w-3.5" />}>
-                View Host Details
+                查看主机详细信息
               </DropdownMenuItem>
             )}
             {onEditHost && (
               <DropdownMenuItem onClick={() => onEditHost(host.id)} icon={<Edit className="h-3.5 w-3.5" />}>
-                Edit Host
+                编辑主机
               </DropdownMenuItem>
             )}
             <DropdownMenuItem
               onClick={() => setIsCollapsed(!isCollapsed)}
               icon={<ChevronsUp className="h-3.5 w-3.5" />}
             >
-              {isCollapsed ? 'Expand' : 'Collapse'} Containers
+              {isCollapsed ? '展开' : '收起'}容器
             </DropdownMenuItem>
           </DropdownMenu>
         </div>
@@ -320,7 +320,7 @@ export function ExpandedHostCard({ host, cardRef, onHostClick, onViewDetails, on
                 data={host.sparklines!.cpu}
                 color="cpu"
                 height={32}
-                label={`${host.name} CPU usage`}
+                label={`${host.name} CPU 使用率`}
               />
             </div>
             <span className="text-xs font-mono text-foreground w-12 text-right">
@@ -330,13 +330,13 @@ export function ExpandedHostCard({ host, cardRef, onHostClick, onViewDetails, on
 
           {/* Memory */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground w-8">Mem:</span>
+            <span className="text-xs text-muted-foreground w-8">内存:</span>
             <div className="flex-1">
               <ResponsiveMiniChart
                 data={host.sparklines!.mem}
                 color="memory"
                 height={32}
-                label={`${host.name} Memory usage`}
+                label={`${host.name} 内存使用率`}
               />
             </div>
             <span className="text-xs font-mono text-foreground w-12 text-right">
@@ -346,14 +346,14 @@ export function ExpandedHostCard({ host, cardRef, onHostClick, onViewDetails, on
 
           {/* Network */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground w-8">Net:</span>
+            <span className="text-xs text-muted-foreground w-8">网络:</span>
             <div className="flex-1">
               {hasValidNetworkData ? (
                 <ResponsiveMiniChart
                   data={host.sparklines!.net}
                   color="network"
                   height={32}
-                  label={`${host.name} Network I/O`}
+                  label={`${host.name} 网络 I/O`}
                 />
               ) : (
                 <div className="h-[32px] flex items-center justify-center text-xs text-muted-foreground">
@@ -367,7 +367,7 @@ export function ExpandedHostCard({ host, cardRef, onHostClick, onViewDetails, on
           </div>
         </div>
       ) : (
-        <div className="text-xs text-muted-foreground mb-3">No stats available</div>
+        <div className="text-xs text-muted-foreground mb-3">没有可用的数据</div>
       )}
 
       {/* Expanded Container List - Multi-column responsive grid */}
@@ -376,7 +376,7 @@ export function ExpandedHostCard({ host, cardRef, onHostClick, onViewDetails, on
           {/* Container Sort Control */}
           <div className="flex items-center justify-between mb-2 px-2 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
             <span className="text-xs text-muted-foreground">
-              {displayContainers.length} container{displayContainers.length !== 1 ? 's' : ''}
+              {displayContainers.length} 个容器
             </span>
             <DropdownMenu
               trigger={
@@ -389,17 +389,19 @@ export function ExpandedHostCard({ host, cardRef, onHostClick, onViewDetails, on
               align="end"
             >
               <DropdownMenuItem onClick={() => handleSortChange('state')}>
-                State (Running first)
+                状态 (运行优先)
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleSortChange('name')}>Name (A–Z)</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleSortChange('name')}>
+                名称 (A–Z)
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleSortChange('cpu')}>
-                CPU (High to Low)
+                CPU (从高到低)
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleSortChange('memory')}>
-                Memory (High to Low)
+                内存 (从高到低)
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleSortChange('start_time')} disabled>
-                Start Time (Newest first)
+                启动时间 (最新优先)
               </DropdownMenuItem>
             </DropdownMenu>
           </div>
@@ -447,7 +449,16 @@ export function ExpandedHostCard({ host, cardRef, onHostClick, onViewDetails, on
                           : 'bg-muted text-muted-foreground'
                       }`}
                     >
-                      {container.state.toUpperCase()}
+                      {{
+                        running: "运行中",
+                        stopped: "已停止",
+                        exited: "已暂停",
+                        created: "已创建",
+                        paused: "已暂停",
+                        restarting: "重启中",
+                        removing: "删除中",
+                        dead: "已死亡",
+                      }[container.state] || container.state}
                     </span>
 
                     {/* Container Stats (CPU/RAM) - only for running containers when enabled */}
@@ -478,13 +489,13 @@ export function ExpandedHostCard({ host, cardRef, onHostClick, onViewDetails, on
                               onClick={() => handleContainerAction(container.id, 'stop')}
                               icon={<Square />}
                             >
-                              Stop
+                              停止
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={() => handleContainerAction(container.id, 'restart')}
                               icon={<RotateCcw />}
                             >
-                              Restart
+                              重启
                             </DropdownMenuItem>
                           </>
                         ) : (
@@ -492,14 +503,14 @@ export function ExpandedHostCard({ host, cardRef, onHostClick, onViewDetails, on
                             onClick={() => handleContainerAction(container.id, 'start')}
                             icon={<Play />}
                           >
-                            Start
+                            启动
                           </DropdownMenuItem>
                         )}
                         <DropdownMenuItem
                           onClick={() => handleContainerAction(container.id, 'logs')}
                           icon={<ScrollText />}
                         >
-                          View Logs
+                          查看日志
                         </DropdownMenuItem>
                         {/* WebUI - only show if configured and safe */}
                         {container.web_ui_url && isSafeUrl(container.web_ui_url) && (
@@ -509,7 +520,7 @@ export function ExpandedHostCard({ host, cardRef, onHostClick, onViewDetails, on
                               onClick={() => window.open(container.web_ui_url!, '_blank', 'noopener,noreferrer')}
                               icon={<ExternalLink />}
                             >
-                              Open WebUI
+                              打开 WebUI
                             </DropdownMenuItem>
                           </>
                         )}

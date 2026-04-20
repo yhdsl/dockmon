@@ -91,7 +91,7 @@ export function useHostTagEditor({
       const tagsChanged = JSON.stringify(editedTags) !== JSON.stringify(currentTags)
 
       if (!tagsChanged) {
-        toast.info('No changes to save')
+        toast.info('没有更改可供保存')
         setIsEditing(false)
         return
       }
@@ -119,14 +119,14 @@ export function useHostTagEditor({
         })
       }
 
-      toast.success('Host tags updated successfully')
+      toast.success('已成功更新主机标签')
       setIsEditing(false)
 
       // Refetch hosts to get updated tags
       queryClient.invalidateQueries({ queryKey: ['hosts'] })
     } catch (error) {
       console.error('Failed to update host tags:', error)
-      toast.error('Failed to update host tags')
+      toast.error('无法更新主机标签')
     } finally {
       setIsLoading(false)
     }

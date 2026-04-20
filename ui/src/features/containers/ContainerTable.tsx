@@ -101,11 +101,11 @@ function UpdateBadge({
         onClick?.()
       }}
       className="relative group p-1 rounded hover:bg-surface-2 transition-colors"
-      title="Update available - click to view"
+      title="更新可用 - 点击以查看详情"
     >
       <Package className="h-4 w-4 text-amber-500" />
       <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 px-2 py-1 bg-popover text-popover-foreground text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50 border">
-        Update available - click to view
+        更新可用 - 点击以查看详情
       </div>
     </button>
   )
@@ -159,7 +159,7 @@ function PolicyIcons({
         )}
         {/* Tooltip */}
         <div className="invisible group-hover:visible absolute left-1/2 -translate-x-1/2 bottom-full mb-2 z-10 px-2 py-1 text-xs bg-surface-1 border border-border rounded shadow-lg whitespace-nowrap">
-          Auto-restart: {autoRestart ? 'Enabled' : 'Disabled'}
+          自动重启: {autoRestart ? '已启用' : '已禁用'}
         </div>
       </div>
 
@@ -177,16 +177,16 @@ function PolicyIcons({
           />
           {/* Tooltip */}
           <div className="invisible group-hover:visible absolute left-1/2 -translate-x-1/2 bottom-full mb-2 z-10 px-2 py-1 text-xs bg-surface-1 border border-border rounded shadow-lg whitespace-nowrap">
-            {healthStatus === 'healthy' && 'HTTP(S) Health Check: Healthy'}
+            {healthStatus === 'healthy' && 'HTTP(S) 健康检查状态: 健康'}
             {healthStatus === 'unhealthy' && (
               <>
-                HTTP(S) Health Check: Unhealthy
+                HTTP(S) 健康检查状态: 不健康
                 {consecutiveFailures && consecutiveFailures > 0 && (
-                  <> ({consecutiveFailures} consecutive failures)</>
+                  <> (连续不健康 {consecutiveFailures} 次)</>
                 )}
               </>
             )}
-            {healthStatus === 'unknown' && 'HTTP(S) Health Check: Unknown'}
+            {healthStatus === 'unknown' && 'HTTP(S) 健康检查状态: 未知'}
           </div>
         </div>
       )}
@@ -204,11 +204,11 @@ function PolicyIcons({
         {desiredState && desiredState !== 'unspecified' && (
           <div className="invisible group-hover:visible absolute left-1/2 -translate-x-1/2 bottom-full mb-2 z-10 px-2 py-1 text-xs bg-surface-1 border border-border rounded shadow-lg whitespace-nowrap">
             {showWarning ? (
-              <span>Should be running but is exited!</span>
+              <span>应当处于运行状态，但意外退出!</span>
             ) : desiredState === 'should_run' ? (
-              <span>Desired state: Should Run</span>
+              <span>期望状态: 始终运行</span>
             ) : (
-              <span>Desired state: On-Demand</span>
+              <span>期望状态: 按需运行</span>
             )}
           </div>
         )}
@@ -220,7 +220,7 @@ function PolicyIcons({
           <Package className="h-4 w-4 text-amber-500" />
           {/* Tooltip */}
           <div className="invisible group-hover:visible absolute left-1/2 -translate-x-1/2 bottom-full mb-2 z-10 px-2 py-1 text-xs bg-surface-1 border border-border rounded shadow-lg whitespace-nowrap">
-            Auto-update: Enabled
+            自动更新: 已启用
           </div>
         </div>
       )}
@@ -234,14 +234,14 @@ function PolicyIcons({
  */
 function StatusIcon({ state }: { state: Container['state'] }) {
   const iconMap = {
-    running: { color: 'text-success', fill: 'fill-success', label: 'Running', animate: false },
-    stopped: { color: 'text-danger', fill: 'fill-danger', label: 'Exited', animate: false },
-    exited: { color: 'text-danger', fill: 'fill-danger', label: 'Exited', animate: false },
-    created: { color: 'text-muted-foreground', fill: 'fill-muted-foreground', label: 'Created', animate: false },
-    paused: { color: 'text-warning', fill: 'fill-warning', label: 'Paused', animate: false },
-    restarting: { color: 'text-info', fill: 'fill-info', label: 'Restarting', animate: true },
-    removing: { color: 'text-danger', fill: 'fill-danger', label: 'Removing', animate: false },
-    dead: { color: 'text-danger', fill: 'fill-danger', label: 'Dead', animate: false },
+    running: { color: 'text-success', fill: 'fill-success', label: '运行中', animate: false },
+    stopped: { color: 'text-danger', fill: 'fill-danger', label: '已退出', animate: false },
+    exited: { color: 'text-danger', fill: 'fill-danger', label: '已退出', animate: false },
+    created: { color: 'text-muted-foreground', fill: 'fill-muted-foreground', label: '已创建', animate: false },
+    paused: { color: 'text-warning', fill: 'fill-warning', label: '已暂停', animate: false },
+    restarting: { color: 'text-info', fill: 'fill-info', label: '重启中', animate: true },
+    removing: { color: 'text-danger', fill: 'fill-danger', label: '删除中', animate: false },
+    dead: { color: 'text-danger', fill: 'fill-danger', label: '已死亡', animate: false },
   }
 
   const config = iconMap[state] || iconMap.exited
@@ -573,10 +573,10 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
       setShowJobPanel(true)
 
       // Show success toast
-      const modeText = mode === 'add' ? 'Adding' : 'Removing'
-      toast.success(`${modeText} ${tags.length} tag${tags.length !== 1 ? 's' : ''} ${mode === 'remove' ? 'from' : 'to'} ${selectedContainers.length} container${selectedContainers.length !== 1 ? 's' : ''}...`)
+      const modeText = mode === 'add' ? '添加' : '删除'
+      toast.success(`${modeText} ${tags.length} 个标签到 ${selectedContainers.length} 个容器中...`)
     } catch (error) {
-      toast.error(`Failed to update tags: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      toast.error(`更新标签时失败: ${error instanceof Error ? error.message : '未知错误'}`)
       throw error
     }
   }
@@ -597,9 +597,9 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
       setBatchJobId(result.job_id)
       setShowJobPanel(true)
 
-      toast.success(`${enabled ? 'Enabling' : 'Disabling'} auto-restart for ${count} container${count !== 1 ? 's' : ''}...`)
+      toast.success(`${enabled ? '启用' : '禁用'}自动重启设置到 ${count} 个容器中...`)
     } catch (error) {
-      toast.error(`Failed to update auto-restart: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      toast.error(`更新自动重启设置时失败: ${error instanceof Error ? error.message : '未知错误'}`)
       throw error
     }
   }
@@ -620,10 +620,16 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
       setBatchJobId(result.job_id)
       setShowJobPanel(true)
 
-      const modeText = enabled ? `with ${floatingTagMode} mode` : ''
-      toast.success(`${enabled ? 'Enabling' : 'Disabling'} auto-update ${modeText} for ${count} container${count !== 1 ? 's' : ''}...`)
+      const floatingTagModeMap = {
+        exact: '精确',
+        patch: '补丁',
+        minor: '小型更新',
+        latest: '保持最新',
+      }
+      const modeText = enabled ? `${floatingTagModeMap[floatingTagMode as keyof typeof floatingTagModeMap]}追踪模式下` : ''
+      toast.success(`${enabled ? '启用' : '禁用'}${modeText}的自动更新设置到 ${count} 个容器中...`)
     } catch (error) {
-      toast.error(`Failed to update auto-update: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      toast.error(`更新自动更新设置时失败: ${error instanceof Error ? error.message : '未知错误'}`)
       throw error
     }
   }
@@ -644,10 +650,10 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
       setBatchJobId(result.job_id)
       setShowJobPanel(true)
 
-      const stateText = state === 'should_run' ? 'Should Run' : 'On-Demand'
-      toast.success(`Setting desired state to "${stateText}" for ${count} container${count !== 1 ? 's' : ''}...`)
+      const stateText = state === 'should_run' ? '始终运行' : '按需运行'
+      toast.success(`设置 "${stateText}" 期望状态到 ${count} 个容器中...`)
     } catch (error) {
-      toast.error(`Failed to update desired state: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      toast.error(`更新期望状态时失败: ${error instanceof Error ? error.message : '未知错误'}`)
       throw error
     }
   }
@@ -673,10 +679,10 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
       setShowJobPanel(true)
       setDeleteConfirmModalOpen(false)
 
-      toast.success(`Deleting ${count} container${count !== 1 ? 's' : ''}...`)
+      toast.success(`删除 ${count} 个容器中...`)
       clearSelection()
     } catch (error) {
-      toast.error(`Failed to delete containers: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      toast.error(`删除容器时失败: ${error instanceof Error ? error.message : '未知错误'}`)
     }
   }
 
@@ -703,8 +709,8 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
         setUpdateConfirmModalOpen(true)
       }
     } catch (error) {
-      debug.error('ContainerTable', 'Failed to validate batch update:', error)
-      toast.error(`Failed to validate update: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      debug.error('ContainerTable', '批处理验证更新时失败:', error)
+      toast.error(`验证更新时失败: ${error instanceof Error ? error.message : '未知错误'}`)
     }
   }
 
@@ -724,10 +730,10 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
       setShowJobPanel(true)
       setUpdateConfirmModalOpen(false)
 
-      toast.success(`Updating ${count} container${count !== 1 ? 's' : ''}...`)
+      toast.success(`更新 ${count} 个容器中...`)
       clearSelection()
     } catch (error) {
-      toast.error(`Failed to update containers: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      toast.error(`更新容器时失败: ${error instanceof Error ? error.message : '未知错误'}`)
     }
   }
 
@@ -754,10 +760,10 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
       setValidationModalOpen(false)
       setValidationData(null)
 
-      toast.success(`Updating ${updateIds.length} container${updateIds.length !== 1 ? 's' : ''}...`)
+      toast.success(`更新 ${updateIds.length} 个容器中...`)
       clearSelection()
     } catch (error) {
-      toast.error(`Failed to update containers: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      toast.error(`更新容器时失败: ${error instanceof Error ? error.message : '未知错误'}`)
     }
   }
 
@@ -783,8 +789,8 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
       }),
     onSuccess: (data) => {
       const jobId = data.job_id
-      toast.success('Batch job started', {
-        description: `Job ID: ${jobId}. Progress will be tracked in the panel.`,
+      toast.success('批处理任务已启动', {
+        description: `Job ID: ${jobId}。进度将在面板中显示。`,
       })
       // Clear selection after starting batch job
       clearSelection()
@@ -794,9 +800,9 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
       queryClient.invalidateQueries({ queryKey: ['containers'] })
     },
     onError: (error) => {
-      debug.error('ContainerTable', 'Batch action failed:', error)
-      toast.error('Failed to start batch job', {
-        description: error instanceof Error ? error.message : 'Unknown error',
+      debug.error('ContainerTable', '批处理操作失败:', error)
+      toast.error('启动批处理任务时失败', {
+        description: error instanceof Error ? error.message : '未知错误',
       })
     },
   })
@@ -920,7 +926,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
               onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
               className="h-8 px-2 hover:bg-surface-2"
             >
-              Status
+              状态
               <ArrowUpDown className={`ml-2 h-4 w-4 ${sortDirection ? 'text-primary' : 'text-muted-foreground'}`} />
             </Button>
           )
@@ -938,7 +944,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
               onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
               className="h-8 px-2 hover:bg-surface-2"
             >
-              Name
+              名称
               <ArrowUpDown className={`ml-2 h-4 w-4 ${sortDirection ? 'text-primary' : 'text-muted-foreground'}`} />
             </Button>
           )
@@ -965,7 +971,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
                   }
                 }}
               >
-                {row.original.name || 'Unknown'}
+                {row.original.name || '未知'}
               </button>
               {tags.length > 0 && (
                 <div className="flex flex-wrap gap-1 items-center">
@@ -1042,7 +1048,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
       // 3. Policy (auto-restart, health check, desired state, auto-update)
       {
         id: 'policy',
-        header: 'Policy',
+        header: '策略',
         cell: ({ row }) => {
           const compositeKey = makeCompositeKey(row.original)
           return (
@@ -1067,7 +1073,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
               onClick={() => column.toggleSorting(sortDirection === 'asc')}
               className="h-8 px-2 hover:bg-surface-2"
             >
-              Alerts
+              告警数
               <ArrowUpDown className={`ml-2 h-4 w-4 ${sortDirection ? 'text-primary' : 'text-muted-foreground'}`} />
             </Button>
           )
@@ -1100,7 +1106,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
               onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
               className="h-8 px-2 hover:bg-surface-2"
             >
-              Host
+              主机
               <ArrowUpDown className={`ml-2 h-4 w-4 ${sortDirection ? 'text-primary' : 'text-muted-foreground'}`} />
             </Button>
           )
@@ -1124,7 +1130,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
       // 7. IP Address (Docker network IPs)
       {
         id: 'ip',
-        header: 'IP Address',
+        header: 'IP 地址',
         cell: ({ row }) => <IPAddressCell container={row.original} />,
         size: 150,
         enableSorting: false,
@@ -1133,7 +1139,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
       {
         accessorKey: 'ports',
         id: 'ports',
-        header: 'Ports',
+        header: '端口映射',
         cell: ({ row }) => {
           const container = row.original
           if (!container.ports || container.ports.length === 0) {
@@ -1164,7 +1170,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
               onClick={() => column.toggleSorting(sortDirection === 'asc')}
               className="h-8 px-2 hover:bg-surface-2"
             >
-              Uptime
+              运行时长
               <ArrowUpDown className={`ml-2 h-4 w-4 ${sortDirection ? 'text-primary' : 'text-muted-foreground'}`} />
             </Button>
           )
@@ -1209,9 +1215,9 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
 
           // Use started_at for uptime (when container was last started), fall back to created
           const uptimeSource = container.started_at || container.created
-          const tooltipText = container.started_at
-            ? `Started: ${container.started_at}`
-            : `Created: ${container.created}`
+          const tooltipText = new Date(container.started_at ?? '').toLocaleString()
+            ? `启动于: ${new Date(container.started_at ?? '').toLocaleString()}`
+            : `创建于: ${new Date(container.created).toLocaleString()}`
 
           return (
             <span className="text-sm text-muted-foreground" title={tooltipText}>
@@ -1280,10 +1286,10 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
           }
 
           const usage = formatBytes(container.memory_usage)
-          const limit = container.memory_limit ? formatBytes(container.memory_limit) : 'No limit'
+          const limit = container.memory_limit ? formatBytes(container.memory_limit) : '无限制'
 
           return (
-            <span className="text-sm text-muted-foreground" title={`Limit: ${limit}`}>
+            <span className="text-sm text-muted-foreground" title={`限制: ${limit}`}>
               {usage}
             </span>
           )
@@ -1293,7 +1299,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
       // 11. Actions (Start/Stop/Restart/Logs/View details)
       {
         id: 'actions',
-        header: 'Actions',
+        header: '容器操作',
         cell: ({ row }) => {
           const container = row.original
           const isRunning = container.state === 'running'
@@ -1312,8 +1318,8 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
                   className="h-8 w-8"
                   onClick={() => {
                     if (!container.host_id) {
-                      toast.error('Cannot start container', {
-                        description: 'Container missing host information',
+                      toast.error('无法启动容器', {
+                        description: '容器缺乏主机信息',
                       })
                       return
                     }
@@ -1324,7 +1330,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
                     })
                   }}
                   disabled={!canStart || isContainerPending(container.host_id || '', container.id)}
-                  title="Start container"
+                  title="启动容器"
                 >
                   <PlayCircle className={`h-4 w-4 ${canStart ? 'text-success' : 'text-muted-foreground'}`} />
                 </Button>
@@ -1336,8 +1342,8 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
                   className="h-8 w-8"
                   onClick={() => {
                     if (!container.host_id) {
-                      toast.error('Cannot stop container', {
-                        description: 'Container missing host information',
+                      toast.error('无法停止容器', {
+                        description: '容器缺乏主机信息',
                       })
                       return
                     }
@@ -1348,7 +1354,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
                     })
                   }}
                   disabled={!canStop || isContainerPending(container.host_id || '', container.id)}
-                  title="Stop container"
+                  title="停止容器"
                 >
                   <Square className={`h-4 w-4 ${canStop ? 'text-danger' : 'text-muted-foreground'}`} />
                 </Button>
@@ -1360,8 +1366,8 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
                   className="h-8 w-8"
                   onClick={() => {
                     if (!container.host_id) {
-                      toast.error('Cannot restart container', {
-                        description: 'Container missing host information',
+                      toast.error('无法重启容器', {
+                        description: '容器缺乏主机信息',
                       })
                       return
                     }
@@ -1372,7 +1378,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
                     })
                   }}
                   disabled={!canRestart || isContainerPending(container.host_id || '', container.id)}
-                  title="Restart container"
+                  title="重启容器"
                 >
                   <RotateCw className={`h-4 w-4 ${canRestart ? 'text-info' : 'text-muted-foreground'}`} />
                 </Button>
@@ -1387,7 +1393,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
                   onClick={() => {
                     openModal(makeCompositeKey(container), 'info')
                   }}
-                  title="View full details"
+                  title="查看完整信息"
                 >
                   <Maximize2 className="h-4 w-4" />
                 </Button>
@@ -1401,7 +1407,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
                 onClick={() => {
                   openModal(makeCompositeKey(container), 'logs')
                 }}
-                title="View logs"
+                title="查看容器日志"
               >
                 <FileText className="h-4 w-4" />
               </Button>
@@ -1421,7 +1427,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center h-8 w-8 rounded hover:bg-surface-2 text-muted-foreground hover:text-primary transition-colors"
-                  title="Open WebUI"
+                  title="打开 WebUI"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <ExternalLink className="h-4 w-4" />
@@ -1606,7 +1612,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
     return (
       <div className="rounded-lg border border-danger/20 bg-danger/5 p-4">
         <p className="text-sm text-danger">
-          Failed to load containers. Please try again.
+          加载容器时失败，请再试一次。
         </p>
       </div>
     )
@@ -1619,14 +1625,14 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
         {/* Left: Search */}
         <div className="flex items-center gap-2 sm:gap-4 flex-1">
           <Input
-            placeholder="Search containers..."
+            placeholder="搜索容器..."
             value={globalFilter ?? ''}
             onChange={(e) => setGlobalFilter(e.target.value)}
             className="flex-1 sm:max-w-md"
             data-testid="containers-search-input"
           />
           <div className="text-sm text-muted-foreground whitespace-nowrap hidden sm:block">
-            {table.getFilteredRowModel().rows.length} container(s)
+            {table.getFilteredRowModel().rows.length} 个匹配的容器
           </div>
         </div>
 
@@ -1641,7 +1647,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
               className="h-9 text-xs"
             >
               <X className="h-3.5 w-3.5 mr-1" />
-              Clear Filters
+              清除过滤器
             </Button>
           )}
 
@@ -1650,7 +1656,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
             trigger={
               <Button variant="outline" size="sm" className="h-9">
                 <Filter className="h-3.5 w-3.5 mr-2" />
-                Hosts
+                主机
                 {filters.selectedHostIds.length > 0 && (
                   <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-primary/20 text-primary rounded">
                     {filters.selectedHostIds.length}
@@ -1678,7 +1684,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
                   </div>
                 ))
               ) : (
-                <div className="px-2 py-2 text-xs text-muted-foreground">No hosts available</div>
+                <div className="px-2 py-2 text-xs text-muted-foreground">没有可用的主机</div>
               )}
             </div>
           </DropdownMenu>
@@ -1688,7 +1694,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
             trigger={
               <Button variant="outline" size="sm" className="h-9">
                 <Filter className="h-3.5 w-3.5 mr-2" />
-                Policy
+                策略
                 {(filters.autoUpdateEnabled !== null || filters.autoRestartEnabled !== null || filters.healthCheckEnabled !== null || filters.selectedDesiredStates.length > 0) && (
                   <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-primary/20 text-primary rounded">
                     {[filters.autoUpdateEnabled, filters.autoRestartEnabled, filters.healthCheckEnabled].filter(v => v !== null).length + filters.selectedDesiredStates.length}
@@ -1701,7 +1707,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
           >
             <div onClick={(e) => e.stopPropagation()} className="min-w-[200px]">
               {/* Auto-update section */}
-              <div className="px-2 py-1 text-xs font-medium text-muted-foreground">Auto-update</div>
+              <div className="px-2 py-1 text-xs font-medium text-muted-foreground">自动更新</div>
               <div
                 className="flex items-center gap-2 px-2 py-1.5 hover:bg-muted rounded-sm cursor-pointer"
                 onClick={() => togglePolicyFilter('auto_update', true)}
@@ -1709,7 +1715,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
                 <div className="w-4 h-4 flex items-center justify-center">
                   {filters.autoUpdateEnabled === true && <Check className="h-3.5 w-3.5 text-primary" />}
                 </div>
-                <span className="text-xs">Enabled</span>
+                <span className="text-xs">已启用</span>
               </div>
               <div
                 className="flex items-center gap-2 px-2 py-1.5 hover:bg-muted rounded-sm cursor-pointer"
@@ -1718,13 +1724,13 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
                 <div className="w-4 h-4 flex items-center justify-center">
                   {filters.autoUpdateEnabled === false && <Check className="h-3.5 w-3.5 text-primary" />}
                 </div>
-                <span className="text-xs">Disabled</span>
+                <span className="text-xs">已禁用</span>
               </div>
 
               <DropdownMenuSeparator />
 
               {/* Auto-restart section */}
-              <div className="px-2 py-1 text-xs font-medium text-muted-foreground">Auto-restart</div>
+              <div className="px-2 py-1 text-xs font-medium text-muted-foreground">自动重启</div>
               <div
                 className="flex items-center gap-2 px-2 py-1.5 hover:bg-muted rounded-sm cursor-pointer"
                 onClick={() => togglePolicyFilter('auto_restart', true)}
@@ -1732,7 +1738,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
                 <div className="w-4 h-4 flex items-center justify-center">
                   {filters.autoRestartEnabled === true && <Check className="h-3.5 w-3.5 text-primary" />}
                 </div>
-                <span className="text-xs">Enabled</span>
+                <span className="text-xs">已启用</span>
               </div>
               <div
                 className="flex items-center gap-2 px-2 py-1.5 hover:bg-muted rounded-sm cursor-pointer"
@@ -1741,13 +1747,13 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
                 <div className="w-4 h-4 flex items-center justify-center">
                   {filters.autoRestartEnabled === false && <Check className="h-3.5 w-3.5 text-primary" />}
                 </div>
-                <span className="text-xs">Disabled</span>
+                <span className="text-xs">已禁用</span>
               </div>
 
               <DropdownMenuSeparator />
 
               {/* Health check section */}
-              <div className="px-2 py-1 text-xs font-medium text-muted-foreground">HTTP/HTTPS Health Check</div>
+              <div className="px-2 py-1 text-xs font-medium text-muted-foreground">HTTP/HTTPS 健康检查</div>
               <div
                 className="flex items-center gap-2 px-2 py-1.5 hover:bg-muted rounded-sm cursor-pointer"
                 onClick={() => togglePolicyFilter('health_check', true)}
@@ -1755,7 +1761,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
                 <div className="w-4 h-4 flex items-center justify-center">
                   {filters.healthCheckEnabled === true && <Check className="h-3.5 w-3.5 text-primary" />}
                 </div>
-                <span className="text-xs">Enabled</span>
+                <span className="text-xs">已启用</span>
               </div>
               <div
                 className="flex items-center gap-2 px-2 py-1.5 hover:bg-muted rounded-sm cursor-pointer"
@@ -1764,13 +1770,13 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
                 <div className="w-4 h-4 flex items-center justify-center">
                   {filters.healthCheckEnabled === false && <Check className="h-3.5 w-3.5 text-primary" />}
                 </div>
-                <span className="text-xs">Disabled</span>
+                <span className="text-xs">已禁用</span>
               </div>
 
               <DropdownMenuSeparator />
 
               {/* Desired State section */}
-              <div className="px-2 py-1 text-xs font-medium text-muted-foreground">Desired State</div>
+              <div className="px-2 py-1 text-xs font-medium text-muted-foreground">期望状态</div>
               <div
                 className="flex items-center gap-2 px-2 py-1.5 hover:bg-muted rounded-sm cursor-pointer"
                 onClick={() => toggleDesiredStateFilter('should_run')}
@@ -1778,7 +1784,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
                 <div className="w-4 h-4 flex items-center justify-center">
                   {filters.selectedDesiredStates.includes('should_run') && <Check className="h-3.5 w-3.5 text-primary" />}
                 </div>
-                <span className="text-xs">Should Run</span>
+                <span className="text-xs">始终运行</span>
               </div>
               <div
                 className="flex items-center gap-2 px-2 py-1.5 hover:bg-muted rounded-sm cursor-pointer"
@@ -1787,7 +1793,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
                 <div className="w-4 h-4 flex items-center justify-center">
                   {filters.selectedDesiredStates.includes('on_demand') && <Check className="h-3.5 w-3.5 text-primary" />}
                 </div>
-                <span className="text-xs">On-Demand</span>
+                <span className="text-xs">按需运行</span>
               </div>
               <div
                 className="flex items-center gap-2 px-2 py-1.5 hover:bg-muted rounded-sm cursor-pointer"
@@ -1796,7 +1802,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
                 <div className="w-4 h-4 flex items-center justify-center">
                   {filters.selectedDesiredStates.includes('unspecified') && <Check className="h-3.5 w-3.5 text-primary" />}
                 </div>
-                <span className="text-xs">Unspecified</span>
+                <span className="text-xs">尚未指定</span>
               </div>
             </div>
           </DropdownMenu>
@@ -1806,7 +1812,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
             trigger={
               <Button variant="outline" size="sm" className="h-9">
                 <Filter className="h-3.5 w-3.5 mr-2" />
-                State
+                状态
                 {(filters.selectedStates.length > 0 || filters.showUpdatesAvailable) && (
                   <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-primary/20 text-primary rounded">
                     {filters.selectedStates.length + (filters.showUpdatesAvailable ? 1 : 0)}
@@ -1825,7 +1831,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
                 <div className="w-4 h-4 flex items-center justify-center">
                   {filters.selectedStates.includes('running') && <Check className="h-3.5 w-3.5 text-primary" />}
                 </div>
-                <span className="text-xs">Running</span>
+                <span className="text-xs">运行中</span>
               </div>
               <div
                 className="flex items-center gap-2 px-2 py-1.5 hover:bg-muted rounded-sm cursor-pointer"
@@ -1834,7 +1840,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
                 <div className="w-4 h-4 flex items-center justify-center">
                   {filters.selectedStates.includes('stopped') && <Check className="h-3.5 w-3.5 text-primary" />}
                 </div>
-                <span className="text-xs">Stopped</span>
+                <span className="text-xs">已停止</span>
               </div>
               <div
                 className="flex items-center gap-2 px-2 py-1.5 hover:bg-muted rounded-sm cursor-pointer"
@@ -1851,7 +1857,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
                 <div className="w-4 h-4 flex items-center justify-center">
                   {filters.showUpdatesAvailable && <Check className="h-3.5 w-3.5 text-primary" />}
                 </div>
-                <span className="text-xs">Updates available</span>
+                <span className="text-xs">有可用更新</span>
               </div>
             </div>
           </DropdownMenu>
@@ -1892,7 +1898,7 @@ export function ContainerTable({ hostId: propHostId }: ContainerTableProps = {})
                   colSpan={columns.length}
                   className="px-4 py-8 text-center text-sm text-muted-foreground"
                 >
-                  No containers found
+                  未找到任何容器
                 </td>
               </tr>
             ) : (

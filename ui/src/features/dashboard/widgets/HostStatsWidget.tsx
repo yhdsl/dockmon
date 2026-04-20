@@ -50,7 +50,7 @@ export function HostStatsWidget() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <Server className="h-5 w-5" />
-            Hosts
+            主机
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -69,11 +69,11 @@ export function HostStatsWidget() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <Server className="h-5 w-5" />
-            Hosts
+            主机
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-danger">Failed to load host stats</p>
+          <p className="text-sm text-danger">加载主机数据时出错</p>
         </CardContent>
       </Card>
     )
@@ -96,14 +96,14 @@ export function HostStatsWidget() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base">
           <Server className="h-5 w-5" />
-          Hosts
+          主机
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Total Count */}
         <div>
           <div className="text-3xl font-semibold">{stats.total}</div>
-          <p className="text-sm text-muted-foreground">Registered hosts</p>
+          <p className="text-sm text-muted-foreground">已注册主机</p>
         </div>
 
         {/* Status Breakdown */}
@@ -111,7 +111,7 @@ export function HostStatsWidget() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-success" />
-              <span className="text-sm">Online</span>
+              <span className="text-sm">在线</span>
             </div>
             <span className="text-sm font-medium">{stats.online}</span>
           </div>
@@ -120,7 +120,7 @@ export function HostStatsWidget() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <XCircle className="h-4 w-4 text-danger" />
-                <span className="text-sm">Offline</span>
+                <span className="text-sm">离线</span>
               </div>
               <span className="text-sm font-medium">{stats.offline}</span>
             </div>

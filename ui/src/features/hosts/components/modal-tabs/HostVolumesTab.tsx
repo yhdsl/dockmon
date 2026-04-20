@@ -12,7 +12,6 @@ import { ConfirmModal } from '@/components/shared/ConfirmModal'
 import { StatusBadge } from '@/components/shared/StatusBadge'
 import { ContainerLinkList } from '@/components/shared/ContainerLinkList'
 import { formatRelativeTime } from '@/lib/utils/eventUtils'
-import { pluralize } from '@/lib/utils/formatting'
 import { useAuth } from '@/features/auth/AuthContext'
 import type { DockerVolume } from '@/types/api'
 
@@ -24,13 +23,13 @@ function VolumeStatusBadge({ volume }: { volume: DockerVolume }) {
   if (volume.in_use) {
     return (
       <StatusBadge variant="success">
-        In Use ({volume.container_count})
+        使用中 ({volume.container_count})
       </StatusBadge>
     )
   }
   return (
     <StatusBadge variant="muted">
-      Unused
+      未使用
     </StatusBadge>
   )
 }
@@ -222,7 +221,7 @@ export function HostVolumesTab({ hostId }: HostVolumesTabProps) {
     return (
       <div className="p-6">
         <div className="bg-danger/10 text-danger p-4 rounded-lg">
-          Failed to load volumes: {error.message}
+          加载卷时出错: {error.message}
         </div>
       </div>
     )
@@ -233,7 +232,7 @@ export function HostVolumesTab({ hostId }: HostVolumesTabProps) {
     return (
       <div className="p-6 text-center text-muted-foreground">
         <HardDrive className="h-12 w-12 mx-auto mb-3 opacity-50" />
-        No volumes found on this host.
+        尚未在此主机中找到卷。
       </div>
     )
   }
@@ -247,7 +246,7 @@ export function HostVolumesTab({ hostId }: HostVolumesTabProps) {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
             type="text"
-            placeholder="Search volumes..."
+            placeholder="搜索卷..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2 bg-surface-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent"
@@ -264,7 +263,7 @@ export function HostVolumesTab({ hostId }: HostVolumesTabProps) {
           }`}
         >
           <Filter className="h-4 w-4" />
-          Unused Only
+          仅未使用
           {unusedCount > 0 && (
             <span className="ml-1 px-1.5 py-0.5 bg-black/20 rounded text-xs">
               {unusedCount}
@@ -277,9 +276,9 @@ export function HostVolumesTab({ hostId }: HostVolumesTabProps) {
       {/* Prune button */}
       <div className="flex items-center justify-between">
         <div className="text-sm text-muted-foreground">
-          Showing {filteredVolumes.length} of {volumes.length} volumes
+          正在展示 {filteredVolumes.length} / {volumes.length} 个卷
           {selectedCount > 0 && (
-            <span className="ml-2 text-accent">({selectedCount} selected)</span>
+            <span className="ml-2 text-accent">({selectedCount} 个已选择)</span>
           )}
         </div>
         <button
@@ -288,7 +287,7 @@ export function HostVolumesTab({ hostId }: HostVolumesTabProps) {
           className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg bg-warning/10 text-warning border border-warning/30 hover:bg-warning/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           <Trash2 className="h-4 w-4" />
-          Prune All Unused
+          修剪未使用的卷
         </button>
       </div>
 
@@ -306,12 +305,12 @@ export function HostVolumesTab({ hostId }: HostVolumesTabProps) {
                   className="w-4 h-4 rounded border-border cursor-pointer disabled:opacity-50"
                 />
               </th>
-              <th className="text-left p-3 text-sm font-medium text-muted-foreground">Name</th>
-              <th className="w-24 text-left p-3 text-sm font-medium text-muted-foreground hidden md:table-cell">Driver</th>
-              <th className="w-32 text-left p-3 text-sm font-medium text-muted-foreground hidden 2xl:table-cell">Created</th>
-              <th className="w-28 text-left p-3 text-sm font-medium text-muted-foreground">Status</th>
-              <th className="w-40 text-left p-3 text-sm font-medium text-muted-foreground hidden xl:table-cell">Containers</th>
-              <th className="w-20 p-3 text-sm font-medium text-muted-foreground">Actions</th>
+              <th className="text-left p-3 text-sm font-medium text-muted-foreground">名称</th>
+              <th className="w-24 text-left p-3 text-sm font-medium text-muted-foreground hidden md:table-cell">驱动</th>
+              <th className="w-32 text-left p-3 text-sm font-medium text-muted-foreground hidden 2xl:table-cell">创建于</th>
+              <th className="w-28 text-left p-3 text-sm font-medium text-muted-foreground">状态</th>
+              <th className="w-40 text-left p-3 text-sm font-medium text-muted-foreground hidden xl:table-cell">容器</th>
+              <th className="w-20 p-3 text-sm font-medium text-muted-foreground">卷操作</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -356,7 +355,7 @@ export function HostVolumesTab({ hostId }: HostVolumesTabProps) {
                     <button
                       onClick={() => handleDeleteClick(volume)}
                       className="p-2 rounded-lg hover:bg-danger/10 text-danger/70 hover:text-danger transition-colors"
-                      title="Delete volume"
+                      title="删除卷"
                       aria-label={`Delete volume ${volume.name}`}
                     >
                       <Trash2 className="h-4 w-4" />
@@ -372,7 +371,7 @@ export function HostVolumesTab({ hostId }: HostVolumesTabProps) {
       {/* Empty filtered state */}
       {filteredVolumes.length === 0 && volumes.length > 0 && (
         <div className="text-center text-muted-foreground py-8">
-          No volumes match your filters.
+          暂无匹配搜索条件的卷。
         </div>
       )}
 
@@ -382,14 +381,14 @@ export function HostVolumesTab({ hostId }: HostVolumesTabProps) {
           <div className="max-w-screen-xl mx-auto flex items-center justify-between">
             <div className="text-sm">
               <span className="font-medium">{selectedCount}</span>
-              {' '}{pluralize(selectedCount, 'volume')} selected
+              {' '}个卷已选择
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setSelectedVolumeNames(new Set())}
                 className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                Clear Selection
+                清除选择
               </button>
               <button
                 onClick={handleBulkDeleteClick}
@@ -397,7 +396,7 @@ export function HostVolumesTab({ hostId }: HostVolumesTabProps) {
                 className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg bg-danger text-danger-foreground hover:bg-danger/90 disabled:opacity-50 transition-colors"
               >
                 <Trash2 className="h-4 w-4" />
-                Delete Selected
+                删除所选
               </button>
             </div>
           </div>
@@ -423,16 +422,16 @@ export function HostVolumesTab({ hostId }: HostVolumesTabProps) {
         isOpen={showPruneConfirm}
         onClose={handlePruneClose}
         onConfirm={handlePruneConfirm}
-        title="Prune Unused Volumes"
-        description={`This will remove ${unusedCount} unused ${pluralize(unusedCount, 'volume')}.`}
-        confirmText="Prune Volumes"
-        pendingText="Pruning..."
+        title="修剪未使用的卷"
+        description={`这将删除 ${unusedCount} 个未使用的卷。`}
+        confirmText="修剪卷"
+        pendingText="修剪中..."
         variant="warning"
         isPending={pruneMutation.isPending}
       >
         <p className="text-sm text-muted-foreground">
-          Volumes that are not being used by any containers will be permanently deleted.
-          This may free up significant disk space but cannot be undone.
+          未被任何容器使用的卷将会被永久删除。
+          这可能会清空大量磁盘空间，但该操作将无法撤销。
         </p>
       </ConfirmModal>
     </div>

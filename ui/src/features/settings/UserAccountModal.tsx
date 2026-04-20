@@ -38,7 +38,7 @@ export function UserAccountModal({ isOpen, onClose }: UserAccountModalProps) {
     setSuccess(null)
 
     if (!username.trim()) {
-      setError('Username is required')
+      setError('用户名为必填项')
       return
     }
 
@@ -54,16 +54,16 @@ export function UserAccountModal({ isOpen, onClose }: UserAccountModalProps) {
       // Refetch user data
       await queryClient.invalidateQueries({ queryKey: ['auth', 'currentUser'] })
 
-      setSuccess('Profile updated successfully!')
+      setSuccess('已成功更新账户信息!')
     } catch (err) {
       if (err instanceof ApiError) {
         if (err.status === 400) {
-          setError(err.message || 'Username already taken')
+          setError(err.message || '用户名已被使用')
         } else {
-          setError('Failed to update profile. Please try again.')
+          setError('无法更新账户信息，请稍后重试。')
         }
       } else {
-        setError('Connection error. Please check if the backend is running.')
+        setError('连接错误。请检查后端服务是否正常运行。')
       }
     } finally {
       setIsSubmitting(false)
@@ -85,9 +85,9 @@ export function UserAccountModal({ isOpen, onClose }: UserAccountModalProps) {
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-xl font-semibold">Account Settings</h2>
+              <h2 className="text-xl font-semibold">账户设置</h2>
               <p className="text-sm text-muted-foreground mt-1">
-                Manage your account information
+                管理你的账户信息
               </p>
             </div>
             <button
@@ -95,7 +95,7 @@ export function UserAccountModal({ isOpen, onClose }: UserAccountModalProps) {
               className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100"
             >
               <X className="h-4 w-4" />
-              <span className="sr-only">Close</span>
+              <span className="sr-only">关闭</span>
             </button>
           </div>
 
@@ -115,14 +115,14 @@ export function UserAccountModal({ isOpen, onClose }: UserAccountModalProps) {
 
             {isOIDC ? (
               <div className="rounded-lg border-l-4 border-primary bg-primary/10 p-3 text-sm text-muted-foreground">
-                Your account is managed by your SSO provider. Profile changes must be made there.
+                你的账户由 SSO 提供商管理，更改个人资料操作需要前往提供商处进行。
               </div>
             ) : (
               <>
                 {/* Display Name */}
                 <div>
                   <label htmlFor="displayName" className="block text-sm font-medium mb-1">
-                    Display Name
+                    昵称
                   </label>
                   <Input
                     id="displayName"
@@ -136,17 +136,17 @@ export function UserAccountModal({ isOpen, onClose }: UserAccountModalProps) {
                       }
                     }}
                     disabled={isSubmitting}
-                    placeholder="Optional friendly name"
+                    placeholder="请输入可选的昵称"
                   />
                   <p className="text-xs text-muted-foreground mt-1">
-                    This is how your name will be displayed
+                    如何优雅的展示你的用户名
                   </p>
                 </div>
 
                 {/* Username */}
                 <div>
                   <label htmlFor="username" className="block text-sm font-medium mb-1">
-                    Username <span className="text-destructive">*</span>
+                    用户名 <span className="text-destructive">*</span>
                   </label>
                   <Input
                     id="username"
@@ -163,7 +163,7 @@ export function UserAccountModal({ isOpen, onClose }: UserAccountModalProps) {
                     required
                   />
                   <p className="text-xs text-muted-foreground mt-1">
-                    Used for logging in
+                    用于登录的用户名
                   </p>
                 </div>
 
@@ -173,7 +173,7 @@ export function UserAccountModal({ isOpen, onClose }: UserAccountModalProps) {
                   disabled={isSubmitting}
                   className="w-full"
                 >
-                  {isSubmitting ? 'Saving...' : 'Save Changes'}
+                  {isSubmitting ? '保存中...' : '保存更改'}
                 </Button>
               </>
             )}
@@ -190,7 +190,7 @@ export function UserAccountModal({ isOpen, onClose }: UserAccountModalProps) {
                 className="w-full"
                 onClick={() => setShowPasswordModal(true)}
               >
-                Change Password
+                修改密码
               </Button>
             </>
           )}

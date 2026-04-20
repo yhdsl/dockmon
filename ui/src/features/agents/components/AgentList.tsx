@@ -18,7 +18,7 @@ function AgentStatusBadge({ agent }: { agent: Agent }) {
     return (
       <Badge variant="default" className="bg-green-500">
         <CheckCircle2 className="h-3 w-3 mr-1" />
-        Connected
+        已连接
       </Badge>
     )
   }
@@ -27,7 +27,7 @@ function AgentStatusBadge({ agent }: { agent: Agent }) {
     return (
       <Badge variant="secondary">
         <Clock className="h-3 w-3 mr-1" />
-        Online
+        在线
       </Badge>
     )
   }
@@ -35,7 +35,7 @@ function AgentStatusBadge({ agent }: { agent: Agent }) {
   return (
     <Badge variant="destructive">
       <XCircle className="h-3 w-3 mr-1" />
-      Offline
+      离线
     </Badge>
   )
 }
@@ -43,7 +43,7 @@ function AgentStatusBadge({ agent }: { agent: Agent }) {
 function AgentCard({ agent }: { agent: Agent }) {
   const { timeFormat } = useTimeFormat()
   const formatDate = (isoString: string | null) => {
-    if (!isoString) return 'Never'
+    if (!isoString) return '从未'
     return formatDateTime(isoString, timeFormat)
   }
 
@@ -55,7 +55,7 @@ function AgentCard({ agent }: { agent: Agent }) {
             <Server className="h-5 w-5 text-muted-foreground" />
             <div>
               <CardTitle className="text-base">
-                {agent.host_name || 'Unknown Host'}
+                {agent.host_name || '未知主机'}
               </CardTitle>
               <CardDescription className="text-xs">
                 {agent.engine_id.substring(0, 12)}
@@ -68,35 +68,35 @@ function AgentCard({ agent }: { agent: Agent }) {
       <CardContent className="pt-0">
         <dl className="grid grid-cols-2 gap-2 text-sm">
           <div>
-            <dt className="text-muted-foreground">Version</dt>
+            <dt className="text-muted-foreground">版本</dt>
             <dd className="font-mono">{agent.version}</dd>
           </div>
           <div>
-            <dt className="text-muted-foreground">Protocol</dt>
+            <dt className="text-muted-foreground">协议版本</dt>
             <dd className="font-mono">{agent.proto_version}</dd>
           </div>
           <div>
-            <dt className="text-muted-foreground">Last Seen</dt>
+            <dt className="text-muted-foreground">上次在线</dt>
             <dd className="text-xs">{formatDate(agent.last_seen_at)}</dd>
           </div>
           <div>
-            <dt className="text-muted-foreground">Registered</dt>
+            <dt className="text-muted-foreground">注册时间</dt>
             <dd className="text-xs">{formatDate(agent.registered_at)}</dd>
           </div>
         </dl>
 
         {Object.keys(agent.capabilities).length > 0 && (
           <div className="mt-3">
-            <dt className="text-sm text-muted-foreground mb-1">Capabilities</dt>
+            <dt className="text-sm text-muted-foreground mb-1">功能</dt>
             <div className="flex flex-wrap gap-1">
               {agent.capabilities.stats_collection && (
-                <Badge variant="outline" className="text-xs">Stats</Badge>
+                <Badge variant="outline" className="text-xs">统计数据</Badge>
               )}
               {agent.capabilities.container_updates && (
-                <Badge variant="outline" className="text-xs">Updates</Badge>
+                <Badge variant="outline" className="text-xs">更新</Badge>
               )}
               {agent.capabilities.self_update && (
-                <Badge variant="outline" className="text-xs">Self-Update</Badge>
+                <Badge variant="outline" className="text-xs">自动更新</Badge>
               )}
             </div>
           </div>
@@ -114,7 +114,7 @@ export function AgentList() {
       <Card>
         <CardContent className="flex items-center justify-center py-8">
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-          <span className="ml-2 text-muted-foreground">Loading agents...</span>
+          <span className="ml-2 text-muted-foreground">加载代理中...</span>
         </CardContent>
       </Card>
     )
@@ -124,7 +124,7 @@ export function AgentList() {
     return (
       <Alert variant="destructive">
         <AlertDescription>
-          {error?.message || 'Failed to load agents'}
+          {error?.message || '加载代理时失败'}
         </AlertDescription>
       </Alert>
     )
@@ -134,9 +134,9 @@ export function AgentList() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>No Agents Registered</CardTitle>
+          <CardTitle>尚未注册任何代理</CardTitle>
           <CardDescription>
-            Get started by generating a registration token and installing an agent on a remote host.
+            请先生成注册令牌，并在远程主机上安装代理以开始使用。
           </CardDescription>
         </CardHeader>
       </Card>
@@ -147,10 +147,9 @@ export function AgentList() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold">Registered Agents</h3>
+          <h3 className="text-lg font-semibold">已注册的代理</h3>
           <p className="text-sm text-muted-foreground">
-            {data.total} agent{data.total !== 1 ? 's' : ''} registered,{' '}
-            {data.connected_count} connected
+            {data.total} 个代理已注册，{data.connected_count} 个代理已连接
           </p>
         </div>
       </div>

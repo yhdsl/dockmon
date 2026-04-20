@@ -12,7 +12,7 @@ import { ImageDeleteConfirmModal } from '../ImageDeleteConfirmModal'
 import { ConfirmModal } from '@/components/shared/ConfirmModal'
 import { StatusBadge } from '@/components/shared/StatusBadge'
 import { ContainerLinkList } from '@/components/shared/ContainerLinkList'
-import { formatBytes, pluralize } from '@/lib/utils/formatting'
+import { formatBytes } from '@/lib/utils/formatting'
 import { useAuth } from '@/features/auth/AuthContext'
 import { formatRelativeTime } from '@/lib/utils/eventUtils'
 import { getImageDisplayName, makeImageCompositeKey } from '@/lib/utils/image'
@@ -26,20 +26,20 @@ function ImageStatusBadge({ image }: { image: DockerImage }) {
   if (image.in_use) {
     return (
       <StatusBadge variant="success">
-        In Use ({image.container_count})
+        使用中 ({image.container_count})
       </StatusBadge>
     )
   }
   if (image.dangling) {
     return (
       <StatusBadge variant="warning" icon={<AlertTriangle className="h-3 w-3" />}>
-        Dangling
+        悬空镜像
       </StatusBadge>
     )
   }
   return (
     <StatusBadge variant="muted">
-      Unused
+      未使用
     </StatusBadge>
   )
 }
@@ -163,7 +163,7 @@ export function HostImagesTab({ hostId }: HostImagesTabProps) {
     return (
       <div className="p-6">
         <div className="bg-danger/10 text-danger p-4 rounded-lg">
-          Failed to load images: {error.message}
+          加载镜像时出错: {error.message}
         </div>
       </div>
     )
@@ -174,7 +174,7 @@ export function HostImagesTab({ hostId }: HostImagesTabProps) {
     return (
       <div className="p-6 text-center text-muted-foreground">
         <Box className="h-12 w-12 mx-auto mb-3 opacity-50" />
-        No images found on this host.
+        尚未在此主机中找到镜像。
       </div>
     )
   }
@@ -188,7 +188,7 @@ export function HostImagesTab({ hostId }: HostImagesTabProps) {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
             type="text"
-            placeholder="Search images..."
+            placeholder="搜索镜像..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2 bg-surface-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent"
@@ -205,7 +205,7 @@ export function HostImagesTab({ hostId }: HostImagesTabProps) {
           }`}
         >
           <Filter className="h-4 w-4" />
-          Unused Only
+          仅未使用
           {unusedCount > 0 && (
             <span className="ml-1 px-1.5 py-0.5 bg-black/20 rounded text-xs">
               {unusedCount}
@@ -218,9 +218,9 @@ export function HostImagesTab({ hostId }: HostImagesTabProps) {
       {/* Prune button */}
       <div className="flex items-center justify-between">
         <div className="text-sm text-muted-foreground">
-          Showing {filteredImages.length} of {images.length} images
+          正在展示 {filteredImages.length} / {images.length} 个镜像
           {selectedCount > 0 && (
-            <span className="ml-2 text-accent">({selectedCount} selected)</span>
+            <span className="ml-2 text-accent">({selectedCount} 个已选择)</span>
           )}
         </div>
         <button
@@ -229,7 +229,7 @@ export function HostImagesTab({ hostId }: HostImagesTabProps) {
           className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg bg-warning/10 text-warning border border-warning/30 hover:bg-warning/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           <Trash2 className="h-4 w-4" />
-          Prune All Unused
+          修剪未使用的镜像
         </button>
       </div>
 
@@ -247,12 +247,12 @@ export function HostImagesTab({ hostId }: HostImagesTabProps) {
                   className="w-4 h-4 rounded border-border cursor-pointer disabled:opacity-50"
                 />
               </th>
-              <th className="text-left p-3 text-sm font-medium text-muted-foreground">Image</th>
-              <th className="w-24 text-left p-3 text-sm font-medium text-muted-foreground hidden md:table-cell">Size</th>
-              <th className="w-32 text-left p-3 text-sm font-medium text-muted-foreground hidden lg:table-cell">Created</th>
-              <th className="w-28 text-left p-3 text-sm font-medium text-muted-foreground">Status</th>
-              <th className="w-40 text-left p-3 text-sm font-medium text-muted-foreground hidden xl:table-cell">Containers</th>
-              <th className="w-20 p-3 text-sm font-medium text-muted-foreground">Actions</th>
+              <th className="text-left p-3 text-sm font-medium text-muted-foreground">镜像</th>
+              <th className="w-24 text-left p-3 text-sm font-medium text-muted-foreground hidden md:table-cell">大小</th>
+              <th className="w-32 text-left p-3 text-sm font-medium text-muted-foreground hidden lg:table-cell">创建于</th>
+              <th className="w-28 text-left p-3 text-sm font-medium text-muted-foreground">状态</th>
+              <th className="w-40 text-left p-3 text-sm font-medium text-muted-foreground hidden xl:table-cell">容器</th>
+              <th className="w-20 p-3 text-sm font-medium text-muted-foreground">镜像操作</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -310,7 +310,7 @@ export function HostImagesTab({ hostId }: HostImagesTabProps) {
                     <button
                       onClick={() => handleDeleteClick(image)}
                       className="p-2 rounded-lg hover:bg-danger/10 text-danger/70 hover:text-danger transition-colors"
-                      title="Delete image"
+                      title="删除镜像"
                       aria-label={`Delete image ${image.tags?.[0] ?? image.id}`}
                     >
                       <Trash2 className="h-4 w-4" />
@@ -326,7 +326,7 @@ export function HostImagesTab({ hostId }: HostImagesTabProps) {
       {/* Empty filtered state */}
       {filteredImages.length === 0 && images.length > 0 && (
         <div className="text-center text-muted-foreground py-8">
-          No images match your filters.
+          暂无匹配搜索条件的镜像。
         </div>
       )}
 
@@ -336,14 +336,14 @@ export function HostImagesTab({ hostId }: HostImagesTabProps) {
           <div className="max-w-screen-xl mx-auto flex items-center justify-between">
             <div className="text-sm">
               <span className="font-medium">{selectedCount}</span>
-              {' '}{pluralize(selectedCount, 'image')} selected
+              {' '}个镜像已选择
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={clearSelection}
                 className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                Clear Selection
+                清除选择
               </button>
               <button
                 onClick={handleBulkDeleteClick}
@@ -351,7 +351,7 @@ export function HostImagesTab({ hostId }: HostImagesTabProps) {
                 className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg bg-danger text-danger-foreground hover:bg-danger/90 disabled:opacity-50 transition-colors"
               >
                 <Trash2 className="h-4 w-4" />
-                Delete Selected
+                删除所选
               </button>
             </div>
           </div>
@@ -376,16 +376,16 @@ export function HostImagesTab({ hostId }: HostImagesTabProps) {
         isOpen={showPruneConfirm}
         onClose={handlePruneClose}
         onConfirm={handlePruneConfirm}
-        title="Prune Unused Images"
-        description={`This will remove ${unusedCount} unused ${pluralize(unusedCount, 'image')}.`}
-        confirmText="Prune Images"
-        pendingText="Pruning..."
+        title="修剪未使用的镜像"
+        description={`这将删除 ${unusedCount} 个未使用的镜像。`}
+        confirmText="修剪镜像"
+        pendingText="修剪中..."
         variant="warning"
         isPending={pruneMutation.isPending}
       >
         <p className="text-sm text-muted-foreground">
-          Images that are not used by any containers will be permanently deleted.
-          This includes dangling images (untagged layers).
+          未被任何容器使用的镜像将会被永久删除。
+          这也包括了悬空镜像 (缺乏标签的镜像层)。
         </p>
       </ConfirmModal>
     </div>

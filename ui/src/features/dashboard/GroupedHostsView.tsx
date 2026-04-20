@@ -169,7 +169,7 @@ export function GroupedHostsView({ hosts, onHostClick, onViewDetails, onEditHost
     const groupMap = new Map<string, Host[]>()
 
     hosts.forEach((host) => {
-      const primaryTag = host.tags?.[0] || 'Untagged'
+      const primaryTag = host.tags?.[0] || '无标签'
       if (!groupMap.has(primaryTag)) {
         groupMap.set(primaryTag, [])
       }
@@ -188,8 +188,8 @@ export function GroupedHostsView({ hosts, onHostClick, onViewDetails, onEditHost
     if (tagGroupOrder.length === 0) {
       // Default sort: alphabetically, but "Untagged" always last
       return baseGroups.sort((a, b) => {
-        if (a.tag === 'Untagged') return 1
-        if (b.tag === 'Untagged') return -1
+        if (a.tag === '无标签') return 1
+        if (b.tag === '无标签') return -1
         return a.tag.localeCompare(b.tag)
       })
     }
@@ -206,8 +206,8 @@ export function GroupedHostsView({ hosts, onHostClick, onViewDetails, onEditHost
 
     // Add any new groups not in the saved order (alphabetically, Untagged last)
     const newGroups = Array.from(remaining.values()).sort((a, b) => {
-      if (a.tag === 'Untagged') return 1
-      if (b.tag === 'Untagged') return -1
+      if (a.tag === '无标签') return 1
+      if (b.tag === '无标签') return -1
       return a.tag.localeCompare(b.tag)
     })
 
@@ -269,7 +269,7 @@ export function GroupedHostsView({ hosts, onHostClick, onViewDetails, onEditHost
   if (isLoading) {
     return (
       <div className="mt-4">
-        <h2 className="text-lg font-semibold mb-4">Hosts (Grouped by Tag)</h2>
+        <h2 className="text-lg font-semibold mb-4">主机 (按主标签分组)</h2>
         <div className="min-h-[400px]" />
       </div>
     )
@@ -277,7 +277,7 @@ export function GroupedHostsView({ hosts, onHostClick, onViewDetails, onEditHost
 
   return (
     <div className="mt-4">
-      <h2 className="text-lg font-semibold mb-4">Hosts (Grouped by Tag)</h2>
+      <h2 className="text-lg font-semibold mb-4">主机 (按主标签分组)</h2>
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={groups.map((g) => g.tag)} strategy={verticalListSortingStrategy}>
@@ -305,7 +305,7 @@ export function GroupedHostsView({ hosts, onHostClick, onViewDetails, onEditHost
 
             {groups.length === 0 && (
               <div className="p-8 border border-dashed border-border rounded-lg text-center text-muted-foreground">
-                No hosts configured. Add a host to get started.
+                尚未配置任何主机。请添加一个主机以开始使用。
               </div>
             )}
           </div>
@@ -410,7 +410,7 @@ function GroupSection({
             {...dragHandleProps.attributes}
             {...dragHandleProps.listeners}
             className="flex items-center px-3 py-3 cursor-grab active:cursor-grabbing"
-            title="Drag to reorder groups"
+            title="拖动以重新排列分组"
           >
             <GripVertical className="h-5 w-5 text-muted-foreground" />
           </div>
@@ -427,14 +427,14 @@ function GroupSection({
               <ChevronDown className="h-5 w-5 text-muted-foreground" />
             )}
             <span className="font-semibold text-lg">
-              {group.tag === 'Untagged' ? (
+              {group.tag === '无标签' ? (
                 <span className="text-muted-foreground italic">{group.tag}</span>
               ) : (
                 group.tag
               )}
             </span>
             <span className="text-sm text-muted-foreground">
-              ({hostCount} {hostCount === 1 ? 'host' : 'hosts'})
+              ({hostCount} 个主机)
             </span>
           </div>
 
@@ -503,7 +503,7 @@ function GroupSection({
                     height: '48px',
                     zIndex: 10,
                   }}
-                  title="Drag to reorder"
+                  title="拖动以重新排列顺序"
                 />
               </div>
             ))}

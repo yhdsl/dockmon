@@ -24,6 +24,7 @@ import { formatTime } from '@/lib/utils/timeFormat'
 import type { Host } from '@/types/api'
 import { useAuth } from '@/features/auth/AuthContext'
 import { formatBytes, formatNetworkRate } from '@/lib/utils/formatting'
+import {formatSeverity} from "@/lib/utils/eventUtils.ts";
 
 interface HostOverviewTabProps {
   hostId: string
@@ -105,9 +106,9 @@ export function HostOverviewTab({ hostId, host }: HostOverviewTabProps) {
               <div className="flex items-center gap-2">
                 <ArrowUpCircle className="h-4 w-4 text-amber-500" />
                 <div>
-                  <div className="text-sm font-medium">Agent update available</div>
+                  <div className="text-sm font-medium">代理更新可用</div>
                   <div className="text-xs text-muted-foreground">
-                    v{agent.latest_version} (current: v{agent.version})
+                    新版本 v{agent.latest_version} (当前版本: v{agent.version})
                   </div>
                 </div>
               </div>
@@ -120,17 +121,17 @@ export function HostOverviewTab({ hostId, host }: HostOverviewTabProps) {
                   {triggerUpdate.isPending ? (
                     <>
                       <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                      Updating...
+                      更新中...
                     </>
                   ) : (
-                    'Update Agent'
+                    '更新代理'
                   )}
                 </Button>
               )}
             </div>
             {agent.is_container_mode && (
               <div className="mt-2 text-xs text-muted-foreground">
-                This agent runs in a container. Update DockMon to update the agent.
+                该代理正在容器中运行。请更新 DockMon 以同时更新此代理。
               </div>
             )}
           </div>
@@ -142,9 +143,9 @@ export function HostOverviewTab({ hostId, host }: HostOverviewTabProps) {
             <div className="flex items-center gap-2">
               <RefreshCw className="h-4 w-4 text-blue-500 animate-spin" />
               <div>
-                <div className="text-sm font-medium">Agent update in progress</div>
+                <div className="text-sm font-medium">正在更新</div>
                 <div className="text-xs text-muted-foreground">
-                  Agent will reconnect shortly...
+                  代理将很快重新连接...
                 </div>
               </div>
             </div>
@@ -156,11 +157,11 @@ export function HostOverviewTab({ hostId, host }: HostOverviewTabProps) {
           <div className="space-y-4 sm:space-y-6">
             {/* Host Information */}
             <div>
-              <h4 className="text-base sm:text-lg font-medium text-foreground mb-3">Host Information</h4>
+              <h4 className="text-base sm:text-lg font-medium text-foreground mb-3">主机信息</h4>
               <div className="space-y-2">
                 {host.host_ips && host.host_ips.length > 0 ? (
                   <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-2 text-sm">
-                    <span className="text-muted-foreground">IP Addresses</span>
+                    <span className="text-muted-foreground">IP 地址</span>
                     <div className="flex flex-col gap-0.5">
                       {host.host_ips.map((ip) => (
                         <span key={ip} className="text-sm text-foreground">{ip}</span>
@@ -169,16 +170,16 @@ export function HostOverviewTab({ hostId, host }: HostOverviewTabProps) {
                   </div>
                 ) : (
                   <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-2 text-sm">
-                    <span className="text-muted-foreground">Address</span>
+                    <span className="text-muted-foreground">端点</span>
                     <span className="font-mono text-xs break-all">{host.url || '—'}</span>
                   </div>
                 )}
                 <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-2 text-sm">
-                  <span className="text-muted-foreground">OS</span>
-                  <span>{host.os_version || 'Unknown'}</span>
+                  <span className="text-muted-foreground">操作系统</span>
+                  <span>{host.os_version || '未知'}</span>
                 </div>
                 <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-2 text-sm">
-                  <span className="text-muted-foreground">{host.is_podman ? 'Podman' : 'Docker'} Version</span>
+                  <span className="text-muted-foreground">{host.is_podman ? 'Podman' : 'Docker'} 版本</span>
                   <span>{host.docker_version || '—'}</span>
                 </div>
                 <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-2 text-sm">
@@ -186,7 +187,7 @@ export function HostOverviewTab({ hostId, host }: HostOverviewTabProps) {
                   <span>{host.num_cpus || '—'}</span>
                 </div>
                 <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-2 text-sm">
-                  <span className="text-muted-foreground">Memory</span>
+                  <span className="text-muted-foreground">内存</span>
                   <span>{host.total_memory ? formatBytes(host.total_memory) : '—'}</span>
                 </div>
                 {/* Agent info - only for agent-based hosts */}
@@ -194,16 +195,16 @@ export function HostOverviewTab({ hostId, host }: HostOverviewTabProps) {
                   <>
                     <div className="border-t border-border my-2" />
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Agent Version</span>
+                      <span className="text-muted-foreground">代理版本</span>
                       <span>v{agent.version}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Agent Platform</span>
+                      <span className="text-muted-foreground">代理平台</span>
                       <span>{agent.os || 'linux'}/{agent.arch || 'amd64'}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Agent Deployment</span>
-                      <span>{agent.is_container_mode ? 'Container' : 'Systemd'}</span>
+                      <span className="text-muted-foreground">代理部署类型</span>
+                      <span>{agent.is_container_mode ? '基于容器' : '系统服务'}</span>
                     </div>
                   </>
                 )}
@@ -215,13 +216,13 @@ export function HostOverviewTab({ hostId, host }: HostOverviewTabProps) {
               {isEditingTags ? (
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <h4 className="text-lg font-medium text-foreground">Tags</h4>
+                    <h4 className="text-lg font-medium text-foreground">标签</h4>
                   </div>
                   <TagInput
                     value={editedTags}
                     onChange={setEditedTags}
                     suggestions={tagSuggestions}
-                    placeholder="Add tags..."
+                    placeholder="请输入标签内容..."
                     maxTags={20}
                     showPrimaryIndicator={true}
                   />
@@ -232,7 +233,7 @@ export function HostOverviewTab({ hostId, host }: HostOverviewTabProps) {
                       disabled={isLoadingTags}
                       className="flex-1"
                     >
-                      Save
+                      保存
                     </Button>
                     <Button
                       size="sm"
@@ -240,24 +241,24 @@ export function HostOverviewTab({ hostId, host }: HostOverviewTabProps) {
                       onClick={handleCancelEdit}
                       disabled={isLoadingTags}
                     >
-                      Cancel
+                      取消
                     </Button>
                   </div>
                 </div>
               ) : (
                 <div>
                   <div className="flex items-center justify-between mb-3">
-                    <h4 className="text-lg font-medium text-foreground">Tags</h4>
+                    <h4 className="text-lg font-medium text-foreground">标签</h4>
                     <button
                       onClick={handleStartEdit}
                       disabled={!canManageTags}
                       className="text-xs text-primary hover:text-primary/80 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      + Edit
+                      + 编辑
                     </button>
                   </div>
                   {currentTags.length === 0 ? (
-                    <span className="text-sm text-muted-foreground">No tags</span>
+                    <span className="text-sm text-muted-foreground">暂无标签</span>
                   ) : (
                     <div className="flex flex-wrap gap-2">
                       {(currentTags as string[]).map((tag) => (
@@ -271,29 +272,29 @@ export function HostOverviewTab({ hostId, host }: HostOverviewTabProps) {
 
             {/* Events */}
             <div>
-              <h4 className="text-lg font-medium text-foreground mb-3">Recent Events</h4>
+              <h4 className="text-lg font-medium text-foreground mb-3">事件</h4>
               {isLoadingEvents ? (
                 <div className="text-center py-4 text-muted-foreground">
-                  <p className="text-sm">Loading events...</p>
+                  <p className="text-sm">加载事件数据中...</p>
                 </div>
               ) : eventsError ? (
                 <div className="text-center py-4">
                   <AlertCircle className="h-8 w-8 mx-auto mb-2 text-red-500 opacity-50" />
-                  <p className="text-sm text-red-500">Failed to load events</p>
+                  <p className="text-sm text-red-500">无法加载事件数据</p>
                 </div>
               ) : events.length === 0 ? (
                 <div className="text-center py-4 text-muted-foreground">
                   <Calendar className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                  <p className="text-sm">No recent events</p>
+                  <p className="text-sm">最近暂无事件</p>
                 </div>
               ) : (
                 <div className="border border-border rounded-lg overflow-hidden">
                   {/* Mini table header */}
                   <div className="bg-surface-2 px-3 py-1.5 grid grid-cols-[60px_60px_1fr] sm:grid-cols-[80px_70px_1fr] gap-2 text-xs font-medium text-muted-foreground border-b border-border">
-                    <div>TIME</div>
-                    <div className="hidden sm:block">SEVERITY</div>
-                    <div className="sm:hidden">SEV</div>
-                    <div>DETAILS</div>
+                    <div>时间戳</div>
+                    <div className="hidden sm:block">严重程度</div>
+                    <div className="sm:hidden">严重程度</div>
+                    <div>详细信息</div>
                   </div>
                   {/* Events */}
                   <div className="divide-y divide-border bg-surface-1">
@@ -308,7 +309,7 @@ export function HostOverviewTab({ hostId, host }: HostOverviewTabProps) {
                           event.severity === 'warning' ? 'text-yellow-500' :
                           event.severity === 'info' ? 'text-blue-400' : 'text-gray-400'
                         }`}>
-                          {event.severity.charAt(0).toUpperCase() + event.severity.slice(1)}
+                          {formatSeverity(event.severity)}
                         </div>
                         <div className="text-foreground truncate" title={event.title}>
                           {event.title}
@@ -325,7 +326,7 @@ export function HostOverviewTab({ hostId, host }: HostOverviewTabProps) {
           <div className="space-y-4 sm:space-y-6">
             {/* Live Stats Header */}
             <div className="-mb-2 sm:-mb-3">
-              <h4 className="text-base sm:text-lg font-medium text-foreground">Live Stats</h4>
+              <h4 className="text-base sm:text-lg font-medium text-foreground">实时统计数据</h4>
             </div>
 
             {/* CPU Usage */}
@@ -333,7 +334,7 @@ export function HostOverviewTab({ hostId, host }: HostOverviewTabProps) {
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <Cpu className="h-4 w-4 text-amber-500" />
-                  <span className="font-medium text-sm">CPU Usage</span>
+                  <span className="font-medium text-sm">CPU 使用率</span>
                 </div>
                 <span className="text-xs text-muted-foreground">
                   {metrics?.cpu_percent !== undefined
@@ -352,7 +353,7 @@ export function HostOverviewTab({ hostId, host }: HostOverviewTabProps) {
                 </div>
               ) : (
                 <div className="h-[120px] flex items-center justify-center text-muted-foreground text-xs">
-                  No data available
+                  没有可用的数据
                 </div>
               )}
             </div>
@@ -362,7 +363,7 @@ export function HostOverviewTab({ hostId, host }: HostOverviewTabProps) {
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <MemoryStick className="h-4 w-4 text-green-500" />
-                  <span className="font-medium text-sm">Memory Usage</span>
+                  <span className="font-medium text-sm">内存使用率</span>
                 </div>
                 <span className="text-xs text-muted-foreground">
                   {metrics?.mem_bytes
@@ -381,7 +382,7 @@ export function HostOverviewTab({ hostId, host }: HostOverviewTabProps) {
                 </div>
               ) : (
                 <div className="h-[120px] flex items-center justify-center text-muted-foreground text-xs">
-                  No data available
+                  没有可用的数据
                 </div>
               )}
             </div>
@@ -391,7 +392,7 @@ export function HostOverviewTab({ hostId, host }: HostOverviewTabProps) {
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <Network className="h-4 w-4 text-orange-500" />
-                  <span className="font-medium text-sm">Network Traffic</span>
+                  <span className="font-medium text-sm">网络流量</span>
                 </div>
                 <span className="text-xs text-muted-foreground">
                   {metrics?.net_bytes_per_sec !== undefined
@@ -410,7 +411,7 @@ export function HostOverviewTab({ hostId, host }: HostOverviewTabProps) {
                 </div>
               ) : (
                 <div className="h-[120px] flex items-center justify-center text-muted-foreground text-xs">
-                  No data available
+                  没有可用的数据
                 </div>
               )}
             </div>

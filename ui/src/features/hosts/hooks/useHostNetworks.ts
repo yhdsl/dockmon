@@ -11,7 +11,6 @@ import { toast } from 'sonner'
 import { apiClient } from '@/lib/api/client'
 import { batchDeleteWithConcurrency, showBulkDeleteToast } from '@/lib/utils/batch'
 import { getErrorMessage } from '@/lib/utils/errors'
-import { pluralize } from '@/lib/utils/formatting'
 import type { DockerNetwork } from '@/types/api'
 
 interface DeleteNetworkParams {
@@ -97,14 +96,14 @@ export function useDeleteNetwork() {
       return { previousNetworks }
     },
     onSuccess: (data, variables) => {
-      toast.success(data.message || `Network '${variables.networkName}' deleted`)
+      toast.success(data.message || `已成功删除网络 '${variables.networkName}'`)
     },
     onError: (error: unknown, variables, context) => {
       // Rollback on error
       if (context?.previousNetworks) {
         queryClient.setQueryData(['host-networks', variables.hostId], context.previousNetworks)
       }
-      toast.error(getErrorMessage(error, 'Failed to delete network'))
+      toast.error(getErrorMessage(error, '无法删除网络'))
     },
     onSettled: (_data, _error, variables) => {
       // Refetch to sync with actual state
@@ -139,13 +138,13 @@ export function usePruneNetworks(hostId: string) {
       }
 
       if (data.removed_count > 0) {
-        toast.success(`Pruned ${data.removed_count} unused ${pluralize(data.removed_count, 'network')}`)
+        toast.success(`已成功删除 ${data.removed_count} 个未使用的网络}`)
       } else {
-        toast.info('No unused networks to prune')
+        toast.info('没有可修剪的未使用的网络')
       }
     },
     onError: (error: unknown) => {
-      toast.error(getErrorMessage(error, 'Failed to prune networks'))
+      toast.error(getErrorMessage(error, '修剪网络时失败'))
     },
     onSettled: () => {
       // Refetch to sync with actual state
@@ -193,14 +192,14 @@ export function useDeleteNetworks() {
     onSuccess: (results) => {
       const successCount = results.filter(r => r.success).length
       const failCount = results.filter(r => !r.success).length
-      showBulkDeleteToast(successCount, failCount, 'network')
+      showBulkDeleteToast(successCount, failCount, '网络')
     },
     onError: (error: unknown, variables, context) => {
       // Rollback on error
       if (context?.previousNetworks) {
         queryClient.setQueryData(['host-networks', variables.hostId], context.previousNetworks)
       }
-      toast.error(getErrorMessage(error, 'Failed to delete networks'))
+      toast.error(getErrorMessage(error, '无法删除网络'))
     },
     onSettled: (_data, _error, variables) => {
       // Refetch to sync with actual state

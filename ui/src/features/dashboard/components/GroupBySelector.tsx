@@ -19,8 +19,8 @@ interface GroupBySelectorProps {
 }
 
 const options: Array<{ value: GroupByMode; label: string }> = [
-  { value: 'none', label: 'None' },
-  { value: 'tags', label: 'Tag' },
+  { value: 'none', label: '无' },
+  { value: 'tags', label: '主标签' },
 ]
 
 export function GroupBySelector({ value, onChange, disabled = false }: GroupBySelectorProps) {
@@ -28,7 +28,7 @@ export function GroupBySelector({ value, onChange, disabled = false }: GroupBySe
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-sm font-medium text-muted-foreground">Group by:</span>
+      <span className="text-sm font-medium text-muted-foreground">分组依据:</span>
       <DropdownMenu
         trigger={
           <button
@@ -41,7 +41,7 @@ export function GroupBySelector({ value, onChange, disabled = false }: GroupBySe
               'min-w-[120px] justify-between'
             )}
           >
-            <span>{selectedOption?.label ?? 'None'}</span>
+            <span>{selectedOption?.label ?? '无'}</span>
             <ChevronDown className="h-4 w-4 text-muted-foreground" />
           </button>
         }

@@ -17,23 +17,23 @@ interface ContainerModalEventsTabProps {
 }
 
 const TIME_RANGE_OPTIONS = [
-  { value: 1, label: 'Last 1 hour' },
-  { value: 6, label: 'Last 6 hours' },
-  { value: 12, label: 'Last 12 hours' },
-  { value: 24, label: 'Last 24 hours' },
-  { value: 48, label: 'Last 48 hours' },
-  { value: 168, label: 'Last 7 days' },
-  { value: 720, label: 'Last 30 days' },
-  { value: 0, label: 'All time' },
+  { value: 1, label: '最近 1 小时' },
+  { value: 6, label: '最近 6 小时' },
+  { value: 12, label: '最近 12 小时' },
+  { value: 24, label: '最近 24 小时' },
+  { value: 48, label: '最近 48 小时' },
+  { value: 168, label: "最近 7 天" },
+  { value: 720, label: '最近 30 天' },
+  { value: 0, label: '全部时间' },
 ]
 
 const SEVERITY_OPTIONS = ['critical', 'error', 'warning', 'info']
 
 // Event type options matching backend EventType enum values
 const EVENT_TYPE_OPTIONS = [
-  { value: 'state_change', label: 'State Changes' },
-  { value: 'action_taken', label: 'Actions' },
-  { value: 'auto_restart', label: 'Auto-Restart' },
+  { value: 'state_change', label: '状态改变' },
+  { value: 'action_taken', label: '执行操作' },
+  { value: 'auto_restart', label: '自动重启' },
 ]
 
 export function ContainerModalEventsTab({ hostId, containerId }: ContainerModalEventsTabProps) {
@@ -131,7 +131,7 @@ export function ContainerModalEventsTab({ hostId, containerId }: ContainerModalE
   if (isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <div className="text-muted-foreground text-sm">Loading events...</div>
+        <div className="text-muted-foreground text-sm">加载事件数据中...</div>
       </div>
     )
   }
@@ -141,7 +141,7 @@ export function ContainerModalEventsTab({ hostId, containerId }: ContainerModalE
       <div className="flex-1 flex items-center justify-center">
         <div className="text-center">
           <AlertCircle className="h-12 w-12 mx-auto mb-3 text-red-500 opacity-50" />
-          <p className="text-sm text-red-500">Failed to load events</p>
+          <p className="text-sm text-red-500">无法加载事件数据</p>
         </div>
       </div>
     )
@@ -155,7 +155,7 @@ export function ContainerModalEventsTab({ hostId, containerId }: ContainerModalE
           <div className="flex items-center gap-2 text-sm">
             <Bell className="h-4 w-4 text-yellow-500" />
             <span className="text-foreground">
-              <span className="font-semibold text-yellow-500">{alertEventCount}</span> alert event{alertEventCount !== 1 ? 's' : ''} logged for this container
+              已在此容器内记录了 <span className="font-semibold text-yellow-500">{alertEventCount}</span> 条告警事件
             </span>
           </div>
         </div>
@@ -164,7 +164,7 @@ export function ContainerModalEventsTab({ hostId, containerId }: ContainerModalE
       {/* Filters */}
       <div className="border-b border-border bg-surface px-6 py-4 shrink-0">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold">Container Events</h3>
+          <h3 className="text-lg font-semibold">容器事件</h3>
           <div className="flex items-center gap-2">
             <button
               onClick={exportToCSV}
@@ -172,21 +172,21 @@ export function ContainerModalEventsTab({ hostId, containerId }: ContainerModalE
               className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border bg-surface-1 hover:bg-surface-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Download className="h-3.5 w-3.5" />
-              <span>Export CSV</span>
+              <span>导出 CSV</span>
             </button>
             <button
               onClick={toggleSortOrder}
               className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border bg-surface-1 hover:bg-surface-2 text-sm"
             >
               <ArrowUpDown className="h-3.5 w-3.5" />
-              <span>{sortOrder === 'desc' ? 'Newest First' : 'Oldest First'}</span>
+              <span>{sortOrder === 'desc' ? '最新优先' : '最早优先'}</span>
             </button>
             <button
               onClick={resetFilters}
               className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border bg-surface-1 hover:bg-surface-2 text-sm"
             >
               <X className="h-3.5 w-3.5" />
-              <span>Reset</span>
+              <span>重置筛选</span>
             </button>
           </div>
         </div>
@@ -195,7 +195,7 @@ export function ContainerModalEventsTab({ hostId, containerId }: ContainerModalE
         <div className="grid grid-cols-4 gap-3">
           {/* Time Range */}
           <div>
-            <label className="block text-xs font-medium text-muted-foreground mb-1.5">TIME RANGE</label>
+            <label className="block text-xs font-medium text-muted-foreground mb-1.5">时间范围</label>
             <select
               value={filters.hours}
               onChange={(e) => updateFilter('hours', Number(e.target.value))}
@@ -211,16 +211,16 @@ export function ContainerModalEventsTab({ hostId, containerId }: ContainerModalE
 
           {/* Severity */}
           <div>
-            <label className="block text-xs font-medium text-muted-foreground mb-1.5">SEVERITY</label>
+            <label className="block text-xs font-medium text-muted-foreground mb-1.5">严重程度</label>
             <select
               value={filters.severity}
               onChange={(e) => updateFilter('severity', e.target.value)}
               className="w-full px-3 py-2 rounded-lg border border-border bg-surface-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             >
-              <option value="">All Severity</option>
+              <option value="">全部等级</option>
               {SEVERITY_OPTIONS.map((sev) => (
                 <option key={sev} value={sev}>
-                  {sev.charAt(0).toUpperCase() + sev.slice(1)}
+                  {{'critical': "严重", 'error': "错误", 'warning': "警告", 'info': "通知"}[sev]}
                 </option>
               ))}
             </select>
@@ -228,13 +228,13 @@ export function ContainerModalEventsTab({ hostId, containerId }: ContainerModalE
 
           {/* Event Type */}
           <div>
-            <label className="block text-xs font-medium text-muted-foreground mb-1.5">EVENT TYPE</label>
+            <label className="block text-xs font-medium text-muted-foreground mb-1.5">事件类型</label>
             <select
               value={filters.eventType}
               onChange={(e) => updateFilter('eventType', e.target.value)}
               className="w-full px-3 py-2 rounded-lg border border-border bg-surface-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             >
-              <option value="">All Types</option>
+              <option value="">全部类型</option>
               {EVENT_TYPE_OPTIONS.map((type) => (
                 <option key={type.value} value={type.value}>
                   {type.label}
@@ -245,12 +245,12 @@ export function ContainerModalEventsTab({ hostId, containerId }: ContainerModalE
 
           {/* Search */}
           <div>
-            <label className="block text-xs font-medium text-muted-foreground mb-1.5">SEARCH</label>
+            <label className="block text-xs font-medium text-muted-foreground mb-1.5">搜索</label>
             <input
               type="text"
               value={filters.search}
               onChange={(e) => updateFilter('search', e.target.value)}
-              placeholder="Search..."
+              placeholder="请输入搜索内容..."
               className="w-full px-3 py-2 rounded-lg border border-border bg-surface-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
@@ -262,16 +262,16 @@ export function ContainerModalEventsTab({ hostId, containerId }: ContainerModalE
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center py-8 text-muted-foreground">
             <Calendar className="h-12 w-12 mx-auto mb-3 opacity-50" />
-            <p className="text-sm">No events found</p>
+            <p className="text-sm">暂无事件</p>
           </div>
         </div>
       ) : (
         <>
           {/* Table Header */}
           <div className="sticky top-0 bg-surface border-b border-border px-6 py-2 grid grid-cols-[200px_120px_1fr] gap-4 text-xs font-medium text-muted-foreground shrink-0">
-            <div>TIMESTAMP</div>
-            <div>SEVERITY</div>
-            <div>EVENT DETAILS</div>
+            <div>时间戳</div>
+            <div>严重程度</div>
+            <div>详细信息</div>
           </div>
 
           {/* Table Rows - scrollable */}
@@ -284,7 +284,7 @@ export function ContainerModalEventsTab({ hostId, containerId }: ContainerModalE
           {/* Event Count Footer */}
           <div className="border-t border-border px-6 py-3 shrink-0">
             <div className="text-sm text-muted-foreground">
-              Showing {filteredEvents.length} event{filteredEvents.length !== 1 ? 's' : ''}
+              正在展示 {filteredEvents.length} 条事件
             </div>
           </div>
         </>

@@ -39,7 +39,7 @@ export function RecentEventsWidget() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <Activity className="h-5 w-5" />
-            Recent Events
+            最近事件
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -59,11 +59,11 @@ export function RecentEventsWidget() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <Activity className="h-5 w-5" />
-            Recent Events
+            最近事件
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-danger">Failed to load events</p>
+          <p className="text-sm text-danger">加载事件数据时出错</p>
         </CardContent>
       </Card>
     )
@@ -76,12 +76,12 @@ export function RecentEventsWidget() {
       <CardHeader className="flex-shrink-0">
         <CardTitle className="flex items-center gap-2 text-base">
           <Activity className="h-5 w-5" />
-          Recent Events
+          最近事件
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 overflow-auto">
         {events.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No recent events</p>
+          <p className="text-sm text-muted-foreground">最近暂无事件</p>
         ) : (
           <div className="space-y-3">
             {events.map((event) => {

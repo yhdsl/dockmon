@@ -51,7 +51,7 @@ export function DashboardSettings() {
         showKpiBar: checked
       }
     })
-    toast.success(checked ? 'KPI bar enabled' : 'KPI bar disabled')
+    toast.success(checked ? '摘要栏已启用' : '摘要栏已禁用')
   }
 
   const handleToggleStatsWidgets = (checked: boolean) => {
@@ -61,7 +61,7 @@ export function DashboardSettings() {
         showStatsWidgets: checked
       }
     })
-    toast.success(checked ? 'Stats widgets enabled' : 'Stats widgets disabled')
+    toast.success(checked ? '状态小部件已启用' : '状态小部件已禁用')
   }
 
   const handleToggleOptimizedLoading = (checked: boolean) => {
@@ -71,7 +71,7 @@ export function DashboardSettings() {
         optimizedLoading: checked
       }
     })
-    toast.success(checked ? 'Optimized loading enabled' : 'Optimized loading disabled')
+    toast.success(checked ? '加载优化已启用' : '加载优化已禁用')
   }
 
   const handleToggleContainerStats = (checked: boolean) => {
@@ -81,26 +81,26 @@ export function DashboardSettings() {
         showContainerStats: checked
       }
     })
-    toast.success(checked ? 'Container statistics enabled' : 'Container statistics disabled')
+    toast.success(checked ? '容器统计信息已启用' : '容器统计信息已禁用')
   }
 
   const handleToggleSimplifiedWorkflow = (checked: boolean) => {
     setSimplifiedWorkflow(checked)
-    toast.success(checked ? 'Simplified workflow enabled - drawers skipped' : 'Simplified workflow disabled - drawers shown')
+    toast.success(checked ? '工作流简化已启用 - 已跳过抽屉视图' : '工作流简化已禁用 - 已显示抽屉视图')
   }
 
   const handleEditorThemeChange = async (theme: string) => {
     try {
       await updateGlobalSettings.mutateAsync({ editor_theme: theme })
-      toast.success(`Editor theme changed to ${EDITOR_THEMES.find(t => t.value === theme)?.label}`)
+      toast.success(`已更新编辑器主题为 ${EDITOR_THEMES.find(t => t.value === theme)?.label}`)
     } catch {
-      toast.error('Failed to update editor theme')
+      toast.error('无法更新编辑器主题')
     }
   }
 
   const handleTimeFormatChange = (format: '12h' | '24h') => {
     setTimeFormat(format)
-    toast.success(`Time format changed to ${format === '12h' ? '12-hour' : '24-hour'}`)
+    toast.success(`时间格式已更新为 ${format === '12h' ? '12 小时制' : '24 小时制'}`)
   }
 
   return (
@@ -108,30 +108,30 @@ export function DashboardSettings() {
       {/* Dashboard Summary */}
       <div>
         <div className="mb-4">
-          <h3 className="text-lg font-semibold text-white">Dashboard Summary</h3>
+          <h3 className="text-lg font-semibold text-white">仪表盘摘要</h3>
           <p className="text-xs text-gray-400 mt-1">
-            Control which elements appear on your dashboard
+            控制在仪表盘中显示的部件
           </p>
         </div>
         <div className="divide-y divide-border">
           <ToggleSwitch
             id="show-kpi-bar"
-            label="Show KPI bar"
-            description="Display the summary bar at the top of the dashboard showing total hosts, containers, and system health"
+            label="显示摘要栏"
+            description="在仪表板的顶部显示摘要栏，以展示主机状态、容器状态以及系统健康状态"
             checked={showKpiBar}
             onChange={handleToggleKpiBar}
           />
           <ToggleSwitch
             id="show-stats-widgets"
-            label="Show stats widgets"
-            description="Display detailed statistics widgets on the dashboard"
+            label="显示状态小部件"
+            description="在仪表板中显示包含详细统计信息的小部件"
             checked={showStatsWidgets}
             onChange={handleToggleStatsWidgets}
           />
           <ToggleSwitch
             id="show-container-stats"
-            label="Show CPU/RAM statistics per container"
-            description="Display CPU usage and memory consumption for each running container in the expanded view"
+            label="显示每个容器的 CPU/RAM 统计信息"
+            description="在展开视图中为每个正在运行的容器展示 CPU 和内存的使用状态"
             checked={showContainerStats}
             onChange={handleToggleContainerStats}
           />
@@ -141,29 +141,29 @@ export function DashboardSettings() {
       {/* Display */}
       <div>
         <div className="mb-4">
-          <h3 className="text-lg font-semibold text-white">Display</h3>
+          <h3 className="text-lg font-semibold text-white">显示</h3>
           <p className="text-xs text-gray-400 mt-1">
-            Customize how information is displayed
+            自定义如何显示信息数据
           </p>
         </div>
         <div className="space-y-4">
           <div>
             <label htmlFor="time-format" className="block text-sm font-medium text-gray-300 mb-2">
-              Time Format
+              时间格式
             </label>
             <Select value={timeFormat} onValueChange={(v) => handleTimeFormatChange(v as '12h' | '24h')}>
               <SelectTrigger id="time-format" className="w-full max-w-xs">
                 <SelectValue>
-                  {timeFormat === '12h' ? '12-hour (1:30 PM)' : '24-hour (13:30)'}
+                  {timeFormat === '12h' ? '12 小时制 (1:30 PM)' : '24 小时制 (13:30)'}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="12h">12-hour (1:30 PM)</SelectItem>
-                <SelectItem value="24h">24-hour (13:30)</SelectItem>
+                <SelectItem value="12h">12 小时制 (1:30 PM)</SelectItem>
+                <SelectItem value="24h">24 小时制 (13:30)</SelectItem>
               </SelectContent>
             </Select>
             <p className="mt-1 text-xs text-gray-400">
-              Choose how times are displayed throughout the application
+              选择应用中时间的显示格式
             </p>
           </div>
         </div>
@@ -172,16 +172,16 @@ export function DashboardSettings() {
       {/* Workflow */}
       <div>
         <div className="mb-4">
-          <h3 className="text-lg font-semibold text-white">Workflow</h3>
+          <h3 className="text-lg font-semibold text-white">工作流</h3>
           <p className="text-xs text-gray-400 mt-1">
-            Customize how you interact with hosts and containers
+            自定义主机与容器的交互方式
           </p>
         </div>
         <div className="divide-y divide-border">
           <ToggleSwitch
             id="simplified-workflow"
-            label="Simplified workflow"
-            description="Skip the drawer view and open full details modal directly when clicking on hosts or containers. Ideal for users who prefer immediate access to all information."
+            label="工作流简化"
+            description="跳过抽屉视图，在点击主机或容器时直接打开详细信息页面。适合立即希望查阅全部信息的用户。"
             checked={simplifiedWorkflow}
             onChange={handleToggleSimplifiedWorkflow}
           />
@@ -191,16 +191,16 @@ export function DashboardSettings() {
       {/* Performance */}
       <div>
         <div className="mb-4">
-          <h3 className="text-lg font-semibold text-white">Performance</h3>
+          <h3 className="text-lg font-semibold text-white">性能</h3>
           <p className="text-xs text-gray-400 mt-1">
-            Optimize dashboard performance for better battery life and responsiveness
+            优化仪表板性能以提升电池续航和响应速度
           </p>
         </div>
         <div className="divide-y divide-border">
           <ToggleSwitch
             id="optimized-loading"
-            label="Optimized dashboard loading"
-            description="Pause sparkline updates for host cards scrolled out of view. Saves CPU and battery on large dashboards (50+ hosts). Disable for continuous updates on all hosts."
+            label="仪表盘加载优化"
+            description="对于不在视图中的主机卡片暂停其统计数据折线图的更新。在大型仪表板 (50+ 主机) 中可有效节省 CPU 占用和电量消耗。禁用后将持续更新所有主机的折线图。"
             checked={optimizedLoading}
             onChange={handleToggleOptimizedLoading}
           />
@@ -210,15 +210,15 @@ export function DashboardSettings() {
       {/* Editor */}
       <div>
         <div className="mb-4">
-          <h3 className="text-lg font-semibold text-white">Editor</h3>
+          <h3 className="text-lg font-semibold text-white">编辑器</h3>
           <p className="text-xs text-gray-400 mt-1">
-            Customize the code editor appearance for stack and container configurations
+            自定义代码编辑器的外观主题，包含堆栈页面和容器配置页面。
           </p>
         </div>
         <div className="space-y-4">
           <div>
             <label htmlFor="editor-theme" className="block text-sm font-medium text-gray-300 mb-2">
-              Editor Theme
+              编辑器主题
             </label>
             <Select value={editorTheme} onValueChange={handleEditorThemeChange}>
               <SelectTrigger id="editor-theme" className="w-full">
@@ -235,7 +235,7 @@ export function DashboardSettings() {
               </SelectContent>
             </Select>
             <p className="mt-1 text-xs text-gray-400">
-              Color theme for YAML and JSON editing in stack deployments
+              堆栈部署中 YAML 和 JSON 编辑器的主题配色。
             </p>
           </div>
         </div>

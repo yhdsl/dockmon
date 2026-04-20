@@ -42,10 +42,10 @@ export function DeleteConfirmModal({
             </div>
             <div>
               <h2 className="text-lg font-semibold text-foreground">
-                Delete Container{containers.length !== 1 ? 's' : ''}
+                删除容器
               </h2>
               <p className="text-sm text-muted-foreground mt-1">
-                This action cannot be undone. The container{containers.length !== 1 ? 's' : ''} and all data will be permanently deleted.
+                此操作将无法撤销。容器及其数据将会被永久删除。
               </p>
             </div>
           </div>
@@ -90,11 +90,11 @@ export function DeleteConfirmModal({
                 className="w-4 h-4 rounded border-border"
               />
               <span className="text-sm text-foreground">
-                Also remove anonymous volumes
+                同时删除匿名卷
               </span>
             </label>
             <p className="text-xs text-muted-foreground mt-2">
-              This will remove volumes that were created with the container but are not associated with a data volume.
+              这将删除由此容器创建的但未关联到任何数据卷的匿名卷。
             </p>
           </fieldset>
         </div>
@@ -105,14 +105,14 @@ export function DeleteConfirmModal({
             onClick={onClose}
             className="px-4 py-2 text-sm font-medium text-foreground hover:bg-surface-2 rounded transition-colors"
           >
-            Cancel
+            取消
           </button>
           <fieldset disabled={!canOperate} className="disabled:opacity-60">
             <button
               onClick={handleConfirm}
               className="px-4 py-2 text-sm font-medium rounded transition-colors bg-danger text-danger-foreground hover:bg-danger/90"
             >
-              Delete {containers.length} Container{containers.length !== 1 ? 's' : ''}
+              删除 {containers.length} 个容器
             </button>
           </fieldset>
         </div>

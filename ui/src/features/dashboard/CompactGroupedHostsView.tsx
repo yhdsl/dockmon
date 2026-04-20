@@ -49,7 +49,7 @@ export function CompactGroupedHostsView({ hosts, onHostClick }: CompactGroupedHo
     const groupMap = new Map<string, CompactHost[]>()
 
     hosts.forEach((host) => {
-      const primaryTag = host.tags?.[0] || 'Untagged'
+      const primaryTag = host.tags?.[0] || '无标签'
       if (!groupMap.has(primaryTag)) {
         groupMap.set(primaryTag, [])
       }
@@ -68,8 +68,8 @@ export function CompactGroupedHostsView({ hosts, onHostClick }: CompactGroupedHo
     if (tagGroupOrder.length === 0) {
       // Default sort: alphabetically, but "Untagged" always last
       return baseGroups.sort((a, b) => {
-        if (a.tag === 'Untagged') return 1
-        if (b.tag === 'Untagged') return -1
+        if (a.tag === '无标签') return 1
+        if (b.tag === '无标签') return -1
         return a.tag.localeCompare(b.tag)
       })
     }
@@ -86,8 +86,8 @@ export function CompactGroupedHostsView({ hosts, onHostClick }: CompactGroupedHo
 
     // Add any new groups not in the saved order (alphabetically, Untagged last)
     const newGroups = Array.from(remaining.values()).sort((a, b) => {
-      if (a.tag === 'Untagged') return 1
-      if (b.tag === 'Untagged') return -1
+      if (a.tag === '无标签') return 1
+      if (b.tag === '无标签') return -1
       return a.tag.localeCompare(b.tag)
     })
 
@@ -143,7 +143,7 @@ export function CompactGroupedHostsView({ hosts, onHostClick }: CompactGroupedHo
   if (isLoading) {
     return (
       <div className="mt-4">
-        <h2 className="text-lg font-semibold mb-4">Hosts (Grouped by Tag)</h2>
+        <h2 className="text-lg font-semibold mb-4">主机 (按主标签分组)</h2>
         <div className="min-h-[400px]" />
       </div>
     )
@@ -151,7 +151,7 @@ export function CompactGroupedHostsView({ hosts, onHostClick }: CompactGroupedHo
 
   return (
     <div className="mt-4">
-      <h2 className="text-lg font-semibold mb-4">Hosts (Grouped by Tag)</h2>
+      <h2 className="text-lg font-semibold mb-4">主机 (按主标签分组)</h2>
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={groups.map((g) => g.tag)} strategy={verticalListSortingStrategy}>
@@ -168,7 +168,7 @@ export function CompactGroupedHostsView({ hosts, onHostClick }: CompactGroupedHo
 
             {groups.length === 0 && (
               <div className="p-8 border border-dashed border-border rounded-lg text-center text-muted-foreground">
-                No hosts configured. Add a host to get started.
+                尚未配置任何主机。请添加一个主机以开始使用。
               </div>
             )}
           </div>
@@ -216,7 +216,7 @@ function CompactGroupSection({
             {...dragHandleProps.attributes}
             {...dragHandleProps.listeners}
             className="flex items-center px-3 py-2.5 cursor-grab active:cursor-grabbing"
-            title="Drag to reorder groups"
+            title="拖动以重新排列分组"
           >
             <GripVertical className="h-4 w-4 text-muted-foreground" />
           </div>
@@ -233,14 +233,14 @@ function CompactGroupSection({
               <ChevronDown className="h-4 w-4 text-muted-foreground" />
             )}
             <span className="font-semibold text-base">
-              {group.tag === 'Untagged' ? (
+              {group.tag === '无标签' ? (
                 <span className="text-muted-foreground italic">{group.tag}</span>
               ) : (
                 group.tag
               )}
             </span>
             <span className="text-sm text-muted-foreground">
-              ({hostCount} {hostCount === 1 ? 'host' : 'hosts'})
+              ({hostCount} 个主机)
             </span>
           </div>
 
@@ -420,7 +420,7 @@ function SortableHostCard({ host, onHostClick }: SortableHostCardProps) {
         {...listeners}
         className="absolute right-0 top-0 h-full cursor-grab active:cursor-grabbing"
         style={{ width: 'calc(100% - 200px)', zIndex: 10 }}
-        title="Drag to reorder"
+        title="拖动以重新排列顺序"
       />
       <CompactHostCard
         host={host}

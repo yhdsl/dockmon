@@ -34,7 +34,7 @@ export function ContainerEventsTab({ hostId, containerId }: ContainerEventsTabPr
     return (
       <div className="p-4">
         <div className="text-center py-8 text-muted-foreground">
-          <p className="text-sm">Loading events...</p>
+          <p className="text-sm">加载事件中...</p>
         </div>
       </div>
     )
@@ -45,7 +45,7 @@ export function ContainerEventsTab({ hostId, containerId }: ContainerEventsTabPr
       <div className="p-4">
         <div className="text-center py-8">
           <AlertCircle className="h-12 w-12 mx-auto mb-3 text-red-500 opacity-50" />
-          <p className="text-sm text-red-500">Failed to load events</p>
+          <p className="text-sm text-red-500">加载事件时出错</p>
         </div>
       </div>
     )
@@ -59,7 +59,7 @@ export function ContainerEventsTab({ hostId, containerId }: ContainerEventsTabPr
           <div className="flex items-center gap-2 text-sm">
             <Bell className="h-4 w-4 text-yellow-500" />
             <span className="text-foreground">
-              <span className="font-semibold text-yellow-500">{alertEventCount}</span> alert event{alertEventCount !== 1 ? 's' : ''} logged
+              已记录 <span className="font-semibold text-yellow-500">{alertEventCount}</span> 个告警事件
             </span>
           </div>
         </div>
@@ -69,7 +69,7 @@ export function ContainerEventsTab({ hostId, containerId }: ContainerEventsTabPr
         <div className="flex items-center justify-center flex-1">
           <div className="text-center py-8 text-muted-foreground">
             <Calendar className="h-12 w-12 mx-auto mb-3 opacity-50" />
-            <p className="text-sm">No events found for this container</p>
+            <p className="text-sm">未在此容器中找到事件</p>
           </div>
         </div>
       ) : (
@@ -85,7 +85,7 @@ export function ContainerEventsTab({ hostId, containerId }: ContainerEventsTabPr
           {totalPages > 1 && (
             <div className="border-t border-border px-4 py-3 flex items-center justify-between shrink-0">
               <div className="text-sm text-muted-foreground">
-                Showing {startIndex + 1}-{Math.min(endIndex, allEvents.length)} of {allEvents.length} events
+                显示 {startIndex + 1}-{Math.min(endIndex, allEvents.length)} ({allEvents.length}) 个事件
               </div>
 
               <div className="flex items-center gap-2">
@@ -95,11 +95,11 @@ export function ContainerEventsTab({ hostId, containerId }: ContainerEventsTabPr
                   className="flex items-center gap-1 px-2 py-1 rounded-lg border border-border hover:bg-surface-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                 >
                   <ChevronLeft className="h-3.5 w-3.5" />
-                  Prev
+                  上一页
                 </button>
 
                 <div className="text-sm text-muted-foreground">
-                  Page {currentPage} of {totalPages}
+                  第 {currentPage} 页 / 共 {totalPages} 页
                 </div>
 
                 <button
@@ -107,7 +107,7 @@ export function ContainerEventsTab({ hostId, containerId }: ContainerEventsTabPr
                   disabled={currentPage === totalPages}
                   className="flex items-center gap-1 px-2 py-1 rounded-lg border border-border hover:bg-surface-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                 >
-                  Next
+                  下一页
                   <ChevronRight className="h-3.5 w-3.5" />
                 </button>
               </div>

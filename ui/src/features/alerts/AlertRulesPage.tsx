@@ -83,8 +83,8 @@ export function AlertRulesPage() {
       {/* Header */}
       <div className="flex items-center justify-between border-b border-gray-800 bg-[#0d1117] px-6 py-4">
         <div>
-          <h1 className="text-xl font-semibold text-white">Alert Rules</h1>
-          <p className="text-sm text-gray-400">Configure rules that trigger alerts based on metrics and conditions</p>
+          <h1 className="text-xl font-semibold text-white">告警规则</h1>
+          <p className="text-sm text-gray-400">创建基于监控指标和逻辑条件触发的告警规则</p>
         </div>
 
         <button
@@ -93,19 +93,19 @@ export function AlertRulesPage() {
           className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-60"
         >
           <Plus className="h-4 w-4" />
-          Create Rule
+          创建告警规则
         </button>
       </div>
 
       {/* Rules List */}
       <div className="flex-1 overflow-auto">
         {isLoading ? (
-          <div className="flex h-full items-center justify-center text-gray-400">Loading rules...</div>
+          <div className="flex h-full items-center justify-center text-gray-400">加载告警规则中...</div>
         ) : rules.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center text-gray-400">
             <Settings className="mb-2 h-12 w-12" />
-            <p className="text-lg">No alert rules configured</p>
-            <p className="text-sm">Create your first rule to start monitoring</p>
+            <p className="text-lg">尚未设置任何告警规则</p>
+            <p className="text-sm">创建你的第一个告警规则以开始监控</p>
           </div>
         ) : (
           <div className="p-6">
@@ -123,17 +123,29 @@ export function AlertRulesPage() {
                       <div className="flex items-center gap-3 mb-2">
                         <h3 className="text-lg font-semibold text-white">{rule.name}</h3>
                         <span className={`rounded-full px-2 py-0.5 text-xs font-medium border ${getSeverityColor(rule.severity)}`}>
-                          {rule.severity}
+                          {{'info': '通知','warning': '警告','error': '错误','critical': '严重',}[rule.severity]}
                         </span>
                         <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${getScopeColor(rule.scope)}`}>
-                          {rule.scope}
+                          {{'host': '主机','container': '容器',}[rule.scope]}
                         </span>
                         <span className="rounded-full bg-gray-800 px-2 py-0.5 text-xs font-medium text-gray-300">
-                          {rule.kind}
+                            {{
+                              cpu_high: 'CPU占用高',
+                              memory_high: '内存占用高',
+                              disk_low: '磁盘可用低',
+                              container_unhealthy: '容器不健康(内置)',
+                              health_check_failed: '容器不健康',
+                              container_stopped: '容器已停止',
+                              container_restart: '容器已重启',
+                              host_down: '主机离线',
+                              update_available: '更新可用',
+                              update_completed: '更新完成',
+                              update_failed: '更新失败',
+                            }[rule.kind]}
                         </span>
                         {!rule.enabled && (
                           <span className="rounded-full bg-gray-700 px-2 py-0.5 text-xs font-medium text-gray-400">
-                            Disabled
+                            已禁用
                           </span>
                         )}
                       </div>
@@ -144,16 +156,16 @@ export function AlertRulesPage() {
                       <div className="flex flex-wrap gap-4 text-xs text-gray-500">
                         {rule.metric && rule.threshold && (
                           <span>
-                            Metric: {rule.metric} {rule.operator} {rule.threshold}
+                            监控指标: {{'cpu_percent': ' CPU 占用率','memory_percent': '内存占用率','disk_percent': '磁盘占用率',}[rule.metric]} {rule.operator} {rule.threshold}%
                           </span>
                         )}
                         {rule.alert_active_delay_seconds > 0 && (
                           <span>
-                            Alert Delay: {rule.alert_active_delay_seconds}s
+                            告警触发延迟: {rule.alert_active_delay_seconds}s
                           </span>
                         )}
-                        {rule.occurrences && <span>Occurrences: {rule.occurrences}</span>}
-                        {rule.notification_cooldown_seconds > 0 && <span>Cooldown: {rule.notification_cooldown_seconds}s</span>}
+                        {rule.occurrences && <span>触发次数: {rule.occurrences}</span>}
+                        {rule.notification_cooldown_seconds > 0 && <span>通知冷却时长: {rule.notification_cooldown_seconds}s</span>}
                       </div>
                     </div>
 
@@ -167,7 +179,7 @@ export function AlertRulesPage() {
                               ? 'text-green-500 hover:bg-gray-800'
                               : 'text-gray-500 hover:bg-gray-800 hover:text-gray-300'
                           }`}
-                          title={rule.enabled ? 'Disable rule' : 'Enable rule'}
+                          title={rule.enabled ? '禁用告警规则' : '启用告警规则'}
                         >
                           {rule.enabled ? <Power className="h-4 w-4" /> : <PowerOff className="h-4 w-4" />}
                         </button>
@@ -175,7 +187,7 @@ export function AlertRulesPage() {
                         <button
                           onClick={() => setEditingRule(rule)}
                           className="rounded-md p-2 text-gray-400 transition-colors hover:bg-gray-800 hover:text-white"
-                          title="Edit rule"
+                          title="编辑告警规则"
                         >
                           <Edit className="h-4 w-4" />
                         </button>
@@ -183,7 +195,7 @@ export function AlertRulesPage() {
                         <button
                           onClick={() => setDeletingRuleId(rule.id)}
                           className="rounded-md p-2 text-gray-400 transition-colors hover:bg-gray-800 hover:text-red-400"
-                          title="Delete rule"
+                          title="删除告警规则"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -217,10 +229,9 @@ export function AlertRulesPage() {
                 <AlertTriangle className="h-6 w-6 text-red-500" />
               </div>
               <div className="flex-1">
-                <h3 className="mb-2 text-lg font-semibold text-white">Delete Alert Rule</h3>
+                <h3 className="mb-2 text-lg font-semibold text-white">删除告警规则</h3>
                 <p className="text-sm text-gray-400">
-                  Are you sure you want to delete this rule? This action cannot be undone. Existing alerts created by
-                  this rule will remain.
+                  确定要删除此告警规则吗？该操作无法撤销。但由该告警规则创建的告警数据将会被保留。
                 </p>
               </div>
             </div>
@@ -229,14 +240,14 @@ export function AlertRulesPage() {
                 onClick={() => setDeletingRuleId(null)}
                 className="rounded-md bg-gray-800 px-4 py-2 text-gray-300 transition-colors hover:bg-gray-700"
               >
-                Cancel
+                取消
               </button>
               <button
                 onClick={handleDelete}
                 disabled={!canManage || deleteRule.isPending}
                 className="rounded-md bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-700 disabled:opacity-50"
               >
-                {deleteRule.isPending ? 'Deleting...' : 'Delete Rule'}
+                {deleteRule.isPending ? '删除中...' : '删除告警规则'}
               </button>
             </div>
           </div>

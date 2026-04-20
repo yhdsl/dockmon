@@ -241,14 +241,14 @@ export function StackEditor({
     }
 
     if (!composeYaml.trim()) {
-      newErrors.compose = 'Compose YAML is required'
+      newErrors.compose = 'Compose YAML 文本为必填项'
     }
 
     // Validate YAML syntax
     if (configEditorRef.current && composeYaml.trim()) {
       const validation = configEditorRef.current.validate()
       if (!validation.valid) {
-        newErrors.compose = validation.error || 'Invalid YAML format'
+        newErrors.compose = validation.error || '无效的 YAML 格式'
       }
     }
 
@@ -266,7 +266,7 @@ export function StackEditor({
           compose_yaml: composeYaml,
           env_content: envContent.trim() || null,
         })
-        toast.success(`Stack "${stackName}" created`)
+        toast.success(`已成功创建堆栈 "${stackName}"`)
         onStackChange(stackName.trim())
       } else if (selectedStackName) {
         if (hasNameChange) {
@@ -283,7 +283,7 @@ export function StackEditor({
           env_content: envContent.trim() || null,
         })
 
-        toast.success('Stack saved')
+        toast.success('堆栈已保存')
         if (hasNameChange) {
           onStackChange(stackName.trim())
         }
@@ -297,9 +297,9 @@ export function StackEditor({
     } catch (error: unknown) {
       const errorMessage = getErrorMessage(error)
       if (errorMessage.includes('already exists')) {
-        setErrors({ name: 'A stack with this name already exists' })
+        setErrors({ name: '已存在同名的堆栈' })
       } else {
-        handleApiError(error, 'save')
+        handleApiError(error, '保存')
       }
       return false
     }
@@ -311,11 +311,11 @@ export function StackEditor({
 
     try {
       await deleteStack.mutateAsync(selectedStackName)
-      toast.success(`Stack "${selectedStackName}" deleted`)
+      toast.success(`已成功删除堆栈 "${selectedStackName}"`)
       onStackChange(null)
       resetForm()
     } catch (error: unknown) {
-      handleApiError(error, 'delete')
+      handleApiError(error, '删除')
     } finally {
       setActiveDialog(null)
     }
@@ -336,10 +336,10 @@ export function StackEditor({
         name: selectedStackName,
         dest_name: copyDestName.trim(),
       })
-      toast.success(`Stack copied to "${copyDestName}"`)
+      toast.success(`堆栈已克隆为 "${copyDestName}"`)
       onStackChange(copyDestName.trim())
     } catch (error: unknown) {
-      handleApiError(error, 'copy')
+      handleApiError(error, '克隆')
     } finally {
       setActiveDialog(null)
       setCopyDestName('')
@@ -368,7 +368,7 @@ export function StackEditor({
       setDeployingHostName(hostName)
       setIsDeploying(true)
     } catch (error: unknown) {
-      const actionLabel = { down: 'stop', restart: 'restart', up: 'deploy' }[action]
+      const actionLabel = { down: '停止', restart: '重启', up: '部署' }[action]
       handleApiError(error, actionLabel)
     }
   }
@@ -445,17 +445,17 @@ export function StackEditor({
 
   // Determine save button text
   const getSaveButtonText = (): string => {
-    if (isSubmitting) return 'Saving...'
-    if (isCreateMode) return 'Create Stack'
-    return 'Save'
+    if (isSubmitting) return '保存中...'
+    if (isCreateMode) return '创建堆栈'
+    return '保存'
   }
 
   // No stack selected - show placeholder
   if (!selectedStackName) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-        <p>Select a stack from the list</p>
-        <p className="text-sm mt-1">or create a new one</p>
+        <p>请从列表中选择一个堆栈</p>
+        <p className="text-sm mt-1">或者创建一个新的</p>
       </div>
     )
   }
@@ -478,7 +478,7 @@ export function StackEditor({
   if (stackLoading && !isCreateMode) {
     return (
       <div className="flex items-center justify-center h-full text-muted-foreground">
-        Loading stack...
+        加载堆栈数据中...
       </div>
     )
   }
@@ -504,7 +504,7 @@ export function StackEditor({
                     variant="ghost"
                     size="icon"
                     onClick={confirmNameEdit}
-                    title="Confirm"
+                    title="确认"
                   >
                     <Check className="h-4 w-4" />
                   </Button>
@@ -512,7 +512,7 @@ export function StackEditor({
                     variant="ghost"
                     size="icon"
                     onClick={cancelEditingName}
-                    title="Cancel"
+                    title="取消"
                   >
                     <X className="h-4 w-4" />
                   </Button>
@@ -527,7 +527,7 @@ export function StackEditor({
                 size="icon"
                 onClick={startEditingName}
                 disabled={!canEdit}
-                title="Rename"
+                title="重命名"
                 className="ml-1"
               >
                 <Pencil className="h-4 w-4" />
@@ -536,13 +536,13 @@ export function StackEditor({
             </>
           )}
 
-          {hasChanges && <Badge variant="secondary">Modified</Badge>}
+          {hasChanges && <Badge variant="secondary">修改</Badge>}
         </div>
 
         {/* Deployed hosts info */}
         {!isCreateMode && deployedTo && deployedTo.length > 0 && (
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2 shrink-0">
-            <span>Deployed on:</span>
+            <span>部署于:</span>
             <div className="flex flex-wrap gap-1">
               {deployedTo.map((host) => (
                 <Badge key={host.host_id} variant="outline" className="font-normal">
@@ -564,7 +564,7 @@ export function StackEditor({
             <span className="font-mono">
               {STACKS_BASE_PATH}/{hasNameChange ? stackName : originalName}/
               {hasNameChange && (
-                <span className="text-amber-500 ml-1">(will be renamed)</span>
+                <span className="text-amber-500 ml-1">(将被重命名)</span>
               )}
             </span>
           </div>
@@ -580,7 +580,7 @@ export function StackEditor({
               size="sm"
               onClick={() => setActiveTab('compose')}
             >
-              Compose
+              Compose 文件
             </Button>
             {canViewEnv && (
               <Button
@@ -589,7 +589,7 @@ export function StackEditor({
                 size="sm"
                 onClick={() => setActiveTab('env')}
               >
-                Environment
+                环境变量
               </Button>
             )}
           </div>
@@ -621,7 +621,7 @@ export function StackEditor({
         {/* Deploy section (only for existing stacks) */}
         {!isCreateMode && (
           <fieldset disabled={!canDeploy} className="pt-3 mt-3 border-t shrink-0 disabled:opacity-60">
-            <Label className="text-sm font-medium mb-2 block">Deploy to Host</Label>
+            <Label className="text-sm font-medium mb-2 block">部署至主机</Label>
             <div className="flex gap-2">
               <Select value={hostId} onValueChange={setHostId}>
                 <SelectTrigger className="min-w-[250px] flex-1">
@@ -632,7 +632,7 @@ export function StackEditor({
                 <SelectContent>
                   {sortedHosts.length === 0 ? (
                     <div className="py-2 px-3 text-sm text-muted-foreground">
-                      No hosts available
+                      暂无可用的主机
                     </div>
                   ) : (
                     sortedHosts.map((host) => (
@@ -649,7 +649,7 @@ export function StackEditor({
                 className="gap-2"
               >
                 <Rocket className="h-4 w-4" />
-                {isRedeploy ? 'Redeploy' : 'Deploy'}
+                {isRedeploy ? '重新部署' : '立即部署'}
               </Button>
               {isRedeploy && (
                 <>
@@ -658,30 +658,30 @@ export function StackEditor({
                     onClick={() => handleAction('restart')}
                     disabled={!hostId || isSubmitting}
                     className="gap-2"
-                    title="Restart stack (down then up, no image pull)"
+                    title="重启堆栈 (先停止容器再启动，不会重新拉取镜像)"
                   >
                     <RefreshCw className="h-4 w-4" />
-                    Restart
+                    重启
                   </Button>
                   <Button
                     variant="outline"
                     onClick={() => handleAction('down')}
                     disabled={!hostId || isSubmitting}
                     className="gap-2"
-                    title="Stop and remove containers and networks"
+                    title="停止并删除容器和使用的网络"
                   >
                     <Square className="h-4 w-4" />
-                    Stop
+                    停止
                   </Button>
                   <Button
                     variant="outline"
                     onClick={() => handleAction('down', true)}
                     disabled={!hostId || isSubmitting}
                     className="gap-2 text-destructive border-destructive/50 hover:bg-destructive/10"
-                    title="Stop, remove containers, networks, and volumes"
+                    title="停止并删除容器、网络和卷"
                   >
                     <Trash2 className="h-4 w-4" />
-                    Remove
+                    删除
                   </Button>
                 </>
               )}
@@ -699,20 +699,20 @@ export function StackEditor({
                   size="sm"
                   onClick={handleOpenCloneDialog}
                   disabled={isSubmitting}
-                  title="Copy stack"
+                  title="创建堆栈副本"
                 >
                   <Copy className="h-4 w-4 mr-1" />
-                  Clone
+                  克隆
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setActiveDialog('delete')}
                   disabled={isSubmitting}
-                  title="Delete stack"
+                  title="删除堆栈"
                 >
                   <Trash2 className="h-4 w-4 mr-1 text-destructive" />
-                  Delete
+                  删除
                 </Button>
               </>
             )}
@@ -736,22 +736,22 @@ export function StackEditor({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Stack</AlertDialogTitle>
+            <AlertDialogTitle>删除堆栈</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete stack "<strong>{selectedStackName}</strong>"?
-              This will remove the compose.yaml and .env files from the filesystem,
-              along with any deployment records. Running containers will not be affected.
-              This action cannot be undone.
+              确定要删除堆栈 "<strong>{selectedStackName}</strong>" 吗?
+              这将从文件系统中删除 compose.yaml 和 .env 文件，以及所有的部署记录。
+              正在运行的容器不会受到影响。
+              该操作将无法撤销。
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>取消</AlertDialogCancel>
             <fieldset disabled={!canEdit} className="disabled:opacity-60">
               <AlertDialogAction
                 onClick={handleDelete}
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
-                Delete
+                删除
               </AlertDialogAction>
             </fieldset>
           </AlertDialogFooter>
@@ -765,16 +765,16 @@ export function StackEditor({
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Clone Stack</DialogTitle>
+            <DialogTitle>克隆堆栈</DialogTitle>
             <DialogDescription>
-              Create a copy of "<strong>{selectedStackName}</strong>" with a new name.
+              创建一个 "<strong>{selectedStackName}</strong>" 堆栈的副本，使用指定的新名称。
             </DialogDescription>
           </DialogHeader>
 
           <fieldset disabled={!canEdit} className="space-y-4 disabled:opacity-60">
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label htmlFor="copy-dest-name">New Stack Name</Label>
+                <Label htmlFor="copy-dest-name">新堆栈名</Label>
                 <Input
                   id="copy-dest-name"
                   value={copyDestName}
@@ -784,7 +784,7 @@ export function StackEditor({
                   maxLength={MAX_STACK_NAME_LENGTH}
                 />
                 <p className="text-xs text-muted-foreground">
-                  Lowercase letters, numbers, hyphens, and underscores only
+                  仅允许使用小写字母、数字、连字符和下划线
                 </p>
               </div>
             </div>
@@ -792,11 +792,11 @@ export function StackEditor({
 
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => setActiveDialog(null)}>
-              Cancel
+              取消
             </Button>
             <fieldset disabled={!canEdit} className="disabled:opacity-60">
               <Button onClick={handleCopy} disabled={!copyDestName.trim() || isSubmitting}>
-                {isSubmitting ? 'Copying...' : 'Clone Stack'}
+                {isSubmitting ? '克隆中...' : '克隆堆栈'}
               </Button>
             </fieldset>
           </div>
@@ -810,16 +810,16 @@ export function StackEditor({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove Stack</AlertDialogTitle>
+            <AlertDialogTitle>删除堆栈</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to remove stack "<strong>{selectedStackName}</strong>"
-              from <strong>{sortedHosts.find((h) => h.id === hostId)?.name || hostId}</strong>?
-              This will stop and remove all containers, networks, <strong>and volumes</strong>.
-              Data stored in volumes will be permanently lost. This action cannot be undone.
+              确定要从 <strong>{sortedHosts.find((h) => h.id === hostId)?.name || hostId}</strong>
+              中移除堆栈 "<strong>{selectedStackName}</strong>" 吗?
+              这将停止并删除所有的容器、网络以及<strong>卷</strong>。
+              存储在卷中的数据将永久删除。该操作将无法撤销。
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>取消</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 setActiveDialog(null)
@@ -827,7 +827,7 @@ export function StackEditor({
               }}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Remove
+              删除
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -840,17 +840,16 @@ export function StackEditor({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Save changes before deploying?</AlertDialogTitle>
+            <AlertDialogTitle>在部署前保存修改?</AlertDialogTitle>
             <AlertDialogDescription>
-              You have unsaved changes to this stack. Would you like to save them
-              before deploying?
+              在此堆栈中存在尚未保存的文本修改。你希望在部署前先保存它们吗?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>取消</AlertDialogCancel>
             <fieldset disabled={!canEdit || !canDeploy} className="disabled:opacity-60">
               <AlertDialogAction onClick={handleSaveAndDeploy}>
-                Save & Deploy
+                保存 & 部署
               </AlertDialogAction>
             </fieldset>
           </AlertDialogFooter>

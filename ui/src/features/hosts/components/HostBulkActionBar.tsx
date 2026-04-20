@@ -77,7 +77,7 @@ export function HostBulkActionBar({
 
   const handleApplyTags = async () => {
     if (tags.length === 0) {
-      toast.error('Please enter at least one tag')
+      toast.error('请至少输入一个标签')
       return
     }
 
@@ -85,7 +85,7 @@ export function HostBulkActionBar({
     let successCount = 0
     let errorCount = 0
 
-    toast.loading(`${tagMode === 'add' ? 'Adding' : 'Removing'} tags for ${hostCount} host${hostCount > 1 ? 's' : ''}...`, {
+    toast.loading(`${tagMode === 'add' ? '添加标签至' : '删除标签从'} ${hostCount} 个主机中...`, {
       id: 'bulk-tags'
     })
 
@@ -106,11 +106,11 @@ export function HostBulkActionBar({
     // Show result
     toast.dismiss('bulk-tags')
     if (errorCount === 0) {
-      toast.success(`Successfully ${tagMode === 'add' ? 'added' : 'removed'} tags for ${successCount} host${successCount > 1 ? 's' : ''}`)
+      toast.success(`已成功${tagMode === 'add' ? '添加标签至' : '删除标签从'} ${successCount} 个主机`)
     } else if (successCount > 0) {
-      toast.warning(`Updated ${successCount} host${successCount > 1 ? 's' : ''}, ${errorCount} failed`)
+      toast.warning(`已更新 ${successCount} 个主机, ${errorCount} 个失败`)
     } else {
-      toast.error(`Failed to update tags for all hosts`)
+      toast.error(`无法将标签更新至全部主机`)
     }
 
     // Reset and notify parent
@@ -128,7 +128,7 @@ export function HostBulkActionBar({
               {hostCount}
             </div>
             <span className="text-sm font-medium">
-              {hostCount} host{hostCount > 1 ? 's' : ''} selected
+              {hostCount} 个主机已选择
             </span>
           </div>
           <Button
@@ -151,7 +151,7 @@ export function HostBulkActionBar({
               className="flex-1"
             >
               <Plus className="h-4 w-4 mr-2" />
-              Add Tags
+              添加标签
             </Button>
             <Button
               variant="outline"
@@ -161,7 +161,7 @@ export function HostBulkActionBar({
               className="flex-1"
             >
               <Minus className="h-4 w-4 mr-2" />
-              Remove Tags
+              删除标签
             </Button>
           </div>
         ) : (
@@ -169,14 +169,14 @@ export function HostBulkActionBar({
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Tag className="h-4 w-4" />
               <span>
-                {tagMode === 'add' ? 'Add tags to' : 'Remove tags from'} {hostCount} host{hostCount > 1 ? 's' : ''}
+                {tagMode === 'add' ? '添加标签至' : '删除标签从'} {hostCount} 个主机
               </span>
             </div>
             <TagInput
               value={tags}
               onChange={setTags}
               suggestions={tagSuggestions}
-              placeholder={tagMode === 'add' ? 'Type tags (prod, dev, us-west-1...)' : 'Type tags to remove...'}
+              placeholder={tagMode === 'add' ? '请输入标签 (prod, dev, us-west-1...)' : '请输入待删除的标签...'}
               maxTags={20}
             />
             <div className="flex gap-2">
@@ -187,7 +187,7 @@ export function HostBulkActionBar({
                 disabled={!canManageTags || tags.length === 0}
                 className="flex-1"
               >
-                {tagMode === 'add' ? 'Add' : 'Remove'} Tags
+                {tagMode === 'add' ? '添加' : '删除'}标签
               </Button>
               <Button
                 variant="outline"
@@ -197,7 +197,7 @@ export function HostBulkActionBar({
                   setTags([])
                 }}
               >
-                Cancel
+                取消
               </Button>
             </div>
           </div>

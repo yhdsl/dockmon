@@ -41,7 +41,7 @@ export function ApiKeysSettings() {
   const handleCopyKeyToClipboard = () => {
     if (newKey?.key) {
       navigator.clipboard.writeText(newKey.key)
-      toast.success('API key copied to clipboard!')
+      toast.success('已复制 API 密钥至剪切板!')
     }
   }
 
@@ -71,10 +71,10 @@ export function ApiKeysSettings() {
         <div className="flex items-start gap-3">
           <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
           <div>
-            <h3 className="font-semibold text-yellow-200">API keys are sensitive</h3>
+            <h3 className="font-semibold text-yellow-200">API 密钥为敏感信息</h3>
             <p className="text-sm text-yellow-300 mt-1">
-              API keys grant programmatic access to DockMon. Treat them like passwords and keep them secure. Each key
-              is shown only once after creation.
+              API 密钥可授予对 DockMon 程序的访问权限，请将其视为登录密码并妥善保管。
+              出于安全考虑，每个密钥仅在创建后显示一次。
             </p>
           </div>
         </div>
@@ -83,14 +83,14 @@ export function ApiKeysSettings() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-white">API Keys</h2>
+          <h2 className="text-lg font-semibold text-white">API 密钥</h2>
           <p className="text-sm text-gray-400 mt-1">
-            Create API keys for automation tools (Ansible, Homepage, scripts)
+            为自动化工具 (Ansible、Homepage、脚本等) 创建 API 密钥
           </p>
         </div>
         <Button onClick={() => setShowCreateModal(true)} variant="default" size="sm">
           <Plus className="h-4 w-4 mr-2" />
-          Create API Key
+          创建 API 密钥
         </Button>
       </div>
 
@@ -104,26 +104,26 @@ export function ApiKeysSettings() {
               onChange={(e) => setShowRevoked(e.target.checked)}
               className="w-4 h-4 rounded border-gray-700 bg-gray-800 text-blue-600 focus:ring-2 focus:ring-blue-600 focus:ring-offset-0"
             />
-            Show revoked keys ({revokedCount})
+            显示已撤销的密钥 ({revokedCount})
           </label>
         </div>
       )}
 
       {/* API Keys List */}
       {isLoading ? (
-        <div className="text-center py-8 text-gray-400">Loading API keys...</div>
+        <div className="text-center py-8 text-gray-400">加载 API 密钥中...</div>
       ) : !apiKeys || apiKeys.length === 0 ? (
         <div className="rounded-lg border border-gray-800 bg-gray-900/30 p-8 text-center">
           <Key className="h-12 w-12 text-gray-600 mx-auto mb-3" />
-          <h3 className="text-gray-400 font-medium">No API keys yet</h3>
-          <p className="text-sm text-gray-500 mt-1">Create your first API key to enable programmatic access</p>
+          <h3 className="text-gray-400 font-medium">尚未创建 API 密钥</h3>
+          <p className="text-sm text-gray-500 mt-1">创建你的第一个 API 密钥以允许外部程序访问</p>
         </div>
       ) : filteredKeys.length === 0 ? (
         <div className="rounded-lg border border-gray-800 bg-gray-900/30 p-8 text-center">
           <Key className="h-12 w-12 text-gray-600 mx-auto mb-3" />
-          <h3 className="text-gray-400 font-medium">All keys are revoked</h3>
+          <h3 className="text-gray-400 font-medium">全部的密钥均已被撤销</h3>
           <p className="text-sm text-gray-500 mt-1">
-            Enable "Show revoked keys" to view them, or create a new key
+            启用 "显示已撤销的密钥" 按钮以查看，或者创建一个新的密钥
           </p>
         </div>
       ) : (
@@ -146,9 +146,9 @@ export function ApiKeysSettings() {
                       <code className="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded">
                         {key.key_prefix}
                       </code>
-                      {isRevoked && <span className="text-xs bg-red-900/50 text-red-300 px-2 py-1 rounded">Revoked</span>}
+                      {isRevoked && <span className="text-xs bg-red-900/50 text-red-300 px-2 py-1 rounded">已撤销</span>}
                       {isExpired && (
-                        <span className="text-xs bg-yellow-900/50 text-yellow-300 px-2 py-1 rounded">Expired</span>
+                        <span className="text-xs bg-yellow-900/50 text-yellow-300 px-2 py-1 rounded">已过期</span>
                       )}
                     </div>
                     {key.description && <p className="text-sm text-gray-400 mt-1">{key.description}</p>}
@@ -156,28 +156,28 @@ export function ApiKeysSettings() {
                     {/* Key Details */}
                     <div className="flex flex-wrap gap-4 mt-3 text-xs text-gray-500">
                       <div className="flex items-center gap-1">
-                        <span className="text-gray-400">Group:</span>
+                        <span className="text-gray-400">用户群组:</span>
                         <Users className="h-3 w-3 text-blue-400" />
-                        {key.group_name || 'Unknown'}
+                        {{'Administrators': "管理群组", 'Operators': "操作群组", 'Read Only': "访客群组"}[key.group_name] ?? key.group_name ?? '未知群组'}
                       </div>
                       <div>
-                        <span className="text-gray-400">Usage:</span> {key.usage_count} calls
+                        <span className="text-gray-400">使用次数:</span> {key.usage_count} 次调用
                       </div>
                       {key.last_used_at && (
                         <div>
-                          <span className="text-gray-400">Last used:</span>{' '}
+                          <span className="text-gray-400">上次使用:</span>{' '}
                           {new Date(key.last_used_at).toLocaleDateString()}
                         </div>
                       )}
                       {key.expires_at && (
                         <div>
-                          <span className="text-gray-400">Expires:</span>{' '}
+                          <span className="text-gray-400">过期时间:</span>{' '}
                           {new Date(key.expires_at).toLocaleDateString()}
                         </div>
                       )}
                       {key.allowed_ips && (
                         <div>
-                          <span className="text-gray-400">IP Allowlist:</span> {key.allowed_ips}
+                          <span className="text-gray-400">IP 白名单:</span> {key.allowed_ips}
                         </div>
                       )}
                     </div>
@@ -189,7 +189,7 @@ export function ApiKeysSettings() {
                       <button
                         onClick={() => setEditingKeyId(key.id)}
                         className="p-2 hover:bg-gray-700 rounded transition-colors text-gray-400 hover:text-gray-300"
-                        title="Edit API key"
+                        title="编辑 API 密钥"
                       >
                         <Edit2 className="h-4 w-4" />
                       </button>
@@ -197,7 +197,7 @@ export function ApiKeysSettings() {
                         onClick={() => handleRevokeClick(key.id, key.name)}
                         disabled={revokeKey.isPending}
                         className="p-2 hover:bg-red-900/30 rounded transition-colors text-red-400 hover:text-red-300 disabled:opacity-50"
-                        title="Revoke API key"
+                        title="撤销 API 密钥"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -243,9 +243,9 @@ export function ApiKeysSettings() {
                 <AlertTriangle className="h-5 w-5 text-red-400" />
               </div>
               <div>
-                <DialogTitle>Revoke API Key</DialogTitle>
+                <DialogTitle>撤销 API 密钥</DialogTitle>
                 <DialogDescription className="mt-1">
-                  This action cannot be undone. The API key will stop working immediately.
+                  该操作将无法撤销。此 API 密钥将立即停止工作。
                 </DialogDescription>
               </div>
             </div>
@@ -257,22 +257,22 @@ export function ApiKeysSettings() {
                 <p className="text-sm font-medium text-white">{deletingKey.name}</p>
               </div>
               <p className="text-sm text-gray-400 mt-3">
-                All active sessions and integrations using this key will fail immediately. Make sure to update any
-                automation or scripts before revoking.
+                所有使用此密钥的活动会话与外部集成都将立即失效。
+                请确保在撤销前已更新任何自动化程序或脚本。
               </p>
             </div>
           )}
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeletingKey(null)}>
-              Cancel
+              取消
             </Button>
             <Button
               variant="destructive"
               onClick={handleRevokeConfirm}
               disabled={revokeKey.isPending}
             >
-              {revokeKey.isPending ? 'Revoking...' : 'Revoke API Key'}
+              {revokeKey.isPending ? '撤销中...' : '撤销 API 密钥'}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -84,10 +84,10 @@ export function showBulkDeleteToast(
   entityName: string
 ): void {
   if (failCount === 0) {
-    toast.success(`Deleted ${successCount} ${pluralize(successCount, entityName)}`)
+    toast.success(`已删除 ${successCount} 个 ${pluralize(successCount, entityName)}`)
   } else if (successCount > 0) {
-    toast.warning(`Deleted ${successCount} ${pluralize(successCount, entityName)}, ${failCount} failed`)
+    toast.warning(`已删除 ${successCount} 个 ${pluralize(successCount, entityName)}，其中 ${failCount} 个失败`)
   } else {
-    toast.error(`Failed to delete ${failCount} ${pluralize(failCount, entityName)}`)
+    toast.error(`无法删除指定的 ${failCount} 个 ${pluralize(failCount, entityName)}`)
   }
 }

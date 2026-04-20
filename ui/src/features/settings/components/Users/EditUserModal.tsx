@@ -62,7 +62,7 @@ export function EditUserModal({ isOpen, onClose, userId }: EditUserModalProps) {
     if (!user) return
 
     if (selectedGroupIds.size === 0) {
-      toast.error('User must belong to at least one group')
+      toast.error('用户必须加入一个用户群组')
       return
     }
 
@@ -94,7 +94,7 @@ export function EditUserModal({ isOpen, onClose, userId }: EditUserModalProps) {
 
       // Check if anything changed
       if (Object.keys(request).length === 0) {
-        toast.info('No changes to save')
+        toast.info('没有更改可供保存')
         onClose()
         return
       }
@@ -116,7 +116,7 @@ export function EditUserModal({ isOpen, onClose, userId }: EditUserModalProps) {
       <div className="mx-4 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-lg border border-gray-800 bg-gray-900">
         {/* Header */}
         <div className="sticky top-0 flex items-center justify-between border-b border-gray-800 bg-gray-900 px-6 py-4">
-          <h2 className="text-lg font-semibold text-white">Edit User</h2>
+          <h2 className="text-lg font-semibold text-white">编辑用户</h2>
           <button
             onClick={handleClose}
             disabled={updateUser.isPending}
@@ -132,59 +132,59 @@ export function EditUserModal({ isOpen, onClose, userId }: EditUserModalProps) {
             <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
           </div>
         ) : !user ? (
-          <div className="py-12 text-center text-gray-400">User not found</div>
+          <div className="py-12 text-center text-gray-400">用户未找到</div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-5 p-6">
             {/* Username (read-only) */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-300">Username</label>
+              <label className="mb-2 block text-sm font-medium text-gray-300">用户名</label>
               <Input
                 type="text"
                 value={user.username}
                 disabled
                 className="w-full bg-gray-800/50 text-gray-400"
               />
-              <p className="mt-1 text-xs text-gray-500">Username cannot be changed</p>
+              <p className="mt-1 text-xs text-gray-500">无法修改用户名</p>
             </div>
 
             {/* Display Name */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-300">Display Name</label>
+              <label className="mb-2 block text-sm font-medium text-gray-300">昵称</label>
               <Input
                 type="text"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
-                placeholder="e.g., John Doe"
+                placeholder="例如: John Doe"
                 disabled={updateUser.isPending}
                 className="w-full"
               />
-              <p className="mt-1 text-xs text-gray-500">Optional friendly name shown in the UI</p>
+              <p className="mt-1 text-xs text-gray-500">如何优雅的展示你的用户名 (可选)</p>
             </div>
 
             {/* Email */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-300">Email</label>
+              <label className="mb-2 block text-sm font-medium text-gray-300">邮箱</label>
               <Input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="e.g., john@example.com"
+                placeholder="例如: john@example.com"
                 disabled={updateUser.isPending}
                 className="w-full"
               />
               <p className="mt-1 text-xs text-gray-500">
-                Optional. Used for password reset and OIDC matching.
+                用于重置密码和 OIDC 配置 (可选)
               </p>
             </div>
 
             {/* Group Selection */}
             <div>
               <label className="mb-3 block text-sm font-medium text-gray-300">
-                Groups <span className="text-xs text-gray-500">(at least one required)</span>
+                用户群组 <span className="text-xs text-gray-500">(请至少选择一个)</span>
               </label>
               {groups.length === 0 ? (
                 <div className="rounded-lg border border-yellow-900/30 bg-yellow-900/10 p-3 text-sm text-yellow-300">
-                  No groups available.
+                  没有可用的用户群组。
                 </div>
               ) : (
                 <div className="space-y-2">
@@ -207,10 +207,10 @@ export function EditUserModal({ isOpen, onClose, userId }: EditUserModalProps) {
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
                           <Users className="h-4 w-4 text-blue-400" />
-                          <span className="font-medium text-white">{group.name}</span>
+                          <span className="font-medium text-white">{group.name}{group.is_system ? ` (${{'Administrators': "管理群组", 'Operators': "操作群组", 'Read Only': "访客群组"}[group.name]})` : ""}</span>
                           {group.is_system && (
                             <span className="rounded bg-gray-700 px-1.5 py-0.5 text-xs text-gray-400">
-                              System
+                              系统群组
                             </span>
                           )}
                         </div>
@@ -228,8 +228,7 @@ export function EditUserModal({ isOpen, onClose, userId }: EditUserModalProps) {
             {user.auth_provider === 'oidc' && (
               <div className="rounded-lg border border-cyan-900/30 bg-cyan-900/10 p-3">
                 <p className="text-sm text-cyan-300">
-                  This is an SSO user. Their group membership may be overridden by OIDC group mappings on next
-                  login.
+                  这是一个 SSO 用户。其所在的用户群组可能会在下次登录时被 OIDC 映射所覆盖更新。
                 </p>
               </div>
             )}
@@ -237,7 +236,7 @@ export function EditUserModal({ isOpen, onClose, userId }: EditUserModalProps) {
             {/* Actions */}
             <div className="flex gap-2 pt-2">
               <Button type="submit" disabled={updateUser.isPending} className="flex-1">
-                {updateUser.isPending ? 'Saving...' : 'Save Changes'}
+                {updateUser.isPending ? '保存中...' : '保存更改'}
               </Button>
               <Button
                 type="button"
@@ -246,7 +245,7 @@ export function EditUserModal({ isOpen, onClose, userId }: EditUserModalProps) {
                 variant="outline"
                 className="flex-1"
               >
-                Cancel
+                取消
               </Button>
             </div>
           </form>

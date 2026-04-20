@@ -25,12 +25,12 @@ export function useGenerateToken() {
     },
     onSuccess: (data) => {
       const message = data.multi_use
-        ? 'Multi-use registration token generated'
-        : 'Registration token generated'
+        ? '已生成可复用的注册令牌'
+        : '已生成注册令牌'
       toast.success(message)
     },
     onError: (error: Error) => {
-      toast.error(`Failed to generate token: ${error.message}`)
+      toast.error(`生成注册令牌时失败: ${error.message}`)
     },
   })
 }

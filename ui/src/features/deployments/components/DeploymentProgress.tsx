@@ -60,22 +60,22 @@ const ACTION_TEXT: Record<StackAction, {
   logStart: string
 }> = {
   up: {
-    progress: 'Deploying...',
-    complete: 'Deployment Complete',
-    failed: 'Deployment Failed',
-    logStart: 'Starting deployment',
+    progress: '部署中...',
+    complete: '部署完成',
+    failed: '部署失败',
+    logStart: '开始部署',
   },
   down: {
-    progress: 'Stopping...',
-    complete: 'Stack Stopped',
-    failed: 'Stop Failed',
-    logStart: 'Stopping stack',
+    progress: '停止中...',
+    complete: '堆栈停止',
+    failed: '停止失败',
+    logStart: '开始停止堆栈',
   },
   restart: {
-    progress: 'Restarting...',
-    complete: 'Restart Complete',
-    failed: 'Restart Failed',
-    logStart: 'Restarting stack',
+    progress: '重启中...',
+    complete: '重启完成',
+    failed: '重启失败',
+    logStart: '开始重启堆栈',
   },
 }
 
@@ -83,24 +83,24 @@ function getStatusDisplay(status: string, action: StackAction = 'up'): { label: 
   const text = ACTION_TEXT[action]
   switch (status) {
     case 'pending':
-      return { label: 'Pending...', type: 'info' }
+      return { label: '等待中...', type: 'info' }
     case 'in_progress':
-      return { label: 'In Progress...', type: 'info' }
+      return { label: '处理中...', type: 'info' }
     case 'pulling_image':
-      return { label: 'Pulling images...', type: 'info' }
+      return { label: '拉取镜像...', type: 'info' }
     case 'creating':
-      return { label: 'Creating containers...', type: 'info' }
+      return { label: '创建容器...', type: 'info' }
     case 'starting':
-      return { label: 'Starting containers...', type: 'info' }
+      return { label: '启动容器...', type: 'info' }
     case 'running':
     case 'stopped':
       return { label: text.complete, type: 'success' }
     case 'partial':
-      return { label: 'Partially deployed', type: 'error' }
+      return { label: '已部分部署', type: 'error' }
     case 'failed':
       return { label: text.failed, type: 'error' }
     case 'rolled_back':
-      return { label: 'Rolled back', type: 'error' }
+      return { label: '已回滚', type: 'error' }
     default:
       return { label: status, type: 'info' }
   }
@@ -147,7 +147,7 @@ export function DeploymentProgress({
 
     if (!hasLoggedStartRef.current) {
       const actionText = ACTION_TEXT[action]
-      addLog(`${actionText.logStart} of "${stackName}" on ${hostName}...`)
+      addLog(`${actionText.logStart}"${stackName}" (位于主机 ${hostName})...`)
       hasLoggedStartRef.current = true
     }
 
@@ -186,7 +186,7 @@ export function DeploymentProgress({
 
           if (progressData.stage && progressData.stage.length > 0) {
             const stageMsg = progressData.stage
-            const isDetailedMessage = !['Pending...', 'Pulling images...', 'Creating containers...', 'Starting containers...'].includes(stageMsg)
+            const isDetailedMessage = !['Pending...', 'Pulling images...', 'Creating containers...', 'Starting containers...', '等待中...', '拉取镜像...', '创建容器...', '启动容器...'].includes(stageMsg)
             const isDuplicate = stageMsg === lastLoggedMessageRef.current
             if (isDetailedMessage && !isDuplicate) {
               lastLoggedMessageRef.current = stageMsg
@@ -214,7 +214,7 @@ export function DeploymentProgress({
 
         if (errorMsg) {
           setError(errorMsg)
-          addLog(`Error: ${errorMsg}`, 'error')
+          addLog(`错误: ${errorMsg}`, 'error')
         }
       }
 
@@ -228,9 +228,9 @@ export function DeploymentProgress({
             setLogs((prev) => {
               const lastLog = prev[prev.length - 1]
               if (lastLog && lastLog.message.startsWith('Pulling:')) {
-                return [...prev.slice(0, -1), { ...lastLog, message: `Pulling: ${data.summary}` }]
+                return [...prev.slice(0, -1), { ...lastLog, message: `拉取中: ${data.summary}` }]
               }
-              return [...prev, { id: generateLogId(), timestamp: new Date(), message: `Pulling: ${data.summary}`, type: 'info' }]
+              return [...prev, { id: generateLogId(), timestamp: new Date(), message: `拉取中: ${data.summary}`, type: 'info' }]
             })
           }
         }
@@ -266,12 +266,12 @@ export function DeploymentProgress({
             {isSuccess ? (
               <>
                 <CheckCircle2 className="h-4 w-4" />
-                Success
+                部署成功
               </>
             ) : (
               <>
                 <XCircle className="h-4 w-4" />
-                {status === 'partial' ? 'Partial' : 'Failed'}
+                {status === 'partial' ? '部分成功' : '部署失败'}
               </>
             )}
           </div>
@@ -333,11 +333,11 @@ export function DeploymentProgress({
       <div className="flex justify-between pt-4 mt-4 border-t shrink-0">
         <Button variant="outline" onClick={onBack} className="gap-2">
           <ArrowLeft className="h-4 w-4" />
-          Back to Editor
+          返回至编辑器
         </Button>
         {isComplete && (
           <Button onClick={onComplete}>
-            Done
+            完成
           </Button>
         )}
       </div>

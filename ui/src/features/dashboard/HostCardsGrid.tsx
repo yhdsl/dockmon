@@ -210,7 +210,7 @@ export function HostCardsGrid({ hosts, onHostClick, onViewDetails, onEditHost, m
   if (isLoading) {
     return (
       <div className="mt-4">
-        <h2 className="text-lg font-semibold mb-4">Hosts</h2>
+        <h2 className="text-lg font-semibold mb-4">主机</h2>
         <div className="min-h-[400px]" />
       </div>
     )
@@ -218,7 +218,7 @@ export function HostCardsGrid({ hosts, onHostClick, onViewDetails, onEditHost, m
 
   return (
     <div className="mt-4">
-      <h2 className="text-lg font-semibold mb-4">Hosts</h2>
+      <h2 className="text-lg font-semibold mb-4">主机</h2>
 
       <ResponsiveGrid
         className="layout"
@@ -264,7 +264,7 @@ export function HostCardsGrid({ hosts, onHostClick, onViewDetails, onEditHost, m
                 height: '64px',
                 zIndex: 10
               }}
-              title="Drag to reorder"
+              title="拖动以重新排列顺序"
             />
           </div>
         ))}
@@ -272,7 +272,7 @@ export function HostCardsGrid({ hosts, onHostClick, onViewDetails, onEditHost, m
 
       {hosts.length === 0 && (
         <div className="p-8 border border-dashed border-border rounded-lg text-center text-muted-foreground">
-          No hosts configured. Add a host to get started.
+          尚未配置任何主机。请添加一个主机以开始使用。
         </div>
       )}
     </div>

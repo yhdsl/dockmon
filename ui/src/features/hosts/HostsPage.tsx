@@ -52,14 +52,14 @@ export function HostsPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold">Hosts</h1>
+          <h1 className="text-xl sm:text-2xl font-bold">主机</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Manage your Docker hosts and connections
+            管理 Docker 主机与连接
           </p>
         </div>
         <Button onClick={handleAddHost} disabled={!canManage} className="flex items-center gap-2 w-full sm:w-auto" data-testid="add-host-button">
           <Plus className="h-4 w-4" />
-          Add Host
+          添加主机
         </Button>
       </div>
 
@@ -69,7 +69,7 @@ export function HostsPage() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             type="text"
-            placeholder="Search hosts by name, URL, or tags..."
+            placeholder="根据名称、URL 或者标签搜索主机..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"

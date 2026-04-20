@@ -222,7 +222,7 @@ export function MiniChart({
 
           for (const tick of ticksWithNow) {
             const secondsAgo = totalSeconds - tick
-            const label = secondsAgo === 0 ? 'now' : formatRelativeTime(secondsAgo)
+            const label = secondsAgo === 0 ? '刚刚' : formatRelativeTime(secondsAgo)
 
             if (!seenLabels.has(label)) {
               uniqueTicks.push(tick)
@@ -237,7 +237,7 @@ export function MiniChart({
           const maxVal = Math.max(...vals)
           return vals.map((v: number) => {
             const secondsAgo = maxVal - v
-            return secondsAgo === 0 ? 'now' : formatRelativeTime(secondsAgo)
+            return secondsAgo === 0 ? '刚刚' : formatRelativeTime(secondsAgo)
           })
         },
         font: '11px system-ui, -apple-system, sans-serif',
@@ -356,11 +356,11 @@ export function MiniChart({
     series: [
       {
         // X-axis data series
-        label: 'Time',
+        label: '时间',
       },
       {
         // Y-axis data series
-        label: label || 'Value',
+        label: label || '数值',
         stroke: CHART_COLORS[color],
         width: 2,
         points: {
@@ -404,7 +404,7 @@ export function MiniChart({
           // Calculate time ago
           const maxXVal = u.data[0]?.[u.data[0].length - 1] ?? 0
           const secondsAgo = maxXVal - xVal
-          const timeLabel = secondsAgo === 0 ? 'now' : `${formatRelativeTime(secondsAgo)} ago`
+          const timeLabel = secondsAgo === 0 ? '刚刚' : `${formatRelativeTime(secondsAgo)} 之前`
 
           // Format value
           let valueLabel: string

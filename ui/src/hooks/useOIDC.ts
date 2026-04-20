@@ -58,12 +58,12 @@ export function useUpdateOIDCConfig() {
     onSuccess: (data) => {
       queryClient.setQueryData(QUERY_KEYS.config, data)
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.status })
-      toast.success('Configuration saved', {
-        description: 'OIDC settings have been updated.',
+      toast.success('配置已保存', {
+        description: 'OIDC 设置已更新。',
       })
     },
     onError: (error: Error) => {
-      toast.error('Failed to save', {
+      toast.error('保存时失败', {
         description: error.message,
       })
     },
@@ -76,7 +76,7 @@ export function useDiscoverOIDC() {
       return apiClient.post<OIDCDiscoveryResponse>('/v2/oidc/discover', data)
     },
     onError: (error: Error) => {
-      toast.error('Discovery failed', {
+      toast.error('发现时失败', {
         description: error.message,
       })
     },
@@ -103,12 +103,12 @@ export function useCreateOIDCGroupMapping() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.groupMappings })
-      toast.success('Mapping created', {
-        description: 'OIDC group mapping has been created.',
+      toast.success('已创建映射', {
+        description: 'OIDC 用户群组映射已创建。',
       })
     },
     onError: (error: Error) => {
-      toast.error('Failed to create mapping', {
+      toast.error('创建用户群组映射时失败', {
         description: error.message,
       })
     },
@@ -124,12 +124,12 @@ export function useUpdateOIDCGroupMapping() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.groupMappings })
-      toast.success('Mapping updated', {
-        description: 'OIDC group mapping has been updated.',
+      toast.success('已更新映射', {
+        description: 'OIDC 用户群组映射已更新。',
       })
     },
     onError: (error: Error) => {
-      toast.error('Failed to update mapping', {
+      toast.error('更新用户群组映射时失败', {
         description: error.message,
       })
     },
@@ -145,12 +145,12 @@ export function useDeleteOIDCGroupMapping() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.groupMappings })
-      toast.success('Mapping deleted', {
-        description: 'OIDC group mapping has been deleted.',
+      toast.success('已删除映射', {
+        description: 'OIDC 用户群组映射已删除。',
       })
     },
     onError: (error: Error) => {
-      toast.error('Failed to delete mapping', {
+      toast.error('删除用户群组映射时失败', {
         description: error.message,
       })
     },

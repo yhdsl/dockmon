@@ -91,15 +91,15 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
 
   const handleTest = async () => {
     if (!container.host_id) {
-      toast.error('Cannot test health check', {
-        description: 'Container missing host information',
+      toast.error('无法测试健康检查', {
+        description: '容器没有主机信息',
       })
       return
     }
 
     if (!url) {
-      toast.error('URL is required', {
-        description: 'Please enter a URL to test',
+      toast.error('URL 为必填项', {
+        description: '请输入一个 URL 以供测试',
       })
       return
     }
@@ -119,32 +119,32 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
       })
 
       if (result.is_healthy) {
-        toast.success('Health check test passed!', {
+        toast.success('健康检查测试成功!', {
           description: `${result.message} (${result.response_time_ms}ms)`,
         })
       } else {
-        toast.error('Health check test failed', {
+        toast.error('健康检查测试失败', {
           description: result.message,
         })
       }
     } catch (error) {
-      toast.error('Failed to test health check', {
-        description: error instanceof Error ? error.message : 'Unknown error',
+      toast.error('测试健康检查时失败', {
+        description: error instanceof Error ? error.message : '未知错误',
       })
     }
   }
 
   const handleSave = async () => {
     if (!container.host_id) {
-      toast.error('Cannot save health check', {
-        description: 'Container missing host information',
+      toast.error('无法保存健康检查', {
+        description: '容器没有主机信息',
       })
       return
     }
 
     if (enabled && !url) {
-      toast.error('URL is required', {
-        description: 'Please enter a URL to check',
+      toast.error('URL 为必填项', {
+        description: '请输入一个 URL 以供测试',
       })
       return
     }
@@ -171,10 +171,10 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
           restart_retry_delay_seconds: restartRetryDelaySeconds,  // v2.0.2+
         },
       })
-      toast.success('Health check configuration saved')
+      toast.success('健康检查配置已成功保存')
     } catch (error) {
-      toast.error('Failed to save configuration', {
-        description: error instanceof Error ? error.message : 'Unknown error',
+      toast.error('保存健康检查配置时失败', {
+        description: error instanceof Error ? error.message : '未知错误',
       })
     }
   }
@@ -194,7 +194,7 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
   const currentStatus = healthCheck?.current_status || 'unknown'
   const lastChecked = healthCheck?.last_checked_at
     ? formatDateTime(healthCheck.last_checked_at, timeFormat)
-    : 'Never'
+    : '从未'
 
   const getStatusIcon = () => {
     switch (currentStatus) {
@@ -210,11 +210,11 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
   const getStatusText = () => {
     switch (currentStatus) {
       case 'healthy':
-        return { title: 'Healthy', description: 'The container is responding as expected' }
+        return { title: '健康', description: '容器健康检查响应正常' }
       case 'unhealthy':
-        return { title: 'Unhealthy', description: healthCheck?.last_error_message || 'Health check is failing' }
+        return { title: '不健康', description: healthCheck?.last_error_message || '健康检查失败' }
       default:
-        return { title: 'Unknown', description: enabled ? 'Waiting for first health check' : 'Health check is not enabled' }
+        return { title: '未知', description: enabled ? '等待第一次健康检查' : '未启用健康检查' }
     }
   }
 
@@ -246,17 +246,17 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
               onClick={handleTest}
               disabled={testHealthCheck.isPending || !url || !healthCheckExists}
               variant="outline"
-              title={!healthCheckExists ? 'Save configuration first to test' : ''}
+              title={!healthCheckExists ? '首先保存健康检查配置以供测试' : ''}
             >
               {testHealthCheck.isPending ? (
                 <>
                   <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                  Testing...
+                  测试中...
                 </>
               ) : (
                 <>
                   <FlaskConical className="mr-2 h-4 w-4" />
-                  Check Now
+                  立即检查
                 </>
               )}
             </Button>
@@ -271,10 +271,10 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
               {updateHealthCheck.isPending ? (
                 <>
                   <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                  Saving...
+                  保存中...
                 </>
               ) : (
-                'Save Changes'
+                '保存更改'
               )}
             </Button>
           </fieldset>
@@ -287,7 +287,7 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
           <div className="bg-muted rounded-lg p-4">
             <div className="flex items-center gap-2 text-muted-foreground mb-1">
               <Clock className="h-4 w-4" />
-              <span className="text-xs font-medium">Last Checked</span>
+              <span className="text-xs font-medium">上次检查时间</span>
             </div>
             <p className="text-sm font-medium">{lastChecked}</p>
           </div>
@@ -296,7 +296,7 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
             <div className="bg-muted rounded-lg p-4">
               <div className="flex items-center gap-2 text-muted-foreground mb-1">
                 <Activity className="h-4 w-4" />
-                <span className="text-xs font-medium">Response Time</span>
+                <span className="text-xs font-medium">响应时长</span>
               </div>
               <p className="text-sm font-medium">{healthCheck.last_response_time_ms}ms</p>
             </div>
@@ -306,7 +306,7 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
             <div className="bg-danger/10 rounded-lg p-4">
               <div className="flex items-center gap-2 text-danger mb-1">
                 <AlertTriangle className="h-4 w-4" />
-                <span className="text-xs font-medium">Consecutive Failures</span>
+                <span className="text-xs font-medium">连续失败次数</span>
               </div>
               <p className="text-sm font-medium text-danger">
                 {healthCheck.consecutive_failures} / {healthCheck.failure_threshold}
@@ -318,16 +318,16 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
 
       {/* Configuration Form */}
       <fieldset disabled={!canManageHC} className="space-y-4 border-t pt-6 disabled:opacity-60">
-        <h4 className="text-lg font-medium text-foreground mb-3">Configuration</h4>
+        <h4 className="text-lg font-medium text-foreground mb-3">配置</h4>
 
         {/* Enable/Disable toggle */}
         <div className="flex items-start justify-between py-4">
           <div className="flex-1 mr-4">
             <label htmlFor="health-check-enabled" className="text-sm font-medium cursor-pointer">
-              Enable Health Check
+              启用健康检查
             </label>
             <p className="text-sm text-muted-foreground mt-1">
-              Monitor this container with HTTP/HTTPS health checks
+              使用 HTTP/HTTPS 健康检查监控此容器
             </p>
           </div>
           <Switch
@@ -351,7 +351,7 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
             disabled={!enabled}
           />
           <p className="text-xs text-muted-foreground">
-            Full URL to check (e.g., http://localhost:8080/health)
+            完整的用于检查的 URL (例如 http://localhost:8080/health)
           </p>
         </div>
 
@@ -359,7 +359,7 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <label htmlFor="method" className="text-sm font-medium">
-              HTTP Method
+              HTTP 方法
             </label>
             <Select
               value={method}
@@ -379,7 +379,7 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
 
           <div className="space-y-2">
             <label htmlFor="status-codes" className="text-sm font-medium">
-              Expected Status Codes
+              预期状态码
             </label>
             <Input
               id="status-codes"
@@ -389,7 +389,7 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
               disabled={!enabled}
             />
             <p className="text-xs text-muted-foreground">
-              e.g., "200" or "200-299" or "200,201,204"
+              例如 "200"、"200-299" 或者 "200,201,204"
             </p>
           </div>
         </div>
@@ -398,7 +398,7 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <label htmlFor="timeout" className="text-sm font-medium">
-              Timeout (seconds)
+              超时时长 (秒)
             </label>
             <Input
               id="timeout"
@@ -413,7 +413,7 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
 
           <div className="space-y-2">
             <label htmlFor="interval" className="text-sm font-medium">
-              Check Interval (seconds)
+              检查间隔 (秒)
             </label>
             <Input
               id="interval"
@@ -431,7 +431,7 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <label htmlFor="failure-threshold" className="text-sm font-medium">
-              Failure Threshold
+              失败次数阈值
             </label>
             <Input
               id="failure-threshold"
@@ -443,13 +443,13 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
               disabled={!enabled}
             />
             <p className="text-xs text-muted-foreground">
-              Consecutive failures before marking as unhealthy
+              标记为不健康前的连续失败次数
             </p>
           </div>
 
           <div className="space-y-2">
             <label htmlFor="success-threshold" className="text-sm font-medium">
-              Success Threshold
+              成功次数阈值
             </label>
             <Input
               id="success-threshold"
@@ -461,7 +461,7 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
               disabled={!enabled}
             />
             <p className="text-xs text-muted-foreground">
-              Consecutive successes to mark as healthy after failure
+              在失败后重新标记为健康所需的连续成功次数
             </p>
           </div>
         </div>
@@ -471,10 +471,10 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
           <div className="flex items-start justify-between py-2">
             <div className="flex-1 mr-4">
               <label htmlFor="verify-ssl" className="text-sm font-medium cursor-pointer">
-                Verify SSL
+                验证 SSL
               </label>
               <p className="text-xs text-muted-foreground mt-1">
-                Validate SSL certificates
+                验证 SSL 证书
               </p>
             </div>
             <Switch
@@ -488,10 +488,10 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
           <div className="flex items-start justify-between py-2">
             <div className="flex-1 mr-4">
               <label htmlFor="follow-redirects" className="text-sm font-medium cursor-pointer">
-                Follow Redirects
+                跟随重定向
               </label>
               <p className="text-xs text-muted-foreground mt-1">
-                Follow HTTP redirects
+                跟随 HTTP 重定向请求
               </p>
             </div>
             <Switch
@@ -506,7 +506,7 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
         {/* Check Location (v2.2.0+) */}
         <div className="space-y-2">
           <label htmlFor="check-from" className="text-sm font-medium">
-            Check From
+            健康检查请求源
           </label>
           <Select
             value={checkFrom}
@@ -515,18 +515,18 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
           >
             <SelectTrigger id="check-from">
               <SelectValue>
-                {checkFrom === 'backend' ? 'DockMon Backend' : 'Remote Agent'}
+                {checkFrom === 'backend' ? 'DockMon 后端' : '远程代理'}
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="backend">DockMon Backend</SelectItem>
-              <SelectItem value="agent">Remote Agent</SelectItem>
+              <SelectItem value="backend">DockMon 后端</SelectItem>
+              <SelectItem value="agent">远程代理</SelectItem>
             </SelectContent>
           </Select>
           <p className="text-xs text-muted-foreground">
             {checkFrom === 'backend'
-              ? 'Health checks performed from the DockMon backend server'
-              : 'Health checks performed from the agent on the remote host (useful when backend cannot reach the container)'}
+              ? '健康检查由 DockMon 后端服务器执行'
+              : '健康检查由远程主机上的代理执行 (当 DockMon 后端无法访问此容器时)'}
           </p>
         </div>
 
@@ -535,10 +535,10 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
           <div className="flex items-start justify-between py-2">
             <div className="flex-1 mr-4">
               <label htmlFor="auto-restart" className="text-sm font-medium cursor-pointer">
-                Auto-restart on Failure
+                失败时自动重启
               </label>
               <p className="text-sm text-muted-foreground mt-1">
-                Automatically restart container when failure threshold is reached
+                当达到失败次数阈值时自动重启容器
               </p>
             </div>
             <Switch
@@ -554,7 +554,7 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
             <div className="grid grid-cols-2 gap-4 pl-4 border-l-2 border-muted">
               <div className="space-y-2">
                 <label htmlFor="max-restart-attempts" className="text-sm font-medium">
-                  Max Restart Attempts
+                  最大重启尝试次数
                 </label>
                 <Input
                   id="max-restart-attempts"
@@ -566,13 +566,13 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
                   disabled={!enabled}
                 />
                 <p className="text-xs text-muted-foreground">
-                  Number of restart attempts per unhealthy episode (resets on recovery)
+                  每次不健康状态下的重启最大尝试次数 (容器恢复健康后重置)
                 </p>
               </div>
 
               <div className="space-y-2">
                 <label htmlFor="restart-retry-delay" className="text-sm font-medium">
-                  Retry Delay (seconds)
+                  重试延迟 (秒)
                 </label>
                 <Input
                   id="restart-retry-delay"
@@ -584,7 +584,7 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
                   disabled={!enabled}
                 />
                 <p className="text-xs text-muted-foreground">
-                  Delay between restart attempts. Note: 10-minute safety window allows max 12 total restarts (long delays may limit attempts)
+                  重复尝试重启之间的延迟间隔。注意: 10 分钟的安全窗口内最多允许 12 次重启 (较长的延迟时长可能会限制重启的尝试次数)
                 </p>
               </div>
             </div>
@@ -594,13 +594,13 @@ function ContainerHealthCheckTabInternal({ container }: ContainerHealthCheckTabP
 
       {/* Help text */}
       <div className="bg-muted/50 rounded-lg p-4 text-sm text-muted-foreground space-y-2">
-        <p className="font-medium">About HTTP Health Checks</p>
+        <p className="font-medium">关于 HTTP 健康检查</p>
         <ul className="list-disc list-inside space-y-1 text-xs">
-          <li>Health checks periodically request a URL to verify container is responding</li>
-          <li>Consecutive failures must reach the threshold before marking as unhealthy</li>
-          <li>Auto-restart can automatically restart containers that fail health checks</li>
-          <li>Health state changes trigger alerts if configured in alert rules</li>
-          <li>Use internal URLs (localhost/container network) for best performance</li>
+          <li>健康检查会定期向一个 URL 发送请求，以验证容器是否正常响应</li>
+          <li>只有连续失败的次数达到阈值后才会标记容器为不健康</li>
+          <li>自动重启设置可用在健康检查失败时自动重启容器</li>
+          <li>如果已设置对应的告警规则，将在健康状态发生变化时触发告警</li>
+          <li>为了获得最佳性能，请使用内部的 URL (localhost/容器网络)</li>
         </ul>
       </div>
     </div>

@@ -17,9 +17,9 @@ interface ViewModeSelectorProps {
 
 export function ViewModeSelector({ viewMode, onChange, disabled = false }: ViewModeSelectorProps) {
   const modes: Array<{ value: ViewMode; label: string; icon: React.ReactNode }> = [
-    { value: 'compact', label: 'Compact', icon: <LayoutGrid className="h-4 w-4" /> },
-    { value: 'standard', label: 'Standard', icon: <LayoutList className="h-4 w-4" /> },
-    { value: 'expanded', label: 'Expanded', icon: <Maximize2 className="h-4 w-4" /> },
+    { value: 'compact', label: '紧凑', icon: <LayoutGrid className="h-4 w-4" /> },
+    { value: 'standard', label: '标准', icon: <LayoutList className="h-4 w-4" /> },
+    { value: 'expanded', label: '展开', icon: <Maximize2 className="h-4 w-4" /> },
   ]
 
   return (

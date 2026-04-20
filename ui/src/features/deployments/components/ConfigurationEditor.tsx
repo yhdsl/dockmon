@@ -30,19 +30,19 @@ function isServicesRecord(value: unknown): value is Record<string, unknown> {
  */
 function validateComposeContent(parsed: unknown): { error?: string; warning?: string } {
   if (!parsed || typeof parsed !== 'object') {
-    return { error: 'Compose file must be a valid YAML object' }
+    return { error: 'Compose 文件必须为一个合法的 YAML 对象' }
   }
 
   const compose = parsed as Record<string, unknown>
 
   // Check for required 'services' section
   if (!('services' in compose) || !compose.services) {
-    return { error: "Compose file must contain a 'services' section" }
+    return { error: "Compose 中必须定义一个 'services' 节" }
   }
 
   // Verify services is an object (not array or primitive)
   if (!isServicesRecord(compose.services)) {
-    return { error: "'services' must be an object containing service definitions" }
+    return { error: "'services' 节中必须定义服务内容" }
   }
 
   // Check for 'build' directives (warning - works locally but not on agent hosts)
@@ -55,7 +55,7 @@ function validateComposeContent(parsed: unknown): { error?: string; warning?: st
 
   if (servicesWithBuild.length > 0) {
     return {
-      warning: `Warning: 'build' directive found in service(s): ${servicesWithBuild.join(', ')}. This will not work on agent-based hosts.`
+      warning: `警告: 在服务定义中找到了 'build' 指令: ${servicesWithBuild.join(', ')}。但该指令无法在基于代理的主机上正常运行。`
     }
   }
 
@@ -195,7 +195,7 @@ export const ConfigurationEditor = forwardRef<ConfigurationEditorHandle, Configu
         return { valid: true, error: null }
       }
     } catch (err: unknown) {
-      const errMsg = err instanceof Error ? err.message : 'Invalid format'
+      const errMsg = err instanceof Error ? err.message : '无效的格式'
       return { valid: false, error: errMsg }
     }
   }
@@ -401,14 +401,14 @@ export const ConfigurationEditor = forwardRef<ConfigurationEditorHandle, Configu
       setFormatStatus('success')
       setTimeout(() => setFormatStatus('idle'), 2000)
     } else {
-      setValidationError('Invalid format - could not auto-fix')
+      setValidationError('无效的格式 - 并且无法自动修复')
       setValidationWarning(null)
       setFormatStatus('error')
       setTimeout(() => setFormatStatus('idle'), 2000)
 
       // Show helpful message for YAML errors
       if (type === 'stack') {
-        let helpfulMessage = 'Invalid YAML format'
+        let helpfulMessage = '无效的 YAML 格式'
 
         // Check for common YAML indentation errors
         try {
@@ -416,7 +416,7 @@ export const ConfigurationEditor = forwardRef<ConfigurationEditorHandle, Configu
         } catch (err: unknown) {
           const errMsg = err instanceof Error ? err.message : String(err)
           if (errMsg.includes('bad indentation')) {
-            helpfulMessage += '\n\nTip: Root-level keys (services, volumes, networks) must have NO indentation (column 0).'
+            helpfulMessage += '\n\n小提示: 顶级的键 (services, volumes, networks) 必须顶格书写 (第 0 列)。'
           }
         }
 
@@ -465,7 +465,7 @@ networks:
   default:
     driver: bridge`,
 
-    env: `# Environment variables for your stack
+    env: `# 为你的堆栈添加环境变量，例如
 DATABASE_URL=postgres://user:pass@localhost:5432/db
 API_KEY=your-secret-key
 DEBUG=false`
@@ -473,9 +473,9 @@ DEBUG=false`
 
   // Type-specific help text
   const helpText = {
-    container: 'Container deployment JSON: specify image, ports, volumes, environment variables, and restart policy',
-    stack: 'Docker Compose YAML: define multiple services, networks, and volumes in YAML format',
-    env: 'Environment variables in KEY=value format, one per line. Lines starting with # are comments.'
+    container: '容器部署使用 JSON 格式: 需要指定镜像、端口、卷、环境变量和重启策略',
+    stack: 'Docker Compose 使用 YAML 格式: 需要定义多个服务、网络和卷',
+    env: '环境变量使用 KEY=value 的格式，每行定义一个变量。其中以 # 开头的行为注释行，将会被忽略。'
   }
 
   return (
@@ -493,17 +493,17 @@ DEBUG=false`
           {formatStatus === 'success' ? (
             <>
               <CheckCircle2 className="h-4 w-4 text-green-600" />
-              Formatted
+              已格式化
             </>
           ) : formatStatus === 'error' ? (
             <>
               <Wand2 className="h-4 w-4 text-destructive" />
-              Invalid {type === 'stack' ? 'YAML' : 'JSON'}
+              无效的 {type === 'stack' ? 'YAML' : 'JSON'}
             </>
           ) : (
             <>
               <Wand2 className="h-4 w-4" />
-              Format & Validate
+              格式化 & 验证
             </>
           )}
         </Button>

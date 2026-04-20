@@ -27,15 +27,15 @@ export type RoleType = 'admin' | 'user' | 'readonly'
 export const VALID_ROLES: RoleType[] = ['admin', 'user', 'readonly']
 
 export const ROLE_LABELS: Record<RoleType, string> = {
-  admin: 'Admin',
-  user: 'User',
-  readonly: 'Read-only',
+  admin: '管理员',
+  user: '普通用户',
+  readonly: '只读用户',
 }
 
 export const ROLE_DESCRIPTIONS: Record<RoleType, string> = {
-  admin: 'Full access to all features',
-  user: 'Can operate containers and deploy stacks',
-  readonly: 'View only, no modifications',
+  admin: '对所有的功能拥有完全访问权限',
+  user: '可以操作容器并部署堆栈',
+  readonly: '仅可查看，不可修改',
 }
 
 /**

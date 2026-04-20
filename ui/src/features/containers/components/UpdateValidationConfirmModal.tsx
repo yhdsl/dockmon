@@ -109,7 +109,7 @@ export function UpdateValidationConfirmModal({
                 id="validation-modal-title"
                 className="text-lg font-semibold text-text-primary"
               >
-                Confirm Container Update
+                确认更新容器
               </h2>
               <p className="mt-1 text-sm text-text-secondary">
                 {containerName}
@@ -122,14 +122,13 @@ export function UpdateValidationConfirmModal({
         <div className="px-6 pb-4">
           <div className="bg-surface-2 rounded-md p-4 border border-border/50">
             <p className="text-sm text-text-secondary mb-3">
-              This container matches a validation pattern that may indicate it requires special care
-              during updates:
+              该容器在更新模式验证中存在警告，这意味着可能在更新前需要额外注意:
             </p>
 
             <div className="space-y-2">
               <div className="flex items-start gap-2">
                 <span className="text-xs font-medium text-text-tertiary uppercase tracking-wider">
-                  Reason:
+                  原因:
                 </span>
                 <span className="text-sm text-text-primary flex-1">{reason}</span>
               </div>
@@ -137,7 +136,7 @@ export function UpdateValidationConfirmModal({
               {matchedPattern && (
                 <div className="flex items-start gap-2">
                   <span className="text-xs font-medium text-text-tertiary uppercase tracking-wider">
-                    Pattern:
+                    模式:
                   </span>
                   <span className="text-sm font-mono text-text-primary bg-surface-3 px-2 py-0.5 rounded">
                     {matchedPattern}
@@ -149,8 +148,7 @@ export function UpdateValidationConfirmModal({
 
           <div className="mt-4 bg-yellow-500/10 border border-yellow-500/20 rounded-md p-3">
             <p className="text-xs text-yellow-200/90">
-              <strong>Recommendation:</strong> Review the update notes and ensure you have recent
-              backups before proceeding.
+              <strong>强烈建议:</strong> 在继续更新之前，请检查更新说明并确保已进行备份。
             </p>
           </div>
         </div>
@@ -158,14 +156,14 @@ export function UpdateValidationConfirmModal({
         {/* Footer */}
         <div className="px-6 py-4 bg-surface-2 rounded-b-lg border-t border-border flex justify-end gap-3">
           <Button variant="outline" onClick={onClose} className="min-w-[100px]">
-            Cancel
+            取消
           </Button>
           <Button
             variant="default"
             onClick={handleConfirm}
             className="min-w-[120px] bg-yellow-600 hover:bg-yellow-700 text-white"
           >
-            Update Anyway
+            仍然更新
           </Button>
         </div>
       </div>

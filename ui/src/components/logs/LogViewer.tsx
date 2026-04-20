@@ -199,7 +199,7 @@ export function LogViewer({
 
       if (rateLimitHit) {
         setAutoRefresh(false)
-        toast.error('Rate limit reached. Auto-refresh disabled.')
+        toast.error('已触发请求频率限制。因此自动刷新已禁用。')
       }
 
       // Merge and sort logs
@@ -395,7 +395,7 @@ export function LogViewer({
               <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <input
                 type="text"
-                placeholder="Search logs (regex supported)..."
+                placeholder="搜索日志 (支持正则表达式)..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className={`w-full pl-8 pr-3 border border-border rounded bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary ${
@@ -413,11 +413,11 @@ export function LogViewer({
               compact ? 'px-2 py-1 text-xs' : 'px-3 py-1.5 text-sm'
             }`}
           >
-            <option value={50}>50 lines</option>
-            <option value={100}>100 lines</option>
-            <option value={500}>500 lines</option>
-            <option value={1000}>1000 lines</option>
-            <option value="all">All lines</option>
+            <option value={50}>50 行</option>
+            <option value={100}>100 行</option>
+            <option value={500}>500 行</option>
+            <option value={1000}>1000 行</option>
+            <option value="all">全部</option>
           </select>
 
           {/* Timestamps Toggle */}
@@ -428,10 +428,10 @@ export function LogViewer({
                 ? 'bg-primary text-primary-foreground'
                 : 'bg-background text-foreground hover:bg-muted'
             } ${compact ? 'py-1 text-xs' : 'py-1.5 text-sm'}`}
-            title="Toggle timestamps"
+            title="切换时间戳显示状态"
           >
             <Clock className="w-3.5 h-3.5" />
-            {!compact && 'Time'}
+            {!compact && '时间戳'}
           </button>
 
           {/* Sort Toggle */}
@@ -440,14 +440,14 @@ export function LogViewer({
             className={`flex items-center gap-1.5 px-3 border border-border rounded bg-background text-foreground hover:bg-muted transition-colors ${
               compact ? 'py-1 text-xs' : 'py-1.5 text-sm'
             }`}
-            title={sortOrder === 'desc' ? 'Newest first' : 'Oldest first'}
+            title={sortOrder === 'desc' ? '最新的日志' : '最早的日志'}
           >
             {sortOrder === 'desc' ? (
               <ArrowDownWideNarrow className="w-3.5 h-3.5" />
             ) : (
               <ArrowUpNarrowWide className="w-3.5 h-3.5" />
             )}
-            {!compact && (sortOrder === 'desc' ? 'Newest' : 'Oldest')}
+            {!compact && (sortOrder === 'desc' ? '最新' : '最早')}
           </button>
 
           {/* Auto-refresh Toggle */}
@@ -458,7 +458,7 @@ export function LogViewer({
               onChange={(e) => setAutoRefresh(e.target.checked)}
               className="rounded border-border"
             />
-            <span className="text-foreground">{compact ? 'Auto' : 'Auto-refresh'}</span>
+            <span className="text-foreground">{compact ? '自动' : '自动刷新'}</span>
           </label>
 
           {/* Clear */}
@@ -468,7 +468,7 @@ export function LogViewer({
             className={`p-2 text-muted-foreground hover:text-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${
               compact ? 'text-xs' : 'text-sm'
             }`}
-            title="Clear logs"
+            title="清空日志"
           >
             <Trash2 className="w-4 h-4" />
           </button>
@@ -480,7 +480,7 @@ export function LogViewer({
             className={`p-2 text-muted-foreground hover:text-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${
               compact ? 'text-xs' : 'text-sm'
             }`}
-            title="Download logs"
+            title="下载日志"
           >
             <Download className="w-4 h-4" />
           </button>
@@ -497,10 +497,10 @@ export function LogViewer({
           {filteredLogs.length === 0 ? (
             <div className="flex items-center justify-center h-full text-muted-foreground">
               {containers.length === 0
-                ? 'Select containers to view logs'
+                ? '选择一个容器以查看日志'
                 : logs.length === 0
-                ? 'No logs available'
-                : 'No logs match search term'}
+                ? '没有可用的日志'
+                : '没有日志匹配搜索的内容'}
             </div>
           ) : (
             <div className={compact ? 'p-2' : 'p-3'}>
@@ -543,7 +543,7 @@ export function LogViewer({
             ) : (
               <ArrowDown className="w-4 h-4" />
             )}
-            Jump to Latest
+            跳转至最新
           </button>
         )}
       </div>

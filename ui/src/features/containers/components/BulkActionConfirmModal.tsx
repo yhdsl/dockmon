@@ -23,9 +23,9 @@ export function BulkActionConfirmModal({
   if (!isOpen) return null
 
   const actionLabels = {
-    start: 'Start',
-    stop: 'Stop',
-    restart: 'Restart',
+    start: '启动',
+    stop: '停止',
+    restart: '重启',
   }
 
   const actionColors = {
@@ -44,12 +44,12 @@ export function BulkActionConfirmModal({
         {/* Header */}
         <div className="px-6 py-4 border-b border-border">
           <h2 className="text-lg font-semibold text-foreground">
-            Confirm {actionLabels[action]}
+            确认{actionLabels[action]}操作
           </h2>
           <p className="text-sm text-muted-foreground mt-1">
             {action === 'stop'
-              ? `Are you sure you want to ${action} ${containers.length} container${containers.length !== 1 ? 's' : ''}? This will interrupt running processes.`
-              : `Are you sure you want to ${action} ${containers.length} container${containers.length !== 1 ? 's' : ''}?`
+              ? `确定要${actionLabels[action]} ${containers.length} 个容器吗? 这将中断正在运行的容器进程。`
+              : `确定要${actionLabels[action]} ${containers.length} 个容器吗?`
             }
           </p>
         </div>
@@ -90,14 +90,14 @@ export function BulkActionConfirmModal({
             onClick={onClose}
             className="px-4 py-2 text-sm font-medium text-foreground hover:bg-surface-2 rounded transition-colors"
           >
-            Cancel
+            取消
           </button>
           <fieldset disabled={!canOperate} className="disabled:opacity-60">
             <button
               onClick={onConfirm}
               className={`px-4 py-2 text-sm font-medium rounded transition-colors ${actionColors[action]}`}
             >
-              {actionLabels[action]} {containers.length} Container{containers.length !== 1 ? 's' : ''}
+              {actionLabels[action]} {containers.length} 个容器
             </button>
           </fieldset>
         </div>

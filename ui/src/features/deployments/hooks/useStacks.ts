@@ -56,10 +56,10 @@ export function useCreateStack() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['stacks'] })
-      toast.success('Stack created successfully')
+      toast.success('已成功创建堆栈')
     },
     onError: (error: Error) => {
-      toast.error(`Failed to create stack: ${error.message}`)
+      toast.error(`创建堆栈时失败: ${error.message}`)
     },
   })
 }
@@ -77,10 +77,10 @@ export function useUpdateStack() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['stacks'] })
       queryClient.invalidateQueries({ queryKey: ['stacks', variables.name] })
-      toast.success('Stack updated successfully')
+      toast.success('已成功更新堆栈')
     },
     onError: (error: Error) => {
-      toast.error(`Failed to update stack: ${error.message}`)
+      toast.error(`更新堆栈时失败: ${error.message}`)
     },
   })
 }
@@ -97,10 +97,10 @@ export function useDeleteStack() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['stacks'] })
-      toast.success('Stack deleted')
+      toast.success('已成功删除堆栈')
     },
     onError: (error: Error) => {
-      toast.error(`Failed to delete stack: ${error.message}`)
+      toast.error(`删除堆栈时失败: ${error.message}`)
     },
   })
 }
@@ -128,10 +128,10 @@ export function useRenameStack() {
       queryClient.invalidateQueries({ queryKey: ['stacks', variables.new_name] })
       // Also invalidate deployments since they reference stack_name
       queryClient.invalidateQueries({ queryKey: ['deployments'] })
-      toast.success(`Stack renamed to '${variables.new_name}'`)
+      toast.success(`已重命名堆栈为 '${variables.new_name}'`)
     },
     onError: (error: Error) => {
-      toast.error(`Failed to rename stack: ${error.message}`)
+      toast.error(`重命名堆栈时失败: ${error.message}`)
     },
   })
 }
@@ -151,10 +151,10 @@ export function useCopyStack() {
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['stacks'] })
-      toast.success(`Stack copied to '${variables.dest_name}'`)
+      toast.success(`已克隆堆栈为 '${variables.dest_name}'`)
     },
     onError: (error: Error) => {
-      toast.error(`Failed to copy stack: ${error.message}`)
+      toast.error(`克隆堆栈时失败: ${error.message}`)
     },
   })
 }

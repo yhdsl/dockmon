@@ -50,7 +50,7 @@ export function BlackoutBanner() {
       <div className="pointer-events-auto flex items-center gap-2 px-3 py-1.5 bg-yellow-600/90 border border-yellow-500/50 rounded-full backdrop-blur-sm shadow-lg">
         <MoonStar className="h-3.5 w-3.5 text-yellow-200 flex-shrink-0" />
         <span className="text-xs font-medium text-yellow-100">
-          Blackout Window Active
+          黑窗期已激活
         </span>
         <button
           onClick={() => setIsDismissed(true)}

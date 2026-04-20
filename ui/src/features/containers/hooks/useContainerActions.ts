@@ -108,24 +108,33 @@ export function useContainerActions(options?: {
 
     onSuccess: (_data, variables) => {
       const actionPastTense: Record<string, string> = {
-        start: 'started',
-        stop: 'stopped',
-        restart: 'restarted',
-        pause: 'paused',
-        unpause: 'unpaused',
-        remove: 'removed',
+        start: '启动',
+        stop: '停止',
+        restart: '重启',
+        pause: '暂停',
+        unpause: '恢复',
+        remove: '删除',
       }
-      const pastTense = actionPastTense[variables.type] || `${variables.type}ed`
-      toast.success(`Container ${pastTense} successfully`)
+      const pastTense = actionPastTense[variables.type] || `${variables.type}`
+      toast.success(`容器已成功${pastTense}`)
       // Invalidate containers query to refetch with updated started_at timestamp
       queryClient.invalidateQueries({ queryKey: ['containers'] })
       options?.onSuccess?.()
     },
 
     onError: (error, variables, context) => {
+      const actionPastTense: Record<string, string> = {
+        start: '启动',
+        stop: '停止',
+        restart: '重启',
+        pause: '暂停',
+        unpause: '恢复',
+        remove: '删除',
+      }
+      const pastTense = actionPastTense[variables.type] || `${variables.type}`
       console.error('[useContainerActions] Action failed:', variables.type, error)
-      toast.error(`Failed to ${variables.type} container`, {
-        description: error instanceof Error ? error.message : 'Unknown error',
+      toast.error(`${pastTense}容器时失败`, {
+        description: error instanceof Error ? error.message : '未知错误',
       })
 
       // Clear pending on error

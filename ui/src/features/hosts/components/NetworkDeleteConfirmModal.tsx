@@ -8,7 +8,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { AlertTriangle } from 'lucide-react'
 import { ConfirmModal } from '@/components/shared/ConfirmModal'
-import { pluralize } from '@/lib/utils/formatting'
 import type { DockerNetwork } from '@/types/api'
 
 interface NetworkDeleteConfirmModalProps {
@@ -48,10 +47,10 @@ export function NetworkDeleteConfirmModal({
         isOpen={isOpen}
         onClose={onClose}
         onConfirm={handleConfirm}
-        title="Delete Networks"
-        description={`Delete ${networkCount} selected networks? This action cannot be undone.`}
-        confirmText={`Delete ${networkCount} Networks`}
-        pendingText="Deleting..."
+        title="删除网络"
+        description={`删除 ${networkCount} 个选择的网络? 此操作将无法撤销。`}
+        confirmText={`删除 ${networkCount} 个网络`}
+        pendingText="删除中..."
         variant="danger"
         isPending={isPending}
       >
@@ -60,10 +59,10 @@ export function NetworkDeleteConfirmModal({
             <AlertTriangle className="h-5 w-5 text-warning flex-shrink-0 mt-0.5" aria-hidden="true" />
             <div className="text-sm">
               <p className="font-medium text-warning">
-                Bulk network deletion
+                网络批处理删除
               </p>
               <p className="text-muted-foreground mt-1">
-                Networks with connected containers will require force delete.
+                删除正在被容器使用的网络需要启用强制删除。
               </p>
             </div>
           </div>
@@ -77,7 +76,7 @@ export function NetworkDeleteConfirmModal({
                 className="w-4 h-4 rounded border-border"
               />
               <span className="text-sm text-foreground">
-                Force delete (disconnect containers if needed)
+                强制删除 (无视是否被使用)
               </span>
             </label>
           </div>
@@ -96,10 +95,10 @@ export function NetworkDeleteConfirmModal({
       isOpen={isOpen}
       onClose={onClose}
       onConfirm={handleConfirm}
-      title="Delete Network"
-      description="This action cannot be undone."
-      confirmText="Delete Network"
-      pendingText="Deleting..."
+      title="删除网络"
+      description="此操作将无法撤销"
+      confirmText="删除网络"
+      pendingText="删除中..."
       variant="danger"
       isPending={isPending}
       disabled={hasConnectedContainers && !forceDelete}
@@ -111,11 +110,11 @@ export function NetworkDeleteConfirmModal({
             <AlertTriangle className="h-5 w-5 text-warning flex-shrink-0 mt-0.5" aria-hidden="true" />
             <div className="text-sm">
               <p className="font-medium text-warning">
-                Network has {network.container_count} connected {pluralize(network.container_count, 'container')}
+                网络已被 {network.container_count} 个容器所使用
               </p>
               <p className="text-muted-foreground mt-1">
-                Deleting this network requires disconnecting all containers first.
-                This may affect container networking.
+                删除该网络前需要先断开所有已连接的容器。
+                这可能会影响这些容器的网络连接。
               </p>
             </div>
           </div>
@@ -124,26 +123,26 @@ export function NetworkDeleteConfirmModal({
         {/* Network info */}
         <div className="p-3 rounded bg-surface-2 space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Name</span>
+            <span className="text-sm text-muted-foreground">名称</span>
             <span className="text-sm font-medium text-foreground font-mono">
               {network.name}
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Driver</span>
+            <span className="text-sm text-muted-foreground">驱动</span>
             <span className="text-sm text-foreground">
               {network.driver || 'default'}
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Scope</span>
+            <span className="text-sm text-muted-foreground">作用域</span>
             <span className="text-sm text-foreground">
-              {network.scope}
+              {{local: "本地", swarm: "Swarm", global: "全局", }[network.scope]}
             </span>
           </div>
           {hasConnectedContainers && (
             <div className="pt-2 border-t border-border">
-              <span className="text-sm text-muted-foreground">Connected containers:</span>
+              <span className="text-sm text-muted-foreground">已连接的容器:</span>
               <ul className="mt-1 space-y-1">
                 {network.containers.slice(0, 5).map((container) => (
                   <li key={container.id} className="text-sm text-foreground font-mono pl-2">
@@ -152,7 +151,7 @@ export function NetworkDeleteConfirmModal({
                 ))}
                 {network.containers.length > 5 && (
                   <li className="text-sm text-muted-foreground pl-2">
-                    ...and {network.containers.length - 5} more
+                    ...以及剩余的 {network.containers.length - 5} 个
                   </li>
                 )}
               </ul>
@@ -171,11 +170,11 @@ export function NetworkDeleteConfirmModal({
                 className="w-4 h-4 rounded border-border"
               />
               <span className="text-sm text-foreground">
-                Force delete (disconnect containers first)
+                强制删除 (直接断开容器连接)
               </span>
             </label>
             <p className="text-xs text-warning mt-2">
-              Warning: Force deleting will disconnect all containers from this network.
+              警告: 强制删除将从此网络中移除所有已连接的容器。
             </p>
           </div>
         )}

@@ -42,7 +42,7 @@ export function ContainerLinkList({
       })}
       {containers.length > maxVisible && (
         <span className="text-sm text-muted-foreground px-1.5 py-0.5">
-          +{containers.length - maxVisible} more
+          +{containers.length - maxVisible} 个
         </span>
       )}
     </div>

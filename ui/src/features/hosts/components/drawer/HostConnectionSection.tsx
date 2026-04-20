@@ -7,6 +7,7 @@
 import { Shield, CheckCircle2, XCircle, AlertCircle } from 'lucide-react'
 import { DrawerSection } from '@/components/ui/drawer'
 import { formatDistanceToNow } from 'date-fns'
+import { zhCN } from 'date-fns/locale'
 
 interface Host {
   id: string
@@ -31,9 +32,9 @@ export function HostConnectionSection({ host }: HostConnectionSectionProps) {
 
   // Determine connection type
   const getConnectionType = () => {
-    if (!useTls) return 'TCP (Unencrypted)'
+    if (!useTls) return 'TCP (不安全)'
     // We can't determine mTLS vs TLS from current data
-    return 'TLS (Encrypted)'
+    return 'TLS (已加密)'
   }
 
   const getSecurityIcon = () => {
@@ -55,16 +56,16 @@ export function HostConnectionSection({ host }: HostConnectionSectionProps) {
   const getStatusText = () => {
     switch (host.status) {
       case 'online':
-        return 'Connected'
+        return '已连接'
       case 'offline':
-        return 'Disconnected'
+        return '未连接'
       case 'degraded':
-        return 'Connection Issues'
+        return '存在问题'
     }
   }
 
   return (
-    <DrawerSection title="Connection">
+    <DrawerSection title="连接">
       <div className="space-y-4">
         {/* Connection Status */}
         <div className="flex items-center gap-3 p-3 rounded-lg bg-muted">
@@ -73,7 +74,7 @@ export function HostConnectionSection({ host }: HostConnectionSectionProps) {
             <p className="text-sm font-medium">{getStatusText()}</p>
             {host.last_checked && host.status === 'online' && (
               <p className="text-xs text-muted-foreground mt-0.5">
-                Last checked {formatDistanceToNow(new Date(host.last_checked), { addSuffix: true })}
+                上次检查于: {formatDistanceToNow(new Date(host.last_checked), { addSuffix: true, locale: zhCN })}
               </p>
             )}
           </div>
@@ -82,11 +83,11 @@ export function HostConnectionSection({ host }: HostConnectionSectionProps) {
         {/* Connection Details */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="text-xs font-medium text-muted-foreground">Protocol</label>
+            <label className="text-xs font-medium text-muted-foreground">协议</label>
             <p className="text-sm mt-1">Docker API</p>
           </div>
           <div>
-            <label className="text-xs font-medium text-muted-foreground">Port</label>
+            <label className="text-xs font-medium text-muted-foreground">端口</label>
             <p className="text-sm mt-1 font-mono">{port}</p>
           </div>
         </div>
@@ -94,7 +95,7 @@ export function HostConnectionSection({ host }: HostConnectionSectionProps) {
         {/* Security */}
         <div>
           <label className="text-xs font-medium text-muted-foreground flex items-center gap-2">
-            Security
+            安全性
           </label>
           <div className="flex items-center gap-2 mt-2 p-3 rounded-lg bg-muted">
             {getSecurityIcon()}
@@ -108,9 +109,9 @@ export function HostConnectionSection({ host }: HostConnectionSectionProps) {
           <div className="flex items-start gap-2 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
             <AlertCircle className="h-4 w-4 text-amber-500 mt-0.5" />
             <div className="flex-1">
-              <p className="text-sm font-medium text-amber-500">Unencrypted Connection</p>
+              <p className="text-sm font-medium text-amber-500">未加密的连接</p>
               <p className="text-xs text-amber-500/80 mt-1">
-                Docker API traffic is not encrypted. Enable TLS for production use.
+                Docker API 的流量未被加密。如果当前为生产环境，请及时启用 TLS。
               </p>
             </div>
           </div>

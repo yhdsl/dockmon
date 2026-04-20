@@ -107,7 +107,7 @@ export function TagEditor({ tags, containerId, hostId }: TagEditorProps) {
   const addTag = (tag: string) => {
     const validation = validateTag(tag, selectedTags)
     if (!validation.valid) {
-      setError(validation.error || 'Invalid tag')
+      setError(validation.error || '无效的标签')
       return
     }
 
@@ -178,11 +178,11 @@ export function TagEditor({ tags, containerId, hostId }: TagEditorProps) {
       const removedCount = tagsToRemove.length
       let message = ''
       if (addedCount > 0 && removedCount > 0) {
-        message = `Added ${addedCount} and removed ${removedCount} tag${removedCount > 1 ? 's' : ''}`
+        message = `已添加 ${addedCount} 个并删除 ${removedCount} 个标签`
       } else if (addedCount > 0) {
-        message = `Added ${addedCount} tag${addedCount > 1 ? 's' : ''}`
+        message = `已添加 ${addedCount} 个标签`
       } else {
-        message = `Removed ${removedCount} tag${removedCount > 1 ? 's' : ''}`
+        message = `已删除 ${removedCount} 个标签`
       }
 
       toast.success(message)
@@ -195,7 +195,7 @@ export function TagEditor({ tags, containerId, hostId }: TagEditorProps) {
       // Revert optimistic update
       queryClient.invalidateQueries({ queryKey: ['containers'] })
 
-      const errorMessage = err instanceof Error ? err.message : 'Failed to update tags'
+      const errorMessage = err instanceof Error ? err.message : '更新标签时失败'
       toast.error(errorMessage)
       setError(errorMessage)
     }
@@ -218,11 +218,11 @@ export function TagEditor({ tags, containerId, hostId }: TagEditorProps) {
         tags_to_remove: [tagToRemove],
       })
 
-      toast.success(`Removed tag "${tagToRemove}"`)
+      toast.success(`删除 "${tagToRemove} 标签"`)
       queryClient.invalidateQueries({ queryKey: ['containers'] })
     } catch (err) {
       queryClient.invalidateQueries({ queryKey: ['containers'] })
-      toast.error('Failed to remove tag')
+      toast.error('删除标签时失败')
     }
   }
 
@@ -232,7 +232,7 @@ export function TagEditor({ tags, containerId, hostId }: TagEditorProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Tag className="w-4 h-4 text-muted-foreground" />
-            <h4 className="text-sm font-medium text-foreground">Tags</h4>
+            <h4 className="text-sm font-medium text-foreground">标签</h4>
           </div>
         </div>
 
@@ -268,7 +268,7 @@ export function TagEditor({ tags, containerId, hostId }: TagEditorProps) {
                 }}
                 onKeyDown={handleKeyDown}
                 onFocus={() => setShowSuggestions(true)}
-                placeholder="Type to add..."
+                placeholder="输入以添加标签..."
                 className="w-full px-2 py-1 text-sm border border-border rounded bg-background focus:outline-none focus:ring-2 focus:ring-primary"
                 aria-label="Add new tag"
                 aria-describedby={error ? "tag-error" : "tag-helper"}
@@ -309,7 +309,7 @@ export function TagEditor({ tags, containerId, hostId }: TagEditorProps) {
             <p id="tag-error" className="text-xs text-danger" role="alert">{error}</p>
           ) : (
             <p id="tag-helper" className="text-xs text-muted-foreground">
-              Enter to add · Backspace to remove last
+              回车以添加标签 · 退格以删除上一个标签
             </p>
           )}
 
@@ -320,14 +320,14 @@ export function TagEditor({ tags, containerId, hostId }: TagEditorProps) {
               className="px-3 py-1.5 text-sm bg-primary text-primary-foreground rounded hover:bg-primary/90 transition-colors"
               aria-label="Save tag changes"
             >
-              Save
+              保存
             </button>
             <button
               onClick={handleCancel}
               className="px-3 py-1.5 text-sm border border-border rounded hover:bg-muted transition-colors"
               aria-label="Cancel tag editing"
             >
-              Cancel
+              取消
             </button>
           </div>
         </fieldset>
@@ -336,14 +336,14 @@ export function TagEditor({ tags, containerId, hostId }: TagEditorProps) {
         {derivedTags.length > 0 && (
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <h4 className="text-xs font-medium text-muted-foreground">Derived (locked)</h4>
+              <h4 className="text-xs font-medium text-muted-foreground">派生标签 (锁定)</h4>
             </div>
             <div className="flex flex-wrap gap-1.5">
               {derivedTags.map((tag) => (
                 <div
                   key={tag}
                   className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs border border-border bg-transparent text-muted-foreground cursor-help"
-                  title="Derived from docker-compose"
+                  title="从 docker-compose 中派生得到"
                 >
                   <Lock className="w-3 h-3" />
                   <span>{tag}</span>
@@ -362,17 +362,17 @@ export function TagEditor({ tags, containerId, hostId }: TagEditorProps) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Tag className="w-4 h-4 text-muted-foreground" />
-          <h4 className="text-sm font-medium text-foreground">Tags</h4>
+          <h4 className="text-sm font-medium text-foreground">标签</h4>
         </div>
         <button
           onClick={() => setIsEditing(true)}
           disabled={!canManageTags}
           className="text-xs text-primary hover:text-primary/80 transition-colors flex items-center gap-1 disabled:opacity-60 disabled:cursor-not-allowed"
-          title="Edit tags"
+          title="编辑标签"
           aria-label="Edit container tags"
         >
           <Edit className="w-3 h-3" />
-          Edit
+          编辑
         </button>
       </div>
 
@@ -390,7 +390,7 @@ export function TagEditor({ tags, containerId, hostId }: TagEditorProps) {
                 disabled={!canManageTags}
                 className="opacity-60 hover:opacity-100 hover:bg-black/10 dark:hover:bg-white/10 rounded p-0.5 transition-all disabled:hidden"
                 aria-label={`Remove ${tag}`}
-                title="Remove tag"
+                title="删除标签"
               >
                 <X className="w-3 h-3" />
               </button>
@@ -403,7 +403,7 @@ export function TagEditor({ tags, containerId, hostId }: TagEditorProps) {
           disabled={!canManageTags}
           className="text-sm text-muted-foreground hover:text-foreground transition-colors disabled:cursor-not-allowed"
         >
-          {canManageTags ? 'No tags · Click to add' : 'No tags'}
+          {canManageTags ? '暂无标签 · 点击以添加' : '暂无标签'}
         </button>
       )}
 
@@ -414,7 +414,7 @@ export function TagEditor({ tags, containerId, hostId }: TagEditorProps) {
             <div
               key={tag}
               className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs border border-border bg-transparent text-muted-foreground cursor-help"
-              title="Derived from docker-compose (locked)"
+              title="从 docker-compose 中派生得到 (锁定)"
             >
               <Lock className="w-3 h-3" />
               <span>{tag}</span>

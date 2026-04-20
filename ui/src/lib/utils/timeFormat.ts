@@ -28,12 +28,12 @@ export function formatDateTime(
     dateStyle?: 'short' | 'medium' | 'long'
   } = {}
 ): string {
-  const { includeDate = true, includeSeconds = false, dateStyle = 'short' } = options
+  const { includeDate = true, includeSeconds = false, dateStyle = 'long' } = options
 
   const d = date instanceof Date ? date : new Date(date)
 
   if (isNaN(d.getTime())) {
-    return 'Invalid date'
+    return '无效的时间格式'
   }
 
   const hour12 = timeFormat === '12h'

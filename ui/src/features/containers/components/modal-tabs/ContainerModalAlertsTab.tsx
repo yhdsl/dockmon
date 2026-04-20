@@ -17,23 +17,23 @@ interface ContainerModalAlertsTabProps {
 }
 
 const SNOOZE_DURATIONS = [
-  { label: '15 minutes', value: 15 },
-  { label: '1 hour', value: 60 },
-  { label: '4 hours', value: 240 },
-  { label: '24 hours', value: 1440 },
+  { label: '15 分钟后', value: 15 },
+  { label: '1 小时后', value: 60 },
+  { label: '4 小时后', value: 240 },
+  { label: '24 小时后', value: 1440 },
 ]
 
 const STATE_OPTIONS: { value: AlertState; label: string; icon: any }[] = [
-  { value: 'open', label: 'Open', icon: AlertCircle },
-  { value: 'snoozed', label: 'Snoozed', icon: Clock },
-  { value: 'resolved', label: 'Resolved', icon: CheckCircle2 },
+  { value: 'open', label: '未解决', icon: AlertCircle },
+  { value: 'snoozed', label: '稍后解决', icon: Clock },
+  { value: 'resolved', label: '已解决', icon: CheckCircle2 },
 ]
 
 const SEVERITY_OPTIONS: { value: AlertSeverity; label: string; color: string }[] = [
-  { value: 'critical', label: 'Critical', color: 'text-red-600' },
-  { value: 'error', label: 'Error', color: 'text-orange-600' },
-  { value: 'warning', label: 'Warning', color: 'text-yellow-600' },
-  { value: 'info', label: 'Info', color: 'text-blue-600' },
+  { value: 'critical', label: '严重', color: 'text-red-600' },
+  { value: 'error', label: '错误', color: 'text-orange-600' },
+  { value: 'warning', label: '警告', color: 'text-yellow-600' },
+  { value: 'info', label: '通知', color: 'text-blue-600' },
 ]
 
 export function ContainerModalAlertsTab({ container }: ContainerModalAlertsTabProps) {
@@ -104,7 +104,7 @@ export function ContainerModalAlertsTab({ container }: ContainerModalAlertsTabPr
 
   const handleBulkResolve = async () => {
     for (const alertId of selectedAlertIds) {
-      await resolveAlert.mutateAsync({ alertId, reason: 'Bulk resolved from container modal' })
+      await resolveAlert.mutateAsync({ alertId, reason: '从容器弹窗中完成批处理操作' })
     }
     setSelectedAlertIds(new Set())
     setShowResolveConfirm(false)
@@ -142,14 +142,14 @@ export function ContainerModalAlertsTab({ container }: ContainerModalAlertsTabPr
     const hours = Math.floor(minutes / 60)
     const days = Math.floor(hours / 24)
 
-    if (days > 0) return `${days}d ago`
-    if (hours > 0) return `${hours}h ago`
-    if (minutes > 0) return `${minutes}m ago`
-    return 'Just now'
+    if (days > 0) return `${days} 天之前`
+    if (hours > 0) return `${hours} 小时之前`
+    if (minutes > 0) return `${minutes} 分钟之前`
+    return '刚刚'
   }
 
   if (isLoading) {
-    return <div className="p-6 text-center text-muted-foreground">Loading alerts...</div>
+    return <div className="p-6 text-center text-muted-foreground">加载告警数据中...</div>
   }
 
   return (
@@ -205,7 +205,7 @@ export function ContainerModalAlertsTab({ container }: ContainerModalAlertsTabPr
       {selectedAlertIds.size > 0 && (
         <div className="p-3 border-b border-border bg-surface-1 flex items-center gap-3">
           <span className="text-sm text-foreground">
-            {selectedAlertIds.size} selected
+            已选择 {selectedAlertIds.size} 条
           </span>
           <div className="flex gap-2">
             {/* Snooze dropdown */}
@@ -215,7 +215,7 @@ export function ContainerModalAlertsTab({ container }: ContainerModalAlertsTabPr
                 className="flex items-center gap-1 px-3 py-1 rounded-md bg-surface-2 text-foreground text-sm hover:bg-surface-3 transition-colors"
               >
                 <Clock className="h-4 w-4" />
-                Snooze
+                稍后解决
                 <ChevronDown className="h-3 w-3" />
               </button>
               {showSnoozeMenu && (
@@ -239,29 +239,29 @@ export function ContainerModalAlertsTab({ container }: ContainerModalAlertsTabPr
               className="flex items-center gap-1 px-3 py-1 rounded-md bg-success/20 text-success text-sm hover:bg-success/30 transition-colors"
             >
               <CheckCircle2 className="h-4 w-4" />
-              Resolve
+              已解决
             </button>
 
             {/* Resolve confirmation */}
             {showResolveConfirm && (
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
                 <div className="bg-surface-1 rounded-lg p-6 max-w-md border border-border">
-                  <h3 className="text-lg font-semibold text-foreground mb-2">Resolve Alerts?</h3>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">解决告警?</h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Are you sure you want to resolve {selectedAlertIds.size} alert{selectedAlertIds.size > 1 ? 's' : ''}?
+                    确定要将 {selectedAlertIds.size} 条告警标记为已解决吗?
                   </p>
                   <div className="flex gap-3 justify-end">
                     <button
                       onClick={() => setShowResolveConfirm(false)}
                       className="px-4 py-2 rounded-md bg-surface-2 text-foreground hover:bg-surface-3 transition-colors"
                     >
-                      Cancel
+                      取消
                     </button>
                     <button
                       onClick={handleBulkResolve}
                       className="px-4 py-2 rounded-md bg-success text-white hover:bg-success/90 transition-colors"
                     >
-                      Resolve
+                      已解决
                     </button>
                   </div>
                 </div>
@@ -276,8 +276,8 @@ export function ContainerModalAlertsTab({ container }: ContainerModalAlertsTabPr
         {alerts.length === 0 ? (
           <div className="p-8 text-center text-muted-foreground">
             <Bell className="h-12 w-12 mx-auto mb-3 opacity-50" />
-            <p className="text-lg">No alerts found</p>
-            <p className="text-sm mt-1">This container has no {filters.state} alerts</p>
+            <p className="text-lg">暂无告警</p>
+            <p className="text-sm mt-1">此容器没有{{open: "未解决", snoozed: "稍后解决", resolved: "已解决"}[filters.state!]}的告警</p>
           </div>
         ) : (
           <table className="w-full">
@@ -291,11 +291,11 @@ export function ContainerModalAlertsTab({ container }: ContainerModalAlertsTabPr
                     className="rounded border-gray-600"
                   />
                 </th>
-                <th className="text-left p-3 text-sm font-medium text-muted-foreground">Severity</th>
-                <th className="text-left p-3 text-sm font-medium text-muted-foreground">Type</th>
-                <th className="text-left p-3 text-sm font-medium text-muted-foreground">Message</th>
-                <th className="text-left p-3 text-sm font-medium text-muted-foreground">Last Seen</th>
-                <th className="text-left p-3 text-sm font-medium text-muted-foreground">State</th>
+                <th className="text-left p-3 text-sm font-medium text-muted-foreground">严重程度</th>
+                <th className="text-left p-3 text-sm font-medium text-muted-foreground">告警规则</th>
+                <th className="text-left p-3 text-sm font-medium text-muted-foreground">告警信息</th>
+                <th className="text-left p-3 text-sm font-medium text-muted-foreground">上次告警</th>
+                <th className="text-left p-3 text-sm font-medium text-muted-foreground">告警状态</th>
               </tr>
             </thead>
             <tbody>
@@ -314,7 +314,21 @@ export function ContainerModalAlertsTab({ container }: ContainerModalAlertsTabPr
                     />
                   </td>
                   <td className="p-3">{getSeverityIcon(alert.severity)}</td>
-                  <td className="p-3 text-sm text-foreground font-medium">{alert.kind}</td>
+                  <td className="p-3 text-sm text-foreground font-medium">
+                    {{
+                      cpu_high: 'CPU占用高',
+                      memory_high: '内存占用高',
+                      disk_low: '磁盘可用低',
+                      container_unhealthy: '容器不健康(内置)',
+                      health_check_failed: '容器不健康',
+                      container_stopped: '容器已停止',
+                      container_restart: '容器已重启',
+                      host_down: '主机离线',
+                      update_available: '更新可用',
+                      update_completed: '更新完成',
+                      update_failed: '更新失败',
+                    }[alert.kind]}
+                  </td>
                   <td className="p-3 text-sm text-foreground">{alert.title}</td>
                   <td className="p-3 text-sm text-muted-foreground">{formatTimestamp(alert.last_seen)}</td>
                   <td className="p-3">{getStateIcon(alert.state)}</td>
@@ -329,7 +343,7 @@ export function ContainerModalAlertsTab({ container }: ContainerModalAlertsTabPr
       {totalPages > 1 && (
         <div className="p-3 border-t border-border bg-surface-0 flex items-center justify-between">
           <div className="text-sm text-muted-foreground">
-            Page {currentPage} of {totalPages} ({totalCount} total)
+            第 {currentPage} 页 / 共 {totalPages} 页 (共计 {totalCount} 条)
           </div>
           <div className="flex gap-2">
             <button

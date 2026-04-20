@@ -24,14 +24,14 @@ import { debug } from '@/lib/debug'
 const SEVERITY_OPTIONS: EventSeverity[] = ['critical', 'error', 'warning', 'info', 'debug']
 const CATEGORY_OPTIONS: EventCategory[] = ['container', 'host', 'system', 'alert', 'notification', 'user']
 const TIME_RANGE_OPTIONS = [
-  { value: 1, label: 'Last 1 hour' },
-  { value: 6, label: 'Last 6 hours' },
-  { value: 12, label: 'Last 12 hours' },
-  { value: 24, label: 'Last 24 hours' },
-  { value: 48, label: 'Last 48 hours' },
-  { value: 168, label: 'Last 7 days' },
-  { value: 720, label: 'Last 30 days' },
-  { value: 0, label: 'All time' },
+  { value: 1, label: '最近 1 小时' },
+  { value: 6, label: '最近 6 小时' },
+  { value: 12, label: '最近 12 小时' },
+  { value: 24, label: '最近 24 小时' },
+  { value: 48, label: '最近 48 小时' },
+  { value: 168, label: '最近 7 天' },
+  { value: 720, label: '最近 30 天' },
+  { value: 0, label: '全部时间' },
 ]
 
 export function EventsPage() {
@@ -162,7 +162,7 @@ export function EventsPage() {
       await apiClient.post('/user/event-sort-order', { sort_order: newOrder })
       queryClient.invalidateQueries({ queryKey: ['events'] })
     } catch (err) {
-      debug.error('EventsPage', 'Failed to save sort order:', err)
+      debug.error('EventsPage', '保存排序顺序时失败:', err)
     }
   }
 
@@ -239,7 +239,7 @@ export function EventsPage() {
       {/* Header */}
       <div className="border-b border-border bg-surface px-3 sm:px-4 md:px-6 py-4 pt-20 md:pt-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-          <h1 className="text-xl sm:text-2xl font-bold">Event Log</h1>
+          <h1 className="text-xl sm:text-2xl font-bold">事件日志</h1>
           <div className="flex items-center gap-2 overflow-x-auto pb-1">
             <button
               onClick={exportToCSV}
@@ -247,23 +247,23 @@ export function EventsPage() {
               className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-lg border border-border bg-surface-1 hover:bg-surface-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
             >
               <Download className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Export CSV</span>
-              <span className="sm:hidden">Export</span>
+              <span className="hidden sm:inline">导出 CSV</span>
+              <span className="sm:hidden">导出</span>
             </button>
             <button
               onClick={toggleSortOrder}
               className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-lg border border-border bg-surface-1 hover:bg-surface-2 text-sm whitespace-nowrap"
             >
               <ArrowUpDown className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">{sortOrder === 'desc' ? 'Newest First' : 'Oldest First'}</span>
-              <span className="sm:hidden">{sortOrder === 'desc' ? 'Newest' : 'Oldest'}</span>
+              <span className="hidden sm:inline">{sortOrder === 'desc' ? '最新优先' : '最早优先'}</span>
+              <span className="sm:hidden">{sortOrder === 'desc' ? '最新' : '最早'}</span>
             </button>
             <button
               onClick={resetFilters}
               className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-lg border border-border bg-surface-1 hover:bg-surface-2 text-sm whitespace-nowrap"
             >
               <X className="h-3.5 w-3.5" />
-              <span>Reset</span>
+              <span>重置筛选</span>
             </button>
           </div>
         </div>
@@ -272,7 +272,7 @@ export function EventsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
           {/* Time Range */}
           <div>
-            <label className="block text-xs font-medium text-muted-foreground mb-1.5">TIME RANGE</label>
+            <label className="block text-xs font-medium text-muted-foreground mb-1.5">时间范围</label>
             <select
               value={filters.hours ?? 24}
               onChange={(e) => updateFilter('hours', Number(e.target.value))}
@@ -288,16 +288,23 @@ export function EventsPage() {
 
           {/* Category */}
           <div>
-            <label className="block text-xs font-medium text-muted-foreground mb-1.5">CATEGORY</label>
+            <label className="block text-xs font-medium text-muted-foreground mb-1.5">事件类别</label>
             <select
               value={filters.category?.[0] ?? ''}
               onChange={(e) => updateFilter('category', e.target.value ? [e.target.value as EventCategory] : undefined)}
               className="w-full px-3 py-2 rounded-lg border border-border bg-surface-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             >
-              <option value="">All Categories</option>
+              <option value="">全部类别</option>
               {CATEGORY_OPTIONS.map((cat) => (
                 <option key={cat} value={cat} className="capitalize">
-                  {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                  {{
+                    "container": "容器",
+                    "host": "主机",
+                    "system": "系统",
+                    "alert": "告警",
+                    "notification": "通知",
+                    "user": "用户"
+                  }[cat]}
                 </option>
               ))}
             </select>
@@ -305,13 +312,13 @@ export function EventsPage() {
 
           {/* Severity */}
           <div>
-            <label className="block text-xs font-medium text-muted-foreground mb-1.5">SEVERITY</label>
+            <label className="block text-xs font-medium text-muted-foreground mb-1.5">严重程度</label>
             <select
               value={filters.severity?.[0] ?? ''}
               onChange={(e) => updateFilter('severity', e.target.value ? [e.target.value as EventSeverity] : undefined)}
               className="w-full px-3 py-2 rounded-lg border border-border bg-surface-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             >
-              <option value="">All Severity</option>
+              <option value="">全部等级</option>
               {SEVERITY_OPTIONS.map((sev) => (
                 <option key={sev} value={sev}>
                   {formatSeverity(sev)}
@@ -322,7 +329,7 @@ export function EventsPage() {
 
           {/* Host Search with Checkboxes */}
           <div ref={hostDropdownRef} className="relative">
-            <label className="block text-xs font-medium text-muted-foreground mb-1.5">HOST</label>
+            <label className="block text-xs font-medium text-muted-foreground mb-1.5">主机</label>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
               <input
@@ -330,7 +337,7 @@ export function EventsPage() {
                 value={hostSearchInput}
                 onChange={(e) => setHostSearchInput(e.target.value)}
                 onFocus={() => setShowHostDropdown(true)}
-                placeholder={selectedHostIds.length > 0 ? `${selectedHostIds.length} selected` : 'Search hosts...'}
+                placeholder={selectedHostIds.length > 0 ? `${selectedHostIds.length} 个主机已选择` : '搜索主机...'}
                 className="w-full pl-9 pr-3 py-2 rounded-lg border border-border bg-surface-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
@@ -339,7 +346,7 @@ export function EventsPage() {
             {showHostDropdown && (
               <div className="absolute z-50 w-full mt-1 py-1 rounded-lg border border-border bg-surface shadow-lg max-h-[300px] overflow-y-auto">
                 {filteredHosts.length === 0 ? (
-                  <div className="px-3 py-2 text-sm text-muted-foreground">No hosts found</div>
+                  <div className="px-3 py-2 text-sm text-muted-foreground">尚未找到任何主机</div>
                 ) : (
                   filteredHosts.map((host) => {
                     const isSelected = selectedHostIds.includes(host.id)
@@ -374,7 +381,7 @@ export function EventsPage() {
 
           {/* Container Search with Checkboxes */}
           <div ref={containerDropdownRef} className="relative">
-            <label className="block text-xs font-medium text-muted-foreground mb-1.5">CONTAINER</label>
+            <label className="block text-xs font-medium text-muted-foreground mb-1.5">容器</label>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
               <input
@@ -382,7 +389,7 @@ export function EventsPage() {
                 value={containerSearchInput}
                 onChange={(e) => setContainerSearchInput(e.target.value)}
                 onFocus={() => setShowContainerDropdown(true)}
-                placeholder={selectedContainerIds.length > 0 ? `${selectedContainerIds.length} selected` : 'Search containers...'}
+                placeholder={selectedContainerIds.length > 0 ? `${selectedContainerIds.length} 个容器已选择` : '搜索容器...'}
                 className="w-full pl-9 pr-3 py-2 rounded-lg border border-border bg-surface-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
@@ -391,7 +398,7 @@ export function EventsPage() {
             {showContainerDropdown && (
               <div className="absolute z-50 w-full mt-1 py-1 rounded-lg border border-border bg-surface shadow-lg max-h-[300px] overflow-y-auto">
                 {filteredContainers.length === 0 ? (
-                  <div className="px-3 py-2 text-sm text-muted-foreground">No containers found</div>
+                  <div className="px-3 py-2 text-sm text-muted-foreground">尚未找到任何容器</div>
                 ) : (
                   filteredContainers.map((container) => {
                     // Use composite key for selection to match database storage format
@@ -428,14 +435,14 @@ export function EventsPage() {
 
           {/* General Search */}
           <div>
-            <label className="block text-xs font-medium text-muted-foreground mb-1.5">SEARCH</label>
+            <label className="block text-xs font-medium text-muted-foreground mb-1.5">搜索</label>
             <div className="flex gap-2">
               <input
                 type="text"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                placeholder="Search (text or regex)..."
+                placeholder="搜索 (文本或正则表达式)..."
                 className="flex-1 px-3 py-2 rounded-lg border border-border bg-surface-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
@@ -447,19 +454,19 @@ export function EventsPage() {
       <div className="flex-1 overflow-hidden">
         {isLoading ? (
           <div className="flex items-center justify-center h-64">
-            <div className="text-muted-foreground text-sm">Loading events...</div>
+            <div className="text-muted-foreground text-sm">加载事件数据中...</div>
           </div>
         ) : events.length === 0 ? (
           <div className="flex items-center justify-center h-64">
-            <div className="text-muted-foreground text-sm">No events found</div>
+            <div className="text-muted-foreground text-sm">暂无事件</div>
           </div>
         ) : (
           <div className="h-full overflow-y-auto">
             {/* Table Header */}
             <div className="sticky top-0 bg-surface border-b border-border px-6 py-2 grid grid-cols-[200px_120px_1fr] gap-4 text-xs font-medium text-muted-foreground">
-              <div>TIME</div>
-              <div>SEVERITY</div>
-              <div>EVENT DETAILS</div>
+              <div>时间戳</div>
+              <div>严重程度</div>
+              <div>详细信息</div>
             </div>
 
             {/* Table Rows */}
@@ -482,7 +489,7 @@ export function EventsPage() {
       {/* Footer with Pagination */}
       <div className="border-t border-border bg-surface px-6 py-3 flex items-center justify-between">
         <div className="text-sm text-muted-foreground">
-          {events.length === 0 ? 'No events found' : `Showing ${(filters.offset ?? 0) + 1}-${Math.min((filters.offset ?? 0) + events.length, totalCount)} of ${totalCount} events`}
+          {events.length === 0 ? '尚未找到任何事件' : `正在展示 ${(filters.offset ?? 0) + 1}-${Math.min((filters.offset ?? 0) + events.length, totalCount)} 条事件 (共 ${totalCount} 条)`}
         </div>
 
         <div className="flex items-center gap-2">
@@ -492,11 +499,11 @@ export function EventsPage() {
             className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-border hover:bg-surface-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
           >
             <ChevronLeft className="h-4 w-4" />
-            Previous
+            上一页
           </button>
 
           <div className="text-sm text-muted-foreground">
-            Page {currentPage} of {totalPages}
+            第 {currentPage} 页/ 共 {totalPages} 页
           </div>
 
           <button
@@ -504,7 +511,7 @@ export function EventsPage() {
             disabled={totalPages === 0 || currentPage >= totalPages}
             className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-border hover:bg-surface-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
           >
-            Next
+            下一页
             <ChevronRight className="h-4 w-4" />
           </button>
         </div>

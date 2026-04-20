@@ -63,11 +63,11 @@ export function useCreateUser() {
     },
     onSuccess: (user) => {
       queryClient.invalidateQueries({ queryKey: USERS_QUERY_KEY })
-      toast.success(`User "${user.username}" created successfully`)
+      toast.success(`已成功创建用户 "${user.username}"`)
     },
     onError: (error: Error) => {
       console.error('Failed to create user:', error)
-      toast.error('Failed to create user. Please try again.')
+      toast.error('无法创建用户。请稍后再试。')
     },
   })
 }
@@ -85,11 +85,11 @@ export function useUpdateUser() {
     },
     onSuccess: (user) => {
       queryClient.invalidateQueries({ queryKey: USERS_QUERY_KEY })
-      toast.success(`User "${user.username}" updated successfully`)
+      toast.success(`已成功更新用户 "${user.username}"`)
     },
     onError: (error: Error) => {
       console.error('Failed to update user:', error)
-      toast.error('Failed to update user. Please try again.')
+      toast.error('无法更新用户。请稍后再试。')
     },
   })
 }
@@ -108,11 +108,11 @@ export function useDeleteUser() {
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: USERS_QUERY_KEY })
       queryClient.invalidateQueries({ queryKey: ['groups'] })
-      toast.success(response.message || 'User deleted successfully')
+      toast.success(response.message || '已成功删除用户')
     },
     onError: (error: Error) => {
       console.error('Failed to delete user:', error)
-      toast.error('Failed to delete user. Please try again.')
+      toast.error('无法删除用户。请稍后再试。')
     },
   })
 }
@@ -140,14 +140,14 @@ export function useResetUserPassword() {
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: USERS_QUERY_KEY })
       if (response.temporary_password) {
-        toast.info('Temporary password generated - copy it now')
+        toast.info('已创建临时密码 - 请立即复制')
       } else {
-        toast.success(response.message || 'Password reset successfully')
+        toast.success(response.message || '已成功重置密码')
       }
     },
     onError: (error: Error) => {
       console.error('Failed to reset password:', error)
-      toast.error('Failed to reset password. Please try again.')
+      toast.error('无法重置密码。请稍后再试。')
     },
   })
 }
@@ -186,7 +186,7 @@ export function useApproveUser() {
       toast.success(response.message)
     },
     onError: () => {
-      toast.error('Failed to approve user')
+      toast.error('无法批准用户')
     },
   })
 }
@@ -208,7 +208,7 @@ export function useApproveAllUsers() {
       toast.success(response.message)
     },
     onError: () => {
-      toast.error('Failed to approve users')
+      toast.error('无法批准用户')
     },
   })
 }

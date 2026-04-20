@@ -57,26 +57,26 @@ const CATEGORY_CONFIG: Record<
   }
 > = {
   databases: {
-    label: 'Databases',
-    description: 'Database containers (postgres, mysql, mongodb, etc.)',
+    label: '数据库',
+    description: '数据库容器 (postgres, mysql, mongodb 等)',
     icon: Database,
     color: 'text-blue-400'
   },
   proxies: {
-    label: 'Proxies',
-    description: 'Reverse proxy and ingress containers (traefik, nginx, caddy)',
+    label: '代理',
+    description: '反向代理和流量入口容器 (traefik, nginx, caddy)',
     icon: Network,
     color: 'text-purple-400'
   },
   monitoring: {
-    label: 'Monitoring',
-    description: 'Monitoring and observability containers (grafana, prometheus)',
+    label: '监控',
+    description: '监控或指标监视容器 (grafana, prometheus)',
     icon: Activity,
     color: 'text-green-400'
   },
   critical: {
-    label: 'Critical',
-    description: 'Critical infrastructure containers (portainer, dockmon)',
+    label: '关键设施',
+    description: '关键的基础设施容器 (portainer, dockmon)',
     icon: Shield,
     color: 'text-red-400'
   }
@@ -116,10 +116,10 @@ export function UpdatePoliciesSettings() {
   const handleToggleCategory = async (category: UpdatePolicyCategory, enabled: boolean) => {
     try {
       await toggleCategory.mutateAsync({ category, enabled })
-      toast.success(`${CATEGORY_CONFIG[category as keyof typeof CATEGORY_CONFIG]?.label || category} patterns ${enabled ? 'enabled' : 'disabled'}`)
+      toast.success(`模式 '${CATEGORY_CONFIG[category as keyof typeof CATEGORY_CONFIG]?.label || category}' ${enabled ? '已启用' : '已禁用'}`)
     } catch (error) {
-      toast.error('Failed to update category', {
-        description: error instanceof Error ? error.message : 'Unknown error'
+      toast.error('无法更新指定类别', {
+        description: error instanceof Error ? error.message : '未知错误'
       })
     }
   }
@@ -130,21 +130,21 @@ export function UpdatePoliciesSettings() {
   const handleAddCustomPattern = async () => {
     const pattern = customPatternInput.trim()
     if (!pattern) {
-      toast.error('Please enter a pattern')
+      toast.error('请输入一个模式名')
       return
     }
 
     try {
       await createPattern.mutateAsync({ pattern, action: newPatternAction })
-      toast.success(`Custom pattern '${pattern}' added with action '${newPatternAction}'`)
+      toast.success(`已成功添加自定义模式 '${pattern}' 并指定操作为 '${{warn: "警告", ignore: "忽略"}[newPatternAction]}'`)
       setCustomPatternInput('')
       setNewPatternAction('warn') // Reset to default
     } catch (error) {
       if (error instanceof Error && error.message.includes('already exists')) {
-        toast.error(`Pattern '${pattern}' already exists`)
+        toast.error(`模式 '${pattern}' 已存在`)
       } else {
-        toast.error('Failed to add custom pattern', {
-          description: error instanceof Error ? error.message : 'Unknown error'
+        toast.error('无法添加自定义模式', {
+          description: error instanceof Error ? error.message : '未知错误'
         })
       }
     }
@@ -156,10 +156,10 @@ export function UpdatePoliciesSettings() {
   const handleUpdateAction = async (policyId: number, pattern: string, action: UpdatePolicyAction) => {
     try {
       await updateAction.mutateAsync({ policyId, action })
-      toast.success(`Pattern '${pattern}' action updated to '${action}'`)
+      toast.success(`模式 '${pattern}' 操作已更新为 '${{warn: "警告", ignore: "忽略"}[action]}'`)
     } catch (error) {
-      toast.error('Failed to update action', {
-        description: error instanceof Error ? error.message : 'Unknown error'
+      toast.error('无法更新模式操作', {
+        description: error instanceof Error ? error.message : '未知错误'
       })
     }
   }
@@ -170,10 +170,10 @@ export function UpdatePoliciesSettings() {
   const handleDeleteCustomPattern = async (policyId: number, pattern: string) => {
     try {
       await deletePattern.mutateAsync({ policyId })
-      toast.success(`Custom pattern '${pattern}' removed`)
+      toast.success(`已成功删除自定义模式 '${pattern}'`)
     } catch (error) {
-      toast.error('Failed to remove custom pattern', {
-        description: error instanceof Error ? error.message : 'Unknown error'
+      toast.error('无法删除自定义模式', {
+        description: error instanceof Error ? error.message : '未知错误'
       })
     }
   }
@@ -201,7 +201,7 @@ export function UpdatePoliciesSettings() {
   if (isError) {
     return (
       <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
-        <p className="text-sm text-destructive">Failed to load update policies. Please try again.</p>
+        <p className="text-sm text-destructive">无法加载更新策略，请稍后重试。</p>
       </div>
     )
   }
@@ -210,10 +210,10 @@ export function UpdatePoliciesSettings() {
     <fieldset disabled={!canManage} className="space-y-6">
       {/* Header */}
       <div>
-        <h3 className="text-lg font-semibold text-text-primary">Update Validation Policies</h3>
+        <h3 className="text-lg font-semibold text-text-primary">更新验证策略</h3>
         <p className="text-sm text-text-secondary mt-1">
-          Configure automatic validation rules for container updates. Matched containers will
-          require confirmation before updating.
+          配置容器更新时的自动验证策略。
+          匹配的容器在更新前将需要进行确认。
         </p>
       </div>
 
@@ -251,7 +251,7 @@ export function UpdatePoliciesSettings() {
                     <div className="flex items-center gap-2">
                       <h4 className="text-sm font-medium text-text-primary">{config.label}</h4>
                       <span className="text-xs text-text-tertiary">
-                        ({categoryPolicies.length} patterns)
+                        ({categoryPolicies.length} 个模式)
                       </span>
                     </div>
                     <p className="text-xs text-text-secondary mt-0.5">{config.description}</p>
@@ -297,9 +297,9 @@ export function UpdatePoliciesSettings() {
             <PlusCircle className="w-5 h-5" />
           </div>
           <div className="flex-1">
-            <h4 className="text-sm font-medium text-text-primary">Custom Patterns</h4>
+            <h4 className="text-sm font-medium text-text-primary">自定义模式</h4>
             <p className="text-xs text-text-secondary mt-0.5">
-              Add your own patterns to match against container and image names
+              添加自定义的模式，用于匹配容器或镜像名称
             </p>
           </div>
         </div>
@@ -308,11 +308,11 @@ export function UpdatePoliciesSettings() {
         <div className="flex gap-2 mb-4">
           <div className="flex-1">
             <Label htmlFor="custom-pattern" className="sr-only">
-              Custom pattern
+              自定义模式
             </Label>
             <Input
               id="custom-pattern"
-              placeholder="Enter pattern (e.g., myapp)"
+              placeholder="请输入模式名 (例如 myapp)"
               value={customPatternInput}
               onChange={(e) => setCustomPatternInput(e.target.value)}
               onKeyDown={(e) => {
@@ -351,7 +351,7 @@ export function UpdatePoliciesSettings() {
             {createPattern.isPending ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
-              'Add'
+              '添加'
             )}
           </Button>
         </div>
@@ -395,19 +395,18 @@ export function UpdatePoliciesSettings() {
             ))}
           </div>
         ) : (
-          <p className="text-xs text-text-tertiary italic">No custom patterns added yet</p>
+          <p className="text-xs text-text-tertiary italic">尚未添加任何策略</p>
         )}
       </div>
 
       {/* Help Text */}
       <div className="bg-info/10 border border-info/20 rounded-lg p-4">
         <p className="text-xs text-info/90">
-          <strong>How it works:</strong> Patterns match against container and image names.
+          <strong>工作指南:</strong> 这些模式将用于匹配容器或镜像的名称。
           <br /><br />
-          <strong>Warn:</strong> Matched containers will require user confirmation before auto-updating.
+          <strong>警告操作:</strong> 匹配的容器在自动更新前需要用户确认。
           <br />
-          <strong>Ignore:</strong> Matched containers are excluded from automatic update checks entirely.
-          You can still manually check for updates via the container's Updates tab.
+          <strong>忽略操作:</strong> 匹配的容器将完全不会被自动更新，但仍可以在容器的 "更新" 页面手动检查和更新。
         </p>
       </div>
     </fieldset>

@@ -30,10 +30,10 @@ export function UpdateConfirmModal({
         {/* Header */}
         <div className="px-6 py-4 border-b border-border">
           <h2 className="text-lg font-semibold text-foreground">
-            Update Container{containers.length !== 1 ? 's' : ''}
+            更新容器
           </h2>
           <p className="text-sm text-muted-foreground mt-1">
-            Are you sure you want to update {containers.length} container{containers.length !== 1 ? 's' : ''}? This will pull the latest image and recreate the container{containers.length !== 1 ? 's' : ''}.
+            确定要更新 {containers.length} 个容器吗？这将拉取最新的镜像并重新创建这些容器。
           </p>
         </div>
 
@@ -73,14 +73,14 @@ export function UpdateConfirmModal({
             onClick={onClose}
             className="px-4 py-2 text-sm font-medium text-foreground hover:bg-surface-2 rounded transition-colors"
           >
-            Cancel
+            取消
           </button>
           <fieldset disabled={!canUpdate} className="disabled:opacity-60">
             <button
               onClick={onConfirm}
               className="px-4 py-2 text-sm font-medium rounded transition-colors bg-primary text-primary-foreground hover:bg-primary/90"
             >
-              Update {containers.length} Container{containers.length !== 1 ? 's' : ''}
+              更新 {containers.length} 个容器
             </button>
           </fieldset>
         </div>

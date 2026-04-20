@@ -109,15 +109,15 @@ export function validateStackName(name: string): string | null {
   const trimmed = name.trim()
 
   if (!trimmed) {
-    return 'Stack name is required'
+    return '堆栈名为必填项'
   }
 
   if (!VALID_STACK_NAME_PATTERN.test(trimmed)) {
-    return 'Stack name must be lowercase alphanumeric, starting with a letter or number'
+    return '堆栈名只能包含数字和小写字母'
   }
 
   if (trimmed.length > MAX_STACK_NAME_LENGTH) {
-    return `Stack name must be ${MAX_STACK_NAME_LENGTH} characters or less`
+    return `堆栈名不能超过 ${MAX_STACK_NAME_LENGTH} 个字符`
   }
 
   return null

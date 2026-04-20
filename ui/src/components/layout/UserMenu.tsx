@@ -60,14 +60,14 @@ export function UserMenu({ isCollapsed }: UserMenuProps) {
             isCollapsed && 'justify-center',
             showMenu && 'bg-surface-2'
           )}
-          title="User Menu"
+          title="用户菜单"
         >
           <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary mt-0.5">
             {(user?.display_name || user?.username)?.charAt(0).toUpperCase() || 'U'}
           </div>
           {!isCollapsed && (
             <div className="flex-1 overflow-hidden text-left">
-              <p className="truncate text-sm font-medium leading-8">{user?.display_name || user?.username || 'User'}</p>
+              <p className="truncate text-sm font-medium leading-8">{user?.display_name || user?.username || '未知用户'}</p>
               {user?.display_name && user?.username && user.display_name !== user.username && user?.auth_provider !== 'oidc' && (
                 <p className="truncate text-xs text-muted-foreground">{user.username}</p>
               )}
@@ -76,7 +76,7 @@ export function UserMenu({ isCollapsed }: UserMenuProps) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block mt-2 pt-2 border-t border-border/50 text-[10px] text-muted-foreground/70 hover:text-primary transition-colors"
-                title="View release notes on GitHub"
+                title="在 GitHub 上查看发布说明"
                 onClick={(e) => e.stopPropagation()}
               >
                 DockMon v{version}
@@ -100,7 +100,7 @@ export function UserMenu({ isCollapsed }: UserMenuProps) {
                 className="flex w-full items-center gap-3 rounded px-3 py-2 text-sm transition-colors hover:bg-surface-2"
               >
                 <User className="h-4 w-4" />
-                Account Settings
+                账户设置
               </button>
 
               {/* Logout */}
@@ -109,7 +109,7 @@ export function UserMenu({ isCollapsed }: UserMenuProps) {
                 className="flex w-full items-center gap-3 rounded px-3 py-2 text-sm text-danger transition-colors hover:bg-danger/10"
               >
                 <LogOut className="h-4 w-4" />
-                Logout
+                登出
               </button>
             </div>
           </div>

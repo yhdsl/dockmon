@@ -68,7 +68,7 @@ function SortableColumnItem({
         {...attributes}
         {...listeners}
         className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground"
-        title="Drag to reorder"
+        title="拖动以重新排序"
       >
         <GripVertical className="h-4 w-4" />
       </button>
@@ -83,7 +83,7 @@ function SortableColumnItem({
             ? 'text-muted-foreground hover:text-foreground'
             : 'text-muted-foreground/30 cursor-not-allowed'
         }`}
-        title={canHide ? (isVisible ? 'Hide column' : 'Show column') : 'Cannot hide this column'}
+        title={canHide ? (isVisible ? '隐藏列' : '显示列') : '无法隐藏该列'}
       >
         {isVisible ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
       </button>
@@ -93,16 +93,16 @@ function SortableColumnItem({
 
 // Maps column IDs to display names
 const COLUMN_LABELS: Record<string, string> = {
-  state: 'Status',
-  name: 'Name',
-  policy: 'Policy',
-  alerts: 'Alerts',
-  host_id: 'Host',
-  ports: 'Ports',
-  created: 'Uptime',
+  state: '状态',
+  name: '名称',
+  policy: '策略',
+  alerts: '告警数',
+  host_id: '主机',
+  ports: '端口映射',
+  created: '运行时长',
   cpu: 'CPU %',
   memory: 'RAM',
-  actions: 'Actions',
+  actions: '容器操作',
 }
 
 export function ColumnCustomizationPanel<TData>({ table }: ColumnCustomizationPanelProps<TData>) {
@@ -161,7 +161,7 @@ export function ColumnCustomizationPanel<TData>({ table }: ColumnCustomizationPa
       trigger={
         <Button variant="outline" size="sm" className="h-9">
           <Settings className="h-3.5 w-3.5 mr-2" />
-          Columns
+          自定义列
         </Button>
       }
       align="end"
@@ -169,7 +169,7 @@ export function ColumnCustomizationPanel<TData>({ table }: ColumnCustomizationPa
       <div className="min-w-[280px] max-w-[320px]" onClick={(e) => e.stopPropagation()}>
         <div className="px-3 py-2 border-b border-border">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Customize Columns</span>
+            <span className="text-sm font-medium">自定义列顺序和显示状态</span>
             <Button
               variant="ghost"
               size="sm"
@@ -177,11 +177,11 @@ export function ColumnCustomizationPanel<TData>({ table }: ColumnCustomizationPa
               className="h-7 text-xs"
             >
               <RotateCcw className="h-3 w-3 mr-1" />
-              Reset
+              重置
             </Button>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            {visibleCount} of {allColumns.length} visible
+            {visibleCount} 列可见 (共 {allColumns.length} 列可用)
           </p>
         </div>
 
@@ -222,7 +222,7 @@ export function ColumnCustomizationPanel<TData>({ table }: ColumnCustomizationPa
 
         <div className="px-3 py-2 border-t border-border bg-muted/30">
           <p className="text-xs text-muted-foreground">
-            Drag rows to reorder columns. Click the eye icon to show/hide.
+            拖动以重新排列顺序。点击眼睛图标以显示或隐藏。
           </p>
         </div>
       </div>

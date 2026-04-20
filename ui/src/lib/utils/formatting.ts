@@ -73,7 +73,7 @@ export function formatMemory(bytes: number): string {
  * pluralize(2, 'entry', 'entries') // "entries"
  */
 export function pluralize(count: number, singular: string, plural?: string): string {
-  return count === 1 ? singular : (plural ?? singular + 's')
+  return count === 1 ? singular : (plural ?? singular)
 }
 
 /**

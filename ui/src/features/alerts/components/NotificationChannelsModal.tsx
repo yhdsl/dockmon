@@ -106,16 +106,16 @@ export function NotificationChannelsModal({ onClose }: Props) {
       try {
         const result = await testChannel.mutateAsync(selectedChannel.id)
         if (result.success) {
-          setTestResult({ success: true, message: 'Test notification sent successfully!' })
+          setTestResult({ success: true, message: '测试通知发送成功!' })
         } else {
-          setTestResult({ success: false, message: result.error || 'Test failed' })
+          setTestResult({ success: false, message: result.error || '测试失败' })
         }
       } catch (error: unknown) {
-        const message = error instanceof Error ? error.message : 'Test failed'
+        const message = error instanceof Error ? error.message : '测试失败'
         setTestResult({ success: false, message })
       }
     } else {
-      setTestResult({ success: false, message: 'Please save the channel first before testing' })
+      setTestResult({ success: false, message: '请在测试前保存频道' })
     }
   }
 
@@ -137,7 +137,7 @@ export function NotificationChannelsModal({ onClose }: Props) {
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-700 px-6 py-4 sticky top-0 bg-[#0d1117] z-10">
           <h2 className="text-xl font-semibold text-white">
-            {view === 'list' ? 'Notification Channels' : view === 'create' ? 'Add Notification Channel' : 'Edit Notification Channel'}
+            {view === 'list' ? '通知频道' : view === 'create' ? '添加通知频道' : '编辑通知频道'}
           </h2>
           <button
             onClick={onClose}
@@ -159,7 +159,7 @@ export function NotificationChannelsModal({ onClose }: Props) {
                   className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-60"
                 >
                   <Plus className="h-4 w-4" />
-                  Add Channel
+                  添加频道
                 </button>
                 {testResult && (
                   <div className={`flex items-center gap-2 rounded-md px-3 py-1.5 text-sm ${testResult.success ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
@@ -174,12 +174,12 @@ export function NotificationChannelsModal({ onClose }: Props) {
 
               {/* Channels List */}
               {isLoading ? (
-                <div className="text-center py-12 text-gray-400">Loading channels...</div>
+                <div className="text-center py-12 text-gray-400">加载频道中...</div>
               ) : channels.length === 0 ? (
                 <div className="text-center py-12">
                   <Bell className="h-12 w-12 text-gray-600 mx-auto mb-3" />
-                  <p className="text-gray-400 mb-2">No notification channels configured</p>
-                  <p className="text-sm text-gray-500">Add a channel to start receiving alert notifications</p>
+                  <p className="text-gray-400 mb-2">尚未配置任何通知频道</p>
+                  <p className="text-sm text-gray-500">添加一个通知频道以开始接收告警通知</p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -198,12 +198,12 @@ export function NotificationChannelsModal({ onClose }: Props) {
                               {channel.enabled ? (
                                 <span className="inline-flex items-center gap-1 rounded-full bg-green-500/10 px-2 py-0.5 text-xs text-green-400">
                                   <Power className="h-3 w-3" />
-                                  Enabled
+                                  已启用
                                 </span>
                               ) : (
                                 <span className="inline-flex items-center gap-1 rounded-full bg-gray-500/10 px-2 py-0.5 text-xs text-gray-400">
                                   <PowerOff className="h-3 w-3" />
-                                  Disabled
+                                  已禁用
                                 </span>
                               )}
                             </div>
@@ -218,13 +218,13 @@ export function NotificationChannelsModal({ onClose }: Props) {
                                 try {
                                   const result = await testChannel.mutateAsync(channel.id)
                                   if (result.success) {
-                                    setTestResult({ success: true, message: 'Test notification sent successfully!' })
+                                    setTestResult({ success: true, message: '测试通知发送成功!' })
                                   } else {
-                                    setTestResult({ success: false, message: result.error || 'Test failed' })
+                                    setTestResult({ success: false, message: result.error || '测试失败' })
                                   }
                                 } catch (error: unknown) {
-                                  const message = error instanceof Error ? error.message : 'Unknown error'
-                                  setTestResult({ success: false, message: `Test failed: ${message}` })
+                                  const message = error instanceof Error ? error.message : '未知错误'
+                                  setTestResult({ success: false, message: `测试失败: ${message}` })
                                 }
                               }}
                               disabled={!channel.enabled}
@@ -235,21 +235,21 @@ export function NotificationChannelsModal({ onClose }: Props) {
                             <button
                               onClick={() => handleToggleEnabled(channel)}
                               className="rounded-md p-1.5 text-gray-400 transition-colors hover:bg-gray-700 hover:text-white"
-                              title={channel.enabled ? 'Disable channel' : 'Enable channel'}
+                              title={channel.enabled ? '禁用频道' : '启用频道'}
                             >
                               {channel.enabled ? <PowerOff className="h-4 w-4" /> : <Power className="h-4 w-4" />}
                             </button>
                             <button
                               onClick={() => handleEdit(channel)}
                               className="rounded-md p-1.5 text-gray-400 transition-colors hover:bg-gray-700 hover:text-white"
-                              title="Edit channel"
+                              title="编辑频道"
                             >
                               <Edit className="h-4 w-4" />
                             </button>
                             <button
                               onClick={() => setDeleteConfirm(channel.id)}
                               className="rounded-md p-1.5 text-gray-400 transition-colors hover:bg-gray-700 hover:text-red-400"
-                              title="Delete channel"
+                              title="删除频道"
                             >
                               <Trash2 className="h-4 w-4" />
                             </button>
@@ -298,13 +298,13 @@ export function NotificationChannelsModal({ onClose }: Props) {
             <div className="flex items-start gap-3 mb-4">
               <AlertTriangle className="h-6 w-6 text-yellow-500 flex-shrink-0" />
               <div>
-                <h3 className="text-lg font-semibold text-white mb-1">Delete Notification Channel?</h3>
+                <h3 className="text-lg font-semibold text-white mb-1">删除通知频道?</h3>
                 <p className="text-sm text-gray-400">
-                  This will permanently delete the channel and remove it from all alert rules.
+                  这将永久删除该通知频道，并将其从所有的告警规则中删除。
                 </p>
                 {dependentData && dependentData.alert_count > 0 && (
                   <p className="text-sm text-yellow-400 mt-2">
-                    Warning: {dependentData.alert_count} alert rule{dependentData.alert_count > 1 ? 's' : ''} will be updated.
+                    警告: {dependentData.alert_count} 个告警规则将会被自动更新。
                   </p>
                 )}
               </div>
@@ -314,14 +314,14 @@ export function NotificationChannelsModal({ onClose }: Props) {
                 onClick={() => setDeleteConfirm(null)}
                 className="rounded-md bg-gray-800 px-4 py-2 text-sm font-medium text-gray-300 transition-colors hover:bg-gray-700"
               >
-                Cancel
+                取消
               </button>
               <button
                 onClick={() => handleDelete(deleteConfirm)}
                 disabled={!canManageNotifications || deleteChannel.isPending}
                 className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700 disabled:opacity-50"
               >
-                {deleteChannel.isPending ? 'Deleting...' : 'Delete Channel'}
+                {deleteChannel.isPending ? '删除中...' : '删除频道'}
               </button>
             </div>
           </div>

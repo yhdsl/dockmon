@@ -46,15 +46,15 @@ print(response.json())`
       <div className="bg-gray-900 rounded-lg max-w-2xl w-full mx-4 border border-gray-800 max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-gray-900 border-b border-gray-800 px-6 py-4">
-          <h2 className="text-lg font-semibold text-white">API Key Created Successfully</h2>
-          <p className="text-sm text-gray-400 mt-1">Save this key now - it will not be shown again!</p>
+          <h2 className="text-lg font-semibold text-white">已成功创建 API 密钥</h2>
+          <p className="text-sm text-gray-400 mt-1">请立即保存此密钥 - 稍后将不会再次显示!</p>
         </div>
 
         {/* Content */}
         <div className="p-6 space-y-6">
           {/* Key Display */}
           <div className="rounded-lg border border-green-900/30 bg-green-900/10 p-4">
-            <p className="text-sm text-green-300 font-medium mb-3">Your API Key</p>
+            <p className="text-sm text-green-300 font-medium mb-3">你的 API 密钥</p>
             <div className="flex items-center gap-2">
               <code className="flex-1 bg-gray-800 text-green-400 px-3 py-2 rounded text-sm font-mono break-all">
                 {keyData.key}
@@ -75,32 +75,32 @@ print(response.json())`
           {/* Key Details */}
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div className="rounded border border-gray-800 bg-gray-800/30 p-3">
-              <p className="text-gray-400 text-xs mb-1">Name</p>
+              <p className="text-gray-400 text-xs mb-1">密钥名称</p>
               <p className="text-white font-medium">{keyData.name}</p>
             </div>
             <div className="rounded border border-gray-800 bg-gray-800/30 p-3">
-              <p className="text-gray-400 text-xs mb-1">Permissions Group</p>
+              <p className="text-gray-400 text-xs mb-1">授权群组</p>
               <p className="text-white font-medium flex items-center gap-1">
                 <Users className="h-3 w-3 text-blue-400" />
-                {keyData.group_name}
+                {keyData.group_name}{{'Administrators': " (管理群组)", 'Operators': " (操作群组)", 'Read Only': " (访客群组)"}[keyData.group_name] ?? ""}
               </p>
             </div>
             {keyData.expires_at && (
               <div className="rounded border border-gray-800 bg-gray-800/30 p-3">
-                <p className="text-gray-400 text-xs mb-1">Expires</p>
-                <p className="text-white font-medium">{new Date(keyData.expires_at).toLocaleDateString()}</p>
+                <p className="text-gray-400 text-xs mb-1">过期时间</p>
+                <p className="text-white font-medium">{new Date(keyData.expires_at.replace("+00:00", "")).toLocaleDateString()}</p>
               </div>
             )}
           </div>
 
           {/* Usage Examples */}
           <div>
-            <h3 className="text-sm font-semibold text-white mb-3">Usage Examples</h3>
+            <h3 className="text-sm font-semibold text-white mb-3">使用示例</h3>
 
             {/* Tabs */}
             <div className="flex gap-1 mb-3 border-b border-gray-800">
               {[
-                { id: 'copy' as const, label: 'Copy Key', icon: Copy },
+                { id: 'copy' as const, label: '环境变量', icon: Copy },
                 { id: 'curl' as const, label: 'cURL', icon: Terminal },
                 { id: 'python' as const, label: 'Python', icon: Code },
               ].map((tab) => {
@@ -126,12 +126,12 @@ print(response.json())`
             {selectedTab === 'copy' && (
               <div className="space-y-3 text-sm">
                 <div className="p-3 rounded bg-gray-800/50 border border-gray-700">
-                  <p className="text-gray-300 mb-2">Store the API key in an environment variable:</p>
+                  <p className="text-gray-300 mb-2">将 API 密钥保存至环境变量中:</p>
                   <code className="text-green-400 text-xs">
                     export DOCKMON_API_KEY="{keyData.key}"
                   </code>
                 </div>
-                <p className="text-gray-400">Use it in your scripts and automation tools.</p>
+                <p className="text-gray-400">稍后可在脚本或自动化工具中使用。</p>
               </div>
             )}
 
@@ -141,14 +141,14 @@ print(response.json())`
                   {curlExample}
                 </div>
                 <p className="text-xs text-gray-400">
-                  Copy the API key to the Authorization header with "Bearer " prefix.
+                  将 API 密钥复制到 Authorization 请求头中，并添加 "Bearer" 前缀。
                 </p>
               </div>
             )}
 
             {selectedTab === 'python' && (
               <div className="space-y-2">
-                <div className="p-3 rounded bg-gray-800 font-mono text-xs text-blue-400 overflow-x-auto">
+                <div className="p-3 rounded bg-gray-800 font-mono text-xs text-blue-400 overflow-x-auto whitespace-pre-wrap">
                   {pythonExample}
                 </div>
               </div>
@@ -158,15 +158,15 @@ print(response.json())`
           {/* Security Warning */}
           <div className="rounded bg-red-900/20 border border-red-900/30 p-3">
             <p className="text-xs text-red-300">
-              <strong>Security:</strong> Keep this key secure! Anyone with the key can access DockMon with the granted
-              permissions. Do not commit it to version control.
+              <strong>安全提示:</strong> 请妥善保管此密钥！
+              任何持有该密钥的人都可以获取 DockMon 中已授予的密钥权限。请勿将其提交到版本控制系统中。
             </p>
           </div>
 
           {/* Action */}
           <div className="pt-4">
             <Button onClick={onClose} className="w-full">
-              Got it - I've saved the key
+              确定 - 我已妥善保管此密钥
             </Button>
           </div>
         </div>

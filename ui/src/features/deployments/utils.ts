@@ -10,7 +10,7 @@ import { toast } from 'sonner'
  */
 export function handleApiError(error: unknown, operation: string): void {
   const errorMessage = error instanceof Error ? error.message : String(error)
-  toast.error(`Failed to ${operation}: ${errorMessage}`)
+  toast.error(`${operation}时失败: ${errorMessage}`)
 }
 
 /**

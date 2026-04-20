@@ -208,10 +208,10 @@ export function ContainerDetailsModal({
       // CRITICAL: Use current tracked containerId, not container.id which may be stale from fallback
       const { hostId, containerId: currentId } = parseCompositeKey(containerId!)
       await apiClient.post(`/hosts/${hostId}/containers/${currentId}/${action}`)
-      const labels = { start: 'Started', stop: 'Stopped', restart: 'Restarting' } as const
-      toast.success(`${labels[action]} ${container.name}`)
+      const labels = { start: '启动', stop: '停止', restart: '重启' } as const
+      toast.success(`已${labels[action]} ${container.name}`)
     } catch (error) {
-      toast.error(`Failed to ${action} container: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      toast.error(`${action}容器时失败: ${error instanceof Error ? error.message : '未知错误'}`)
     } finally {
       setIsPerformingAction(false)
     }
@@ -224,11 +224,11 @@ export function ContainerDetailsModal({
       await apiClient.delete(`/hosts/${hostId}/containers/${currentId}`, {
         params: { removeVolumes },
       })
-      toast.success(`Container ${container.name} deleted successfully`)
+      toast.success(`已成功删除 ${container.name}`)
       // Close modal after successful deletion
       onClose()
     } catch (error) {
-      toast.error(`Failed to delete container: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      toast.error(`删除容器时失败: ${error instanceof Error ? error.message : '未知错误'}`)
     } finally {
       setIsPerformingAction(false)
     }
@@ -239,9 +239,9 @@ export function ContainerDetailsModal({
     try {
       const { hostId, containerId: currentId } = parseCompositeKey(containerId!)
       await apiClient.post(`/hosts/${hostId}/containers/${currentId}/kill`)
-      toast.success(`Killed ${container.name}`)
+      toast.success(`已杀死容器 ${container.name}`)
     } catch (error) {
-      toast.error(`Failed to kill container: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      toast.error(`杀死容器时失败: ${error instanceof Error ? error.message : '未知错误'}`)
     } finally {
       setIsPerformingAction(false)
     }
@@ -249,9 +249,9 @@ export function ContainerDetailsModal({
 
   const validateContainerName = (name: string): string => {
     if (!name) return ''
-    if (name.length > 255) return 'Name must be 255 characters or fewer'
+    if (name.length > 255) return '容器名称不能超过 255 个字符'
     if (!/^[a-zA-Z0-9][a-zA-Z0-9_.-]*$/.test(name)) {
-      return 'Must start with alphanumeric and contain only alphanumeric, underscore, period, or hyphen'
+      return '容器名称只能包含数字和字母、连字符、下划线以及点'
     }
     return ''
   }
@@ -268,12 +268,12 @@ export function ContainerDetailsModal({
     try {
       const { hostId, containerId: currentId } = parseCompositeKey(containerId!)
       await apiClient.post(`/hosts/${hostId}/containers/${currentId}/rename`, { name: trimmed })
-      toast.success(`Renamed container to ${trimmed}`)
+      toast.success(`已重命名容器名称为 ${trimmed}`)
       setShowRenameDialog(false)
       setRenameValue('')
       setRenameError('')
     } catch (error) {
-      toast.error(`Failed to rename container: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      toast.error(`重命名容器时失败: ${error instanceof Error ? error.message : '未知错误'}`)
     } finally {
       setIsPerformingAction(false)
     }
@@ -298,12 +298,12 @@ export function ContainerDetailsModal({
   const tabs = [
     {
       id: 'info',
-      label: 'Info',
+      label: '信息',
       content: <ContainerInfoTab container={container} />,
     },
     ...(canViewLogs ? [{
       id: 'logs',
-      label: 'Logs',
+      label: '日志',
       content: <ContainerModalLogsTab hostId={container.host_id!} containerId={container.id} containerName={container.name} />,
     }] : []),
     ...(canShell ? [{
@@ -313,22 +313,22 @@ export function ContainerDetailsModal({
     }] : []),
     {
       id: 'events',
-      label: 'Events',
+      label: '事件',
       content: <ContainerModalEventsTab hostId={container.host_id!} containerId={container.id} />,
     },
     {
       id: 'alerts',
-      label: 'Alerts',
+      label: '告警',
       content: <ContainerModalAlertsTab container={container} />,
     },
     {
       id: 'updates',
-      label: 'Updates',
+      label: '更新',
       content: <ContainerUpdatesTab container={container} />,
     },
     ...(canViewHealthChecks ? [{
       id: 'health',
-      label: 'Health Check',
+      label: '健康检查',
       content: <ContainerHealthCheckTab container={container} />,
     }] : []),
   ]
@@ -375,9 +375,20 @@ export function ContainerDetailsModal({
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Circle className={`w-3 h-3 ${getStatusColor()}`} />
-                <span className="capitalize" data-testid="container-status">{container.state}</span>
+                <span className="capitalize" data-testid="container-status">
+                  {{
+                    running: "运行中",
+                    stopped: "已停止",
+                    exited: "已暂停",
+                    created: "已创建",
+                    paused: "已暂停",
+                    restarting: "重启中",
+                    removing: "删除中",
+                    dead: "已死亡",
+                  }[container.state] || container.state}
+                </span>
                 <span>•</span>
-                <span>Uptime: {uptime}</span>
+                <span>运行时长: {uptime}</span>
               </div>
             </div>
           </div>
@@ -393,7 +404,7 @@ export function ContainerDetailsModal({
                   disabled={isPerformingAction}
                 >
                   <Play className="w-4 h-4 mr-2" />
-                  Start
+                  启动
                 </Button>
               ) : (
                 <Button
@@ -404,7 +415,7 @@ export function ContainerDetailsModal({
                   className="border-red-500/50 text-red-400 hover:bg-red-500/10"
                 >
                   <Circle className="w-4 h-4 mr-2" />
-                  Stop
+                  停止
                 </Button>
               )}
               <Button
@@ -414,7 +425,7 @@ export function ContainerDetailsModal({
                 disabled={isPerformingAction}
               >
                 <RotateCw className="w-4 h-4 mr-2" />
-                Restart
+                重启
               </Button>
               <Button
                 variant="outline"
@@ -427,7 +438,7 @@ export function ContainerDetailsModal({
                 disabled={isPerformingAction || isDockMon}
               >
                 <PenLine className="w-4 h-4 mr-2" />
-                Rename
+                重命名
               </Button>
               {isKillable && (
                 <Button
@@ -436,10 +447,10 @@ export function ContainerDetailsModal({
                   onClick={() => setShowKillConfirm(true)}
                   disabled={isPerformingAction || isDockMon}
                   className="border-red-700/50 text-red-500 hover:bg-red-700/10"
-                  title="Force kill (SIGKILL) - for unresponsive containers"
+                  title="强制中止容器 (发送 SIGKILL 信号) - 用于无响应的容器"
                 >
                   <Skull className="w-4 h-4 mr-2" />
-                  Kill
+                  杀死
                 </Button>
               )}
               <Button
@@ -450,7 +461,7 @@ export function ContainerDetailsModal({
                 className="bg-red-600 hover:bg-red-700 text-white"
               >
                 <Trash2 className="w-4 h-4 mr-2" />
-                Delete
+                删除
               </Button>
             </fieldset>
             <Button
@@ -494,7 +505,7 @@ export function ContainerDetailsModal({
               className="bg-surface border border-border rounded-lg shadow-xl w-full max-w-md p-6"
               onClick={(e) => e.stopPropagation()}
             >
-              <h3 className="text-lg font-semibold mb-4">Rename Container</h3>
+              <h3 className="text-lg font-semibold mb-4">重命名容器</h3>
               <input
                 type="text"
                 value={renameValue}
@@ -507,7 +518,7 @@ export function ContainerDetailsModal({
                   if (e.key === 'Escape') setShowRenameDialog(false)
                 }}
                 className={`w-full px-3 py-2 bg-background border rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-primary ${renameError ? 'border-red-500' : 'border-border'}`}
-                placeholder="New container name"
+                placeholder="请输入新的容器名称"
                 autoFocus
                 maxLength={255}
               />
@@ -520,7 +531,7 @@ export function ContainerDetailsModal({
                   size="sm"
                   onClick={() => setShowRenameDialog(false)}
                 >
-                  Cancel
+                  取消
                 </Button>
                 <Button
                   variant="default"
@@ -528,7 +539,7 @@ export function ContainerDetailsModal({
                   onClick={handleRename}
                   disabled={!renameValue.trim() || !!renameError || renameValue.trim() === container.name || isPerformingAction}
                 >
-                  Rename
+                  重命名
                 </Button>
               </div>
             </div>
@@ -544,13 +555,13 @@ export function ContainerDetailsModal({
           setShowKillConfirm(false)
           handleKill()
         }}
-        title="Kill Container"
-        description={`This sends SIGKILL to ${container.name}, terminating it immediately with no chance for graceful shutdown. This may cause data loss or corruption.`}
-        confirmText="Kill Container"
+        title="杀死容器"
+        description={`这将向 ${container.name} 容器发送 SIGKILL 信号，这会立即中止该容器，不会有任何优雅关闭的机会。可能导致数据丢失或损坏`}
+        confirmText="杀死容器"
         variant="danger"
       >
         <p className="text-sm text-muted-foreground">
-          Use this only for unresponsive containers that will not stop gracefully.
+          请仅在容器无响应且无法正常优雅停止时使用。
         </p>
       </ConfirmModal>
     </>

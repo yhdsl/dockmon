@@ -26,7 +26,7 @@ export function formatBytes(bytes: number, decimals: number = 1): string {
  * @returns Formatted string like "2m", "45s", "now"
  */
 export function formatRelativeTime(secondsAgo: number): string {
-  if (secondsAgo < 1) return 'now'
+  if (secondsAgo < 1) return '刚刚'
 
   // If less than 60 seconds, show as seconds
   if (secondsAgo < 60) {

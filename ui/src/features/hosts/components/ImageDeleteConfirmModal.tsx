@@ -54,17 +54,17 @@ export function ImageDeleteConfirmModal({
   const totalSize = useMemo(() => images.reduce((acc, img) => acc + img.size, 0), [images])
 
   const imageCount = images.length
-  const confirmText = `Delete ${imageCount} Image${imageCount !== 1 ? 's' : ''}`
+  const confirmText = `删除 ${imageCount} 个镜像`
 
   return (
     <ConfirmModal
       isOpen={isOpen}
       onClose={onClose}
       onConfirm={handleConfirm}
-      title={`Delete Image${imageCount !== 1 ? 's' : ''}`}
-      description="This action cannot be undone."
+      title={`删除镜像`}
+      description="此操作将无法撤销"
       confirmText={confirmText}
-      pendingText="Deleting..."
+      pendingText="删除中..."
       variant="danger"
       isPending={isPending}
       disabled={hasInUseImages && !forceDelete}
@@ -76,11 +76,11 @@ export function ImageDeleteConfirmModal({
             <AlertTriangle className="h-5 w-5 text-warning flex-shrink-0 mt-0.5" aria-hidden="true" />
             <div className="text-sm">
               <p className="font-medium text-warning">
-                {inUseImages.length} image{inUseImages.length !== 1 ? 's are' : ' is'} in use
+                {inUseImages.length} 个镜像正在被使用
               </p>
               <p className="text-muted-foreground mt-1">
-                Deleting images that are in use by containers requires force delete.
-                This may cause containers to fail if they are restarted.
+                删除正在被容器使用的镜像需要启用强制删除。
+                这可能会导致这些容器在重启后无法正常运行。
               </p>
             </div>
           </div>
@@ -105,7 +105,7 @@ export function ImageDeleteConfirmModal({
                   {formatBytes(image.size)}
                   {image.in_use && (
                     <span className="ml-2 text-success">
-                      In use by {image.container_count} container{image.container_count !== 1 ? 's' : ''}
+                      被 {image.container_count} 个容器使用
                     </span>
                   )}
                 </div>
@@ -116,7 +116,7 @@ export function ImageDeleteConfirmModal({
 
         {/* Total size */}
         <div className="text-sm text-muted-foreground border-t border-border pt-3">
-          Total size: <span className="font-medium text-foreground">{formatBytes(totalSize)}</span>
+          共计: <span className="font-medium text-foreground">{formatBytes(totalSize)}</span>
         </div>
 
         {/* Force delete option (only show if there are in-use images) */}
@@ -130,11 +130,11 @@ export function ImageDeleteConfirmModal({
                 className="w-4 h-4 rounded border-border"
               />
               <span className="text-sm text-foreground">
-                Force delete (remove even if in use)
+                强制删除 (无视是否被使用)
               </span>
             </label>
             <p className="text-xs text-warning mt-2">
-              Warning: Force deleting in-use images may cause containers to fail on restart.
+              警告: 强制删除镜像可能会导致部分容器在重启后无法正常运行。
             </p>
           </div>
         )}

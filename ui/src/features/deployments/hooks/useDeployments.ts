@@ -59,7 +59,7 @@ export function useStackAction() {
       queryClient.invalidateQueries({ queryKey: ['stacks'] })
     },
     onError: (error: Error) => {
-      toast.error(`Failed: ${error.message}`)
+      toast.error(`失败: ${error.message}`)
     },
   })
 }
@@ -99,12 +99,12 @@ export function useImportDeployment() {
 
       if (result.success && result.deployments_created.length > 0) {
         const count = result.deployments_created.length
-        const hostText = count === 1 ? '1 host' : `${count} hosts`
-        toast.success(`Imported stack to ${hostText}`)
+        const hostText = count === 1 ? '1 个主机' : `${count} 个主机`
+        toast.success(`已成功导入堆栈至 ${hostText}`)
       }
     },
     onError: (error: Error) => {
-      toast.error(`Failed to import stack: ${error.message}`)
+      toast.error(`导入堆栈时失败: ${error.message}`)
     },
   })
 }
@@ -127,7 +127,7 @@ export function useScanComposeDirs() {
       )
     },
     onError: (error: Error) => {
-      toast.error(`Failed to scan directories: ${error.message}`)
+      toast.error(`扫描目录时失败: ${error.message}`)
     },
   })
 }
@@ -150,7 +150,7 @@ export function useReadComposeFile() {
       )
     },
     onError: (error: Error) => {
-      toast.error(`Failed to read compose file: ${error.message}`)
+      toast.error(`读取 Compose 文件时失败: ${error.message}`)
     },
   })
 }
@@ -179,7 +179,7 @@ export function useGenerateFromContainers() {
       return apiClient.post<ComposePreviewResponse>('/deployments/generate-from-containers', request)
     },
     onError: (error: Error) => {
-      toast.error(`Failed to generate compose: ${error.message}`)
+      toast.error(`生成 Compose 文件时失败: ${error.message}`)
     },
   })
 }

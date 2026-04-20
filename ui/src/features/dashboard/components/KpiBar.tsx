@@ -87,9 +87,9 @@ export function KpiBar() {
       {/* Hosts */}
       <KpiCard
         icon={<Server className="w-4 h-4" />}
-        label="Hosts"
+        label="主机摘要"
         value={totalHosts}
-        subtitle={`${onlineHosts} online • ${offlineHosts} offline`}
+        subtitle={`${onlineHosts} 在线 • ${offlineHosts} 离线`}
         onClick={() => navigate('/hosts')}
         variant={onlineHosts === totalHosts ? 'success' : 'default'}
         data-testid="kpi-total-hosts"
@@ -98,9 +98,9 @@ export function KpiBar() {
       {/* Total Containers */}
       <KpiCard
         icon={<Box className="w-4 h-4" />}
-        label="Containers"
+        label="容器摘要"
         value={totalContainers}
-        subtitle={`${runningContainers} running • ${stoppedContainers} stopped`}
+        subtitle={`${runningContainers} 运行中 • ${stoppedContainers} 已停止`}
         onClick={() => navigate('/containers')}
         data-testid="kpi-total-containers"
       />
@@ -108,9 +108,9 @@ export function KpiBar() {
       {/* Running Containers */}
       <KpiCard
         icon={<Play className="w-4 h-4" />}
-        label="Running"
+        label="运行状态"
         value={runningContainers}
-        subtitle={totalContainers > 0 ? `${Math.round((runningContainers / totalContainers) * 100)}% of total` : ''}
+        subtitle={totalContainers > 0 ? `共计 ${Math.round((runningContainers / totalContainers) * 100)}%` : ''}
         onClick={() => navigate('/containers?state=running')}
         variant={runningContainers > 0 ? 'success' : 'default'}
         data-testid="kpi-running-containers"
@@ -119,9 +119,9 @@ export function KpiBar() {
       {/* Alerts */}
       <KpiCard
         icon={<AlertTriangle className="w-4 h-4" />}
-        label="Alerts"
+        label="告警摘要"
         value={activeAlerts}
-        subtitle={activeAlerts > 0 ? 'Requires attention' : 'All clear'}
+        subtitle={activeAlerts > 0 ? '需要注意' : '全部解决'}
         onClick={() => navigate('/alerts')}
         variant={activeAlerts > 0 ? 'warning' : 'success'}
       />
@@ -129,9 +129,9 @@ export function KpiBar() {
       {/* Updates */}
       <KpiCard
         icon={<RefreshCw className="w-4 h-4" />}
-        label="Updates"
+        label="更新摘要"
         value={pendingUpdates}
-        subtitle={pendingUpdates > 0 ? 'Updates available' : 'Up to date'}
+        subtitle={pendingUpdates > 0 ? '更新可用' : '已是最新'}
         onClick={() => navigate('/containers?updates=true')}
         variant={pendingUpdates > 0 ? 'warning' : 'success'}
       />

@@ -69,7 +69,7 @@ export function LayerProgressDisplay({
   eventType,
   simpleProgressEventType,
   initialProgress = 0,
-  initialMessage = 'Starting...',
+  initialMessage = '启动中...',
   disableAutoCollapse = false,
 }: LayerProgressDisplayProps) {
   const { addMessageHandler } = useWebSocketContext()
@@ -106,7 +106,7 @@ export function LayerProgressDisplay({
           setUpdateProgress({
             stage: progress?.stage || message.data?.stage,
             progress: progress?.overall_percent ?? message.data?.progress,
-            message: progress?.stage || message.data?.message || 'Processing...',
+            message: progress?.stage || message.data?.message || '处理中...',
           })
 
           // Clear progress when update completes
@@ -204,7 +204,7 @@ export function LayerProgressDisplay({
         <span className="font-medium text-blue-400">
           {hasDetailedProgress
             ? layerProgress.summary
-            : updateProgress?.message || 'Deploying, please wait...'}
+            : updateProgress?.message || '部署中，请稍等...'}
         </span>
         <span className="text-blue-400">
           {hasDetailedProgress
@@ -238,7 +238,7 @@ export function LayerProgressDisplay({
           onClick={() => setLayerDetailsExpanded(!layerDetailsExpanded)}
           className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
         >
-          {layerDetailsExpanded ? '▼ Hide layer details' : '▶ Show layer details'}
+          {layerDetailsExpanded ? '▼ 隐藏镜像层详情' : '▶ 显示镜像层详情'}
         </button>
       )}
 
@@ -264,11 +264,19 @@ export function LayerProgressDisplay({
                   {layer.id}
                 </span>
                 <span className={cn("flex-1 transition-colors duration-300", statusColor)}>
-                  {layer.status}
+                  {{
+                    "Pulling fs layer": "正在拉取文件系统层",
+                    "Downloading": "正在下载镜像层",
+                    "Verifying Checksum": "校验镜像校验和",
+                    "Download complete": "下载完成",
+                    "Extracting": "正在解压镜像层",
+                    "Pull complete": "拉取完成",
+                    "Already exists": "镜像层已存在",
+                  }[layer.status]}
                 </span>
                 {layer.total > 0 && (
                   <span className="text-muted-foreground/80 text-right w-32">
-                    {layer.percent}% of {formatBytes(layer.total)}
+                    {layer.percent}% / {formatBytes(layer.total)}
                   </span>
                 )}
               </div>
@@ -277,9 +285,9 @@ export function LayerProgressDisplay({
 
           {layerProgress.layers.length > 15 && (
             <div className="text-muted-foreground/60 text-center pt-2 border-t border-muted-foreground/10">
-              ... and {layerProgress.remaining_layers > 0
+              ... 以及 {layerProgress.remaining_layers > 0
                 ? layerProgress.remaining_layers + (layerProgress.layers.length - 15)
-                : layerProgress.layers.length - 15} more layers
+                : layerProgress.layers.length - 15} 个镜像层
             </div>
           )}
         </div>

@@ -215,15 +215,15 @@ export function RolesSettings() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-white">Role Permissions</h2>
+          <h2 className="text-lg font-semibold text-white">角色权限</h2>
           <p className="mt-1 text-sm text-gray-400">
-            Customize what each role can do in the system
+            自定义每个角色可在系统中执行的操作
           </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={() => refetch()}>
             <RefreshCw className="mr-2 h-4 w-4" />
-            Refresh
+            刷新
           </Button>
           <Button
             variant="outline"
@@ -232,7 +232,7 @@ export function RolesSettings() {
             className="text-orange-400 hover:text-orange-300"
           >
             <RotateCcw className="mr-2 h-4 w-4" />
-            Reset All
+            重置全部
           </Button>
         </div>
       </div>
@@ -250,12 +250,12 @@ export function RolesSettings() {
             <div className="peer h-5 w-9 rounded-full bg-gray-700 after:absolute after:left-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:bg-gray-400 after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:bg-white" />
           </label>
           <span className="text-sm text-gray-300">
-            Highlight differences from defaults
+            高亮与默认配置的不同之处
           </span>
         </div>
         {diffFromDefaults > 0 && (
           <span className="rounded-full bg-orange-900/50 px-2 py-0.5 text-xs text-orange-300">
-            {diffFromDefaults} change{diffFromDefaults !== 1 ? 's' : ''} from defaults
+            与默认配置有 {diffFromDefaults} 处不同
           </span>
         )}
       </div>
@@ -265,11 +265,11 @@ export function RolesSettings() {
         <div className="flex items-center justify-between rounded-lg border border-yellow-700 bg-yellow-900/20 p-3">
           <div className="flex items-center gap-2 text-yellow-300">
             <AlertTriangle className="h-4 w-4" />
-            <span className="text-sm">You have unsaved changes</span>
+            <span className="text-sm">你有未保存的更改</span>
           </div>
           <div className="flex gap-2">
             <Button variant="ghost" size="sm" onClick={handleDiscard}>
-              Discard
+              丢弃
             </Button>
             <Button
               size="sm"
@@ -281,7 +281,7 @@ export function RolesSettings() {
               ) : (
                 <Save className="mr-2 h-4 w-4" />
               )}
-              Save Changes
+              保存
             </Button>
           </div>
         </div>
@@ -293,7 +293,7 @@ export function RolesSettings() {
           <thead>
             <tr className="border-b border-gray-700">
               <th className="min-w-[250px] p-3 text-left text-sm font-medium text-gray-400">
-                Capability
+                授权内容
               </th>
               {VALID_ROLES.map((role) => {
                 const Icon = ROLE_ICONS[role]
@@ -308,7 +308,7 @@ export function RolesSettings() {
                         onClick={() => openResetDialog(role)}
                         className="mt-1 text-xs text-gray-500 hover:text-gray-300"
                       >
-                        Reset
+                        重置
                       </button>
                     </div>
                   </th>
@@ -338,16 +338,16 @@ export function RolesSettings() {
       <Dialog open={showResetDialog} onOpenChange={setShowResetDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Reset Permissions</DialogTitle>
+            <DialogTitle>重置权限</DialogTitle>
             <DialogDescription>
               {resetRole
-                ? `Are you sure you want to reset all permissions for the "${ROLE_LABELS[resetRole]}" role to defaults?`
-                : 'Are you sure you want to reset ALL role permissions to defaults?'}
+                ? `确定要将 "${ROLE_LABELS[resetRole]}" 角色的所有权限重置为默认值吗?`
+                : '确定要全部角色的所有权限重置为默认值吗?'}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowResetDialog(false)}>
-              Cancel
+              取消
             </Button>
             <Button
               variant="destructive"
@@ -357,7 +357,7 @@ export function RolesSettings() {
               {resetPermissions.isPending && (
                 <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
               )}
-              Reset
+              重置
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -435,7 +435,7 @@ function CategorySection({
                       }
                       ${isDifferent ? 'ring-2 ring-orange-500/50' : ''}
                     `}
-                    title={isAllowed ? 'Allowed' : 'Denied'}
+                    title={isAllowed ? '允许' : '禁止'}
                   >
                     {isAllowed ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
                   </button>

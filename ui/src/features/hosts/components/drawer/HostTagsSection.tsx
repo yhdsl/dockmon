@@ -38,7 +38,7 @@ export function HostTagsSection({ host }: HostTagsSectionProps) {
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Tag className="h-4 w-4 text-muted-foreground" />
-            <h3 className="text-sm font-medium">Host Tags</h3>
+            <h3 className="text-sm font-medium">标签</h3>
           </div>
           {!isEditing && (
             <Button
@@ -49,7 +49,7 @@ export function HostTagsSection({ host }: HostTagsSectionProps) {
               className="h-7 px-2"
             >
               <Plus className="h-3 w-3 mr-1" />
-              Edit
+              编辑
             </Button>
           )}
         </div>
@@ -60,7 +60,7 @@ export function HostTagsSection({ host }: HostTagsSectionProps) {
               value={editedTags}
               onChange={setEditedTags}
               suggestions={tagSuggestions}
-              placeholder="Add host tags (prod, dev, us-west-1...)"
+              placeholder="输入主机标签 (prod, dev, us-west-1...)"
               maxTags={20}
               showPrimaryIndicator={true}
             />
@@ -72,7 +72,7 @@ export function HostTagsSection({ host }: HostTagsSectionProps) {
                 disabled={isLoading}
                 className="flex-1"
               >
-                Save Tags
+                保存标签
               </Button>
               <Button
                 variant="outline"
@@ -80,14 +80,14 @@ export function HostTagsSection({ host }: HostTagsSectionProps) {
                 onClick={handleCancelEdit}
                 disabled={isLoading}
               >
-                Cancel
+                取消
               </Button>
             </div>
           </div>
         ) : (
           <div className="flex flex-wrap gap-2">
             {currentTags.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No tags</p>
+              <p className="text-sm text-muted-foreground">暂无标签</p>
             ) : (
               currentTags.map((tag) => (
                 <TagChip

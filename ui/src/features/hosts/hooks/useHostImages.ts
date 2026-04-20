@@ -11,7 +11,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { apiClient } from '@/lib/api/client'
 import { getErrorMessage } from '@/lib/utils/errors'
-import { formatBytes, pluralize } from '@/lib/utils/formatting'
+import { formatBytes } from '@/lib/utils/formatting'
 import type { DockerImage } from '@/types/api'
 
 interface PruneResult {
@@ -89,13 +89,13 @@ export function usePruneImages(hostId: string) {
 
       if (data.removed_count > 0) {
         const spaceStr = formatBytes(data.space_reclaimed)
-        toast.success(`Pruned ${data.removed_count} ${pluralize(data.removed_count, 'image')}, reclaimed ${spaceStr}`)
+        toast.success(`已成功删除镜像，并回收 ${spaceStr}`)
       } else {
-        toast.info('No unused images to prune')
+        toast.info('没有可修剪的未使用的镜像')
       }
     },
     onError: (error: unknown) => {
-      toast.error(getErrorMessage(error, 'Failed to prune images'))
+      toast.error(getErrorMessage(error, '无法修剪镜像'))
     },
   })
 }
@@ -127,14 +127,14 @@ export function useDeleteImages() {
       return { previousImages }
     },
     onSuccess: (_data, variables) => {
-      toast.success(`Delete job started (${variables.imageIds.length} ${pluralize(variables.imageIds.length, 'image')})`)
+      toast.success(`开始删除 (${variables.imageIds.length} 个镜像`)
     },
     onError: (error: unknown, variables, context) => {
       // Rollback on error
       if (context?.previousImages) {
         queryClient.setQueryData(['host-images', variables.hostId], context.previousImages)
       }
-      toast.error(getErrorMessage(error, 'Failed to delete images'))
+      toast.error(getErrorMessage(error, '无法删除镜像'))
     },
     onSettled: (_data, _error, variables) => {
       // Refetch after a delay to sync with actual state

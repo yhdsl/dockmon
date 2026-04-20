@@ -28,10 +28,10 @@ export function useCreateRegistryCredential() {
       apiClient.post<RegistryCredential>('/registry-credentials', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['registry-credentials'] })
-      toast.success('Registry credential created successfully')
+      toast.success('已成功创建注册表凭证')
     },
     onError: (error: Error) => {
-      toast.error(`Failed to create credential: ${error.message}`)
+      toast.error(`创建注册表凭证时失败: ${error.message}`)
     },
   })
 }
@@ -47,10 +47,10 @@ export function useUpdateRegistryCredential() {
       apiClient.put<RegistryCredential>(`/registry-credentials/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['registry-credentials'] })
-      toast.success('Registry credential updated successfully')
+      toast.success('已成功更新注册表凭证')
     },
     onError: (error: Error) => {
-      toast.error(`Failed to update credential: ${error.message}`)
+      toast.error(`更新注册表凭证时失败: ${error.message}`)
     },
   })
 }
@@ -65,10 +65,10 @@ export function useDeleteRegistryCredential() {
     mutationFn: (id: number) => apiClient.delete(`/registry-credentials/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['registry-credentials'] })
-      toast.success('Registry credential deleted successfully')
+      toast.success('已成功删除注册表凭证')
     },
     onError: (error: Error) => {
-      toast.error(`Failed to delete credential: ${error.message}`)
+      toast.error(`删除注册表凭证时失败: ${error.message}`)
     },
   })
 }

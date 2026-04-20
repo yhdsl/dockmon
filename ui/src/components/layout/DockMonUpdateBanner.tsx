@@ -91,7 +91,7 @@ export function DockMonUpdateBanner({ isCollapsed }: DockMonUpdateBannerProps) {
     return (
       <div
         className="mb-2 flex items-center justify-center rounded-lg bg-gradient-to-r from-blue-500/20 to-cyan-500/20 p-2 cursor-pointer hover:from-blue-500/30 hover:to-cyan-500/30 transition-all duration-200"
-        title={`Update available: ${settings?.latest_available_version}`}
+        title={`更新可用: ${settings?.latest_available_version}`}
         onClick={handleSeeWhatsNew}
       >
         <Info className="h-4 w-4 text-blue-400" />
@@ -106,10 +106,10 @@ export function DockMonUpdateBanner({ isCollapsed }: DockMonUpdateBannerProps) {
         <Info className="h-4 w-4 text-blue-400 flex-shrink-0 mt-0.5" />
         <div className="flex-1 min-w-0">
           <div className="text-xs font-medium text-foreground mb-1">
-            Update available
+            更新可用
           </div>
           <div className="text-xs text-muted-foreground mb-2">
-            Version {settings?.latest_available_version}
+            版本 {settings?.latest_available_version}
           </div>
           <div className="flex flex-col gap-1.5">
             <Button
@@ -119,7 +119,7 @@ export function DockMonUpdateBanner({ isCollapsed }: DockMonUpdateBannerProps) {
               onClick={handleSeeWhatsNew}
             >
               <ExternalLink className="h-3 w-3 mr-1.5" />
-              See what's new
+              查看新增内容
             </Button>
             <Button
               variant="ghost"
@@ -128,7 +128,7 @@ export function DockMonUpdateBanner({ isCollapsed }: DockMonUpdateBannerProps) {
               onClick={handleDismiss}
             >
               <X className="h-3 w-3 mr-1.5" />
-              Dismiss
+              忽略
             </Button>
           </div>
         </div>

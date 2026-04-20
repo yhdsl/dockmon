@@ -50,7 +50,7 @@ export function StackListPanel({
 
   const renderStackList = () => {
     if (isLoading) {
-      return <p className="text-sm text-muted-foreground p-2">Loading stacks...</p>
+      return <p className="text-sm text-muted-foreground p-2">加载堆栈数据中...</p>
     }
 
     return (
@@ -81,13 +81,13 @@ export function StackListPanel({
 
         {filteredStacks.length === 0 && stacks && stacks.length > 0 && (
           <p className="text-sm text-muted-foreground p-2">
-            No stacks match "{searchQuery}"
+            暂无匹配 "{searchQuery}" 的堆栈
           </p>
         )}
 
         {(!stacks || stacks.length === 0) && (
           <p className="text-sm text-muted-foreground p-2">
-            No stacks yet. Create your first stack.
+            尚未添加任何堆栈，请添加一个堆栈以开始使用。
           </p>
         )}
       </>
@@ -109,7 +109,7 @@ export function StackListPanel({
           )}
         >
           <Plus className="h-4 w-4" />
-          New
+          新建
         </Button>
         {onImport && (
           <Button
@@ -120,7 +120,7 @@ export function StackListPanel({
             className="flex-1 gap-2"
           >
             <Download className="h-4 w-4" />
-            Import
+            导入
           </Button>
         )}
       </div>
@@ -129,7 +129,7 @@ export function StackListPanel({
       <div className="relative mb-3 shrink-0">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="Search stacks..."
+          placeholder="搜索堆栈..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-9"

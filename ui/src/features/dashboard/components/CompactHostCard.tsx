@@ -52,7 +52,7 @@ export function CompactHostCard({ host, onClick }: CompactHostCardProps) {
 
       <div className="flex items-center gap-1 text-xs text-muted-foreground whitespace-nowrap">
         <span className="font-mono">{containerCount}</span>
-        <span className="hidden sm:inline">containers</span>
+        <span className="hidden sm:inline">个容器</span>
       </div>
 
       <div className="flex items-center gap-1 px-1.5 sm:px-2 py-1 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400">

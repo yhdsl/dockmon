@@ -75,7 +75,7 @@ export function BatchJobPanel({ jobId, isVisible, onClose, onJobComplete, bulkAc
         }
       } catch (err) {
         if (!cancelled) {
-          setError(err instanceof Error ? err.message : 'Failed to fetch job status')
+          setError(err instanceof Error ? err.message : '获取任务状态时失败')
         }
       } finally {
         if (!cancelled) {
@@ -229,13 +229,13 @@ export function BatchJobPanel({ jobId, isVisible, onClose, onJobComplete, bulkAc
         }`}
       >
         <div className="px-4 py-3 border-b border-border flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-foreground">Batch Operation</h3>
-          <button onClick={handleClose} className="p-1 hover:bg-surface-2 rounded transition-colors" title="Close">
+          <h3 className="text-sm font-semibold text-foreground">批处理</h3>
+          <button onClick={handleClose} className="p-1 hover:bg-surface-2 rounded transition-colors" title="关闭">
             <X className="h-4 w-4 text-muted-foreground" />
           </button>
         </div>
         <div className="px-4 py-8 text-center text-sm text-muted-foreground">
-          You do not have permission to view batch job status.
+          你无权查看批处理状态。
         </div>
       </div>
     )
@@ -252,18 +252,18 @@ export function BatchJobPanel({ jobId, isVisible, onClose, onJobComplete, bulkAc
     : 0
 
   const actionLabels: Record<string, string> = {
-    start: 'Starting',
-    stop: 'Stopping',
-    restart: 'Restarting',
-    'delete-images': 'Deleting images',
-    'delete-containers': 'Deleting containers',
-    'add-tags': 'Adding tags',
-    'remove-tags': 'Removing tags',
-    'set-auto-restart': 'Configuring auto-restart',
-    'set-auto-update': 'Configuring auto-update',
-    'set-desired-state': 'Setting desired state',
-    'check-updates': 'Checking for updates',
-    'update-containers': 'Updating containers',
+    start: '启动',
+    stop: '停止',
+    restart: '重启',
+    'delete-images': '删除镜像于',
+    'delete-containers': '删除容器于',
+    'add-tags': '添加标签至',
+    'remove-tags': '删除标签于',
+    'set-auto-restart': '设置自动重启至',
+    'set-auto-update': '设置自动更新至',
+    'set-desired-state': '设置期望状态至',
+    'check-updates': '检查更新到',
+    'update-containers': '更新',
   }
 
   const statusIcons = {
@@ -284,16 +284,16 @@ export function BatchJobPanel({ jobId, isVisible, onClose, onJobComplete, bulkAc
       <div className="px-4 py-3 border-b border-border flex items-center justify-between">
         <div>
           <h3 className="text-sm font-semibold text-foreground">
-            Batch Operation
+            批处理面板
           </h3>
           <p className="text-xs text-muted-foreground">
-            {job ? actionLabels[job.action] || job.action : 'Loading...'} {job?.total_items || 0} containers
+            {job ? actionLabels[job.action] || job.action : '加载中...'} {job?.total_items || 0} 个容器
           </p>
         </div>
         <button
           onClick={handleClose}
           className="p-1 hover:bg-surface-2 rounded transition-colors"
-          title="Close"
+          title="关闭"
         >
           <X className="h-4 w-4 text-muted-foreground" />
         </button>
@@ -304,7 +304,7 @@ export function BatchJobPanel({ jobId, isVisible, onClose, onJobComplete, bulkAc
         <div className="px-4 py-3 border-b border-border">
           <div className="flex items-center justify-between text-xs mb-2">
             <span className="text-muted-foreground">
-              {job.completed_items} of {job.total_items}
+              {job.completed_items} / {job.total_items}
             </span>
             <span className="font-medium text-foreground">
               {progressPercent}%
@@ -324,16 +324,16 @@ export function BatchJobPanel({ jobId, isVisible, onClose, onJobComplete, bulkAc
           </div>
           <div className="flex items-center gap-4 mt-2 text-xs">
             <span className="text-success">
-              ✓ {job.success_items} success
+              ✓ {job.success_items} 个成功
             </span>
             {job.error_items > 0 && (
               <span className="text-destructive">
-                ✗ {job.error_items} failed
+                ✗ {job.error_items} 个失败
               </span>
             )}
             {job.skipped_items > 0 && (
               <span className="text-warning">
-                ⊘ {job.skipped_items} skipped
+                ⊘ {job.skipped_items} 个跳过
               </span>
             )}
           </div>
@@ -346,7 +346,7 @@ export function BatchJobPanel({ jobId, isVisible, onClose, onJobComplete, bulkAc
           <div className="flex items-start gap-2">
             <XCircle className="h-4 w-4 text-destructive mt-0.5 flex-shrink-0" />
             <div className="flex-1">
-              <p className="text-sm text-destructive font-medium">Failed to load batch job</p>
+              <p className="text-sm text-destructive font-medium">加载批处理任务时失败</p>
               <p className="text-xs text-destructive/80 mt-1">{error}</p>
               <button
                 onClick={() => {
@@ -355,15 +355,15 @@ export function BatchJobPanel({ jobId, isVisible, onClose, onJobComplete, bulkAc
                   apiClient.get<BatchJobStatus>(`/batch/${jobId}`)
                     .then(data => setJob(data))
                     .catch(err => {
-                      const errorMsg = err instanceof Error ? err.message : 'Failed to fetch job status'
-                      debug.error('BatchJobPanel', 'Batch job retry failed:', err)
+                      const errorMsg = err instanceof Error ? err.message : '加载批处理状态时失败'
+                      debug.error('BatchJobPanel', '重试批处理任务时失败:', err)
                       setError(errorMsg)
                     })
                     .finally(() => setLoading(false))
                 }}
                 className="mt-2 text-xs text-primary hover:text-primary/80 font-medium"
               >
-                Retry
+                重试
               </button>
             </div>
           </div>
@@ -422,10 +422,10 @@ export function BatchJobPanel({ jobId, isVisible, onClose, onJobComplete, bulkAc
           <p className="text-xs text-muted-foreground text-center">
             {job.completed_at ? (
               <>
-                Completed at {formatTime(job.completed_at, timeFormat, true)}
+                完成于 {formatTime(job.completed_at, timeFormat, true)}
               </>
             ) : (
-              'Completed'
+              '已完成'
             )}
           </p>
         </div>

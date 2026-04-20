@@ -8,7 +8,7 @@ import type { EventSeverity, EventCategory } from '@/types/events'
  * Format severity for display (e.g., 'info' -> 'Info', 'critical' -> 'Critical')
  */
 export function formatSeverity(severity: EventSeverity): string {
-  return severity.charAt(0).toUpperCase() + severity.slice(1)
+  return {'critical': "严重", 'error': "错误", 'warning': "警告", 'info': "通知", 'debug': "调试"}[severity]
 }
 
 /**

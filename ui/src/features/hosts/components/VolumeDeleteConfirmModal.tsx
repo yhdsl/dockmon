@@ -8,7 +8,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { AlertTriangle } from 'lucide-react'
 import { ConfirmModal } from '@/components/shared/ConfirmModal'
-import { pluralize } from '@/lib/utils/formatting'
 import type { DockerVolume } from '@/types/api'
 
 interface VolumeDeleteConfirmModalProps {
@@ -48,10 +47,10 @@ export function VolumeDeleteConfirmModal({
         isOpen={isOpen}
         onClose={onClose}
         onConfirm={handleConfirm}
-        title="Delete Volumes"
-        description={`Delete ${volumeCount} selected volumes? This action cannot be undone.`}
-        confirmText={`Delete ${volumeCount} Volumes`}
-        pendingText="Deleting..."
+        title="删除卷"
+        description={`删除 ${volumeCount} 个已选择的卷? 此操作将无法撤销。`}
+        confirmText={`删除 ${volumeCount} 个卷`}
+        pendingText="删除中..."
         variant="danger"
         isPending={isPending}
       >
@@ -60,10 +59,10 @@ export function VolumeDeleteConfirmModal({
             <AlertTriangle className="h-5 w-5 text-warning flex-shrink-0 mt-0.5" aria-hidden="true" />
             <div className="text-sm">
               <p className="font-medium text-warning">
-                Bulk volume deletion
+                卷批处理删除
               </p>
               <p className="text-muted-foreground mt-1">
-                Volumes in use by containers will require force delete.
+                删除正在被容器使用的卷需要启用强制删除。
               </p>
             </div>
           </div>
@@ -77,7 +76,7 @@ export function VolumeDeleteConfirmModal({
                 className="w-4 h-4 rounded border-border"
               />
               <span className="text-sm text-foreground">
-                Force delete (remove even if in use)
+                强制删除 (无视是否被使用)
               </span>
             </label>
           </div>
@@ -96,10 +95,10 @@ export function VolumeDeleteConfirmModal({
       isOpen={isOpen}
       onClose={onClose}
       onConfirm={handleConfirm}
-      title="Delete Volume"
-      description="This action cannot be undone."
-      confirmText="Delete Volume"
-      pendingText="Deleting..."
+      title="删除卷"
+      description="此操作将无法撤销"
+      confirmText="删除卷"
+      pendingText="删除中..."
       variant="danger"
       isPending={isPending}
       disabled={isInUse && !forceDelete}
@@ -111,10 +110,10 @@ export function VolumeDeleteConfirmModal({
             <AlertTriangle className="h-5 w-5 text-warning flex-shrink-0 mt-0.5" aria-hidden="true" />
             <div className="text-sm">
               <p className="font-medium text-warning">
-                Volume in use by {volume.container_count} {pluralize(volume.container_count, 'container')}
+                卷已被 {volume.container_count} 个容器所使用
               </p>
               <p className="text-muted-foreground mt-1">
-                Force deleting this volume may cause data loss for running containers.
+                强制删除可能会导致正在运行的容器出现数据丢失。
               </p>
             </div>
           </div>
@@ -123,20 +122,20 @@ export function VolumeDeleteConfirmModal({
         {/* Volume info */}
         <div className="p-3 rounded bg-surface-2 space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Name</span>
+            <span className="text-sm text-muted-foreground">名称</span>
             <span className="text-sm font-medium text-foreground font-mono truncate max-w-[200px]" title={volume.name}>
               {volume.name}
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Driver</span>
+            <span className="text-sm text-muted-foreground">驱动</span>
             <span className="text-sm text-foreground">
               {volume.driver || 'local'}
             </span>
           </div>
           {isInUse && volume.containers && volume.containers.length > 0 && (
             <div className="pt-2 border-t border-border">
-              <span className="text-sm text-muted-foreground">Used by containers:</span>
+              <span className="text-sm text-muted-foreground">被以下容器使用:</span>
               <ul className="mt-1 space-y-1">
                 {volume.containers.slice(0, 5).map((container) => (
                   <li key={container.id} className="text-sm text-foreground font-mono pl-2">
@@ -145,7 +144,7 @@ export function VolumeDeleteConfirmModal({
                 ))}
                 {volume.containers.length > 5 && (
                   <li className="text-sm text-muted-foreground pl-2">
-                    ...and {volume.containers.length - 5} more
+                    ...以及剩余的 {volume.containers.length - 5} 个
                   </li>
                 )}
               </ul>
@@ -164,11 +163,11 @@ export function VolumeDeleteConfirmModal({
                 className="w-4 h-4 rounded border-border"
               />
               <span className="text-sm text-foreground">
-                Force delete (may cause data loss)
+                强制删除 (可能会丢失数据)
               </span>
             </label>
             <p className="text-xs text-warning mt-2">
-              Warning: Force deleting will remove the volume even if containers are using it.
+              警告: 强制删除将不会考虑卷是否正在被容器使用。
             </p>
           </div>
         )}

@@ -71,24 +71,24 @@ export interface ScopePreset {
  */
 export const SCOPE_PRESETS: ScopePreset[] = [
   {
-    label: 'Read-Only',
+    label: '仅可读',
     scopes: ['read'],
-    description: 'View containers and dashboards',
+    description: '读取容器和仪表盘数据',
     icon: 'Eye',
-    useCase: 'Homepage, monitoring dashboards, read-only access',
+    useCase: '主页服务、仪表板监控、只读的访问授权',
   },
   {
-    label: 'Read & Write',
+    label: '可读写',
     scopes: ['read', 'write'],
-    description: 'View and manage containers',
+    description: '读取与管理容器',
     icon: 'Pencil',
-    useCase: 'Ansible automation, container management scripts',
+    useCase: 'Ansible 自动化、容器管理脚本',
   },
   {
-    label: 'Full Admin',
+    label: '管理员',
     scopes: ['admin'],
-    description: 'Full access including API key management',
+    description: '完整的访问权限，包括 API 密钥管理',
     icon: 'Lock',
-    useCase: 'Full Access',
+    useCase: '完整的访问权限',
   },
 ]

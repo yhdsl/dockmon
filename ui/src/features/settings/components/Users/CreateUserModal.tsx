@@ -54,49 +54,49 @@ export function CreateUserModal({ isOpen, onClose }: CreateUserModalProps) {
     // Validation
     const trimmedUsername = username.trim()
     if (!trimmedUsername) {
-      toast.error('Username is required')
+      toast.error('用户名为必填项')
       return
     }
 
     if (trimmedUsername.length < 3) {
-      toast.error('Username must be at least 3 characters')
+      toast.error('用户名必须至少为 3 个字符')
       return
     }
 
     if (trimmedUsername.length > 32) {
-      toast.error('Username must be 32 characters or less')
+      toast.error('用户名不能超过 32 个字符')
       return
     }
 
     if (!/^[a-zA-Z][a-zA-Z0-9_-]*$/.test(trimmedUsername)) {
-      toast.error('Username must start with a letter and contain only letters, numbers, underscores, and hyphens')
+      toast.error('用户名必须以字母开头，并且只能包含字母、数字、下划线和连字符')
       return
     }
 
     // Check for reserved usernames
     const reservedNames = ['admin', 'root', 'system', 'administrator', 'guest', 'api', 'auth', 'oauth', 'oidc']
     if (reservedNames.includes(trimmedUsername.toLowerCase())) {
-      toast.error(`Username "${trimmedUsername}" is reserved`)
+      toast.error(`用户名 "${trimmedUsername}" 为系统保留名称`)
       return
     }
 
     if (!password) {
-      toast.error('Password is required')
+      toast.error('密码为必填项')
       return
     }
 
     if (password.length < 8) {
-      toast.error('Password must be at least 8 characters')
+      toast.error('密码必须至少为 8 个字符')
       return
     }
 
     if (password !== confirmPassword) {
-      toast.error('Passwords do not match')
+      toast.error('密码与确认密码不同')
       return
     }
 
     if (selectedGroupIds.size === 0) {
-      toast.error('Select at least one group')
+      toast.error('请选择一个用户群组')
       return
     }
 
@@ -148,7 +148,7 @@ export function CreateUserModal({ isOpen, onClose }: CreateUserModalProps) {
       <div className="mx-4 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-lg border border-gray-800 bg-gray-900">
         {/* Header */}
         <div className="sticky top-0 flex items-center justify-between border-b border-gray-800 bg-gray-900 px-6 py-4">
-          <h2 className="text-lg font-semibold text-white">Create User</h2>
+          <h2 className="text-lg font-semibold text-white">创建用户</h2>
           <button
             onClick={handleClose}
             disabled={createUser.isPending}
@@ -162,59 +162,59 @@ export function CreateUserModal({ isOpen, onClose }: CreateUserModalProps) {
         <form onSubmit={handleSubmit} className="space-y-5 p-6">
           {/* Username */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-300">Username *</label>
+            <label className="mb-2 block text-sm font-medium text-gray-300">用户名 *</label>
             <Input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="e.g., johndoe"
+              placeholder="例如: johndoe"
               disabled={createUser.isPending}
               className="w-full"
             />
             <p className="mt-1 text-xs text-gray-500">
-              Must start with a letter. Letters, numbers, underscores, hyphens only.
+              必须以字母开头，并且只能包含字母、数字、下划线和连字符。
             </p>
           </div>
 
           {/* Display Name */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-300">Display Name</label>
+            <label className="mb-2 block text-sm font-medium text-gray-300">昵称</label>
             <Input
               type="text"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
-              placeholder="e.g., John Doe"
+              placeholder="例如: John Doe"
               disabled={createUser.isPending}
               className="w-full"
             />
-            <p className="mt-1 text-xs text-gray-500">Optional friendly name shown in the UI</p>
+            <p className="mt-1 text-xs text-gray-500">如何优雅的展示你的用户名 (可选)</p>
           </div>
 
           {/* Email */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-300">Email</label>
+            <label className="mb-2 block text-sm font-medium text-gray-300">邮箱</label>
             <Input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="e.g., john@example.com"
+              placeholder="例如: john@example.com"
               disabled={createUser.isPending}
               className="w-full"
             />
             <p className="mt-1 text-xs text-gray-500">
-              Optional. Used for password reset and OIDC matching.
+              用于重置密码和 OIDC 配置 (可选)
             </p>
           </div>
 
           {/* Password */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-300">Password *</label>
+            <label className="mb-2 block text-sm font-medium text-gray-300">密码 *</label>
             <div className="relative">
               <Input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Minimum 8 characters"
+                placeholder="不少于 8 个字符"
                 disabled={createUser.isPending}
                 className="w-full pr-10"
               />
@@ -230,12 +230,12 @@ export function CreateUserModal({ isOpen, onClose }: CreateUserModalProps) {
 
           {/* Confirm Password */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-300">Confirm Password *</label>
+            <label className="mb-2 block text-sm font-medium text-gray-300">确认密码 *</label>
             <Input
               type={showPassword ? 'text' : 'password'}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Re-enter password"
+              placeholder="请再次输入密码"
               disabled={createUser.isPending}
               className="w-full"
             />
@@ -244,13 +244,13 @@ export function CreateUserModal({ isOpen, onClose }: CreateUserModalProps) {
           {/* Group Selection */}
           <div>
             <label className="mb-3 block text-sm font-medium text-gray-300">
-              Groups * <span className="text-xs text-gray-500">(select at least one)</span>
+              用户群组 * <span className="text-xs text-gray-500">(请至少选择一个)</span>
             </label>
             {loadingGroups ? (
-              <div className="text-sm text-gray-500">Loading groups...</div>
+              <div className="text-sm text-gray-500">加载用户群组中...</div>
             ) : groups.length === 0 ? (
               <div className="rounded-lg border border-yellow-900/30 bg-yellow-900/10 p-3 text-sm text-yellow-300">
-                No groups available. Create a group first in the Groups settings.
+                没有可用的群组，请先前往群组管理页面创建一个用户群组。
               </div>
             ) : (
               <div className="space-y-2">
@@ -273,10 +273,10 @@ export function CreateUserModal({ isOpen, onClose }: CreateUserModalProps) {
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <Users className="h-4 w-4 text-blue-400" />
-                        <span className="font-medium text-white">{group.name}</span>
+                        <span className="font-medium text-white">{group.name}{group.is_system ? ` (${{'Administrators': "管理群组", 'Operators': "操作群组", 'Read Only': "访客群组"}[group.name]})` : ""}</span>
                         {group.is_system && (
                           <span className="rounded bg-gray-700 px-1.5 py-0.5 text-xs text-gray-400">
-                            System
+                            系统群组
                           </span>
                         )}
                       </div>
@@ -302,9 +302,9 @@ export function CreateUserModal({ isOpen, onClose }: CreateUserModalProps) {
               />
               <div>
                 <span className="text-sm font-medium text-gray-300">
-                  Require password change on first login
+                  首次登录后需要更改密码
                 </span>
-                <p className="text-xs text-gray-500">Recommended for security</p>
+                <p className="text-xs text-gray-500">建议启用以提升安全性</p>
               </div>
             </label>
           </div>
@@ -312,7 +312,7 @@ export function CreateUserModal({ isOpen, onClose }: CreateUserModalProps) {
           {/* Actions */}
           <div className="flex gap-2 pt-2">
             <Button type="submit" disabled={createUser.isPending} className="flex-1">
-              {createUser.isPending ? 'Creating...' : 'Create User'}
+              {createUser.isPending ? '创建中...' : '创建用户'}
             </Button>
             <Button
               type="button"
@@ -321,7 +321,7 @@ export function CreateUserModal({ isOpen, onClose }: CreateUserModalProps) {
               variant="outline"
               className="flex-1"
             >
-              Cancel
+              取消
             </Button>
           </div>
         </form>

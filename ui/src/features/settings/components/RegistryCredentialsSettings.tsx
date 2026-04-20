@@ -29,9 +29,9 @@ export function RegistryCredentialsSettings() {
   return (
     <div>
       <div className="mb-4">
-        <h3 className="text-lg font-semibold text-foreground">Registry Credentials</h3>
+        <h3 className="text-lg font-semibold text-foreground">注册表凭证</h3>
         <p className="text-xs text-muted-foreground mt-1">
-          Configure credentials for private container registries
+          为私有镜像注册表网站配置登录凭证
         </p>
       </div>
 
@@ -40,10 +40,10 @@ export function RegistryCredentialsSettings() {
         <div className="flex gap-2">
           <AlertTriangle className="h-5 w-5 text-yellow-500 flex-shrink-0 mt-0.5" />
           <div>
-            <p className="text-sm font-medium text-yellow-200">Security Notice</p>
+            <p className="text-sm font-medium text-yellow-200">安全提示</p>
             <p className="text-xs text-yellow-300/80 mt-1">
-              Credentials are encrypted before storage. However, if both the database and encryption
-              key are compromised, credentials can be decrypted. See documentation for details.
+              在存储前凭证内容将会被加密。
+              然而，如果数据库和加密密钥同时泄露，登录凭证仍有可能被解密。请查看官方文档以了解详情。
             </p>
           </div>
         </div>
@@ -53,17 +53,17 @@ export function RegistryCredentialsSettings() {
       <div className="rounded-md border border-border bg-surface-1">
         {isLoading ? (
           <div className="px-4 py-8 text-center text-sm text-muted-foreground">
-            Loading credentials...
+            加载登录凭证中...
           </div>
         ) : credentials && credentials.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border text-left">
-                  <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase">Registry URL</th>
-                  <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase">Username</th>
-                  <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase">Created</th>
-                  <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase w-24">Actions</th>
+                  <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase">注册表 URL</th>
+                  <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase">用户名</th>
+                  <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase">创建于</th>
+                  <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase w-24">凭证操作</th>
                 </tr>
               </thead>
               <tbody>
@@ -79,14 +79,14 @@ export function RegistryCredentialsSettings() {
                         <button
                           onClick={() => setEditingCredential(cred)}
                           className="p-1 text-muted-foreground hover:text-primary transition-colors"
-                          title="Edit credential"
+                          title="编辑凭证"
                         >
                           <Edit2 className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => setDeletingId(cred.id)}
                           className="p-1 text-muted-foreground hover:text-danger transition-colors"
-                          title="Delete credential"
+                          title="删除凭证"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -99,9 +99,9 @@ export function RegistryCredentialsSettings() {
           </div>
         ) : (
           <div className="px-4 py-8 text-center">
-            <p className="text-sm text-muted-foreground">No registry credentials configured</p>
+            <p className="text-sm text-muted-foreground">尚未配置任何登录凭证</p>
             <p className="text-xs text-muted-foreground/70 mt-1">
-              Add credentials to authenticate with private container registries
+              请添加一个凭证以登录私有的容器镜像注册表网站
             </p>
           </div>
         )}
@@ -111,7 +111,7 @@ export function RegistryCredentialsSettings() {
       <div className="mt-4">
         <Button onClick={() => setShowAddModal(true)} variant="outline" size="sm" disabled={!canManage}>
           <Plus className="h-4 w-4 mr-2" />
-          Add Credential
+          添加凭证
         </Button>
       </div>
 
@@ -194,7 +194,7 @@ function CredentialModal({ credential, disabled, onClose }: CredentialModalProps
       >
         <div className="px-6 py-4 border-b border-border">
           <h3 className="text-lg font-semibold text-foreground">
-            {isEditing ? 'Edit Registry Credential' : 'Add Registry Credential'}
+            {isEditing ? '编辑注册表凭证' : '添加注册表凭证'}
           </h3>
         </div>
 
@@ -203,7 +203,7 @@ function CredentialModal({ credential, disabled, onClose }: CredentialModalProps
           {/* Registry URL */}
           <div>
             <label htmlFor="registry-url" className="block text-sm font-medium text-muted-foreground mb-2">
-              Registry URL
+              注册表 URL
             </label>
             <input
               id="registry-url"
@@ -211,26 +211,26 @@ function CredentialModal({ credential, disabled, onClose }: CredentialModalProps
               value={registryUrl}
               onChange={(e) => setRegistryUrl(e.target.value)}
               disabled={isEditing}
-              placeholder="e.g., ghcr.io, registry.example.com"
+              placeholder="例如 ghcr.io 或 registry.example.com"
               className="w-full rounded-md border border-border bg-surface-1 px-3 py-2 text-foreground placeholder-muted-foreground/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
               required={!isEditing}
             />
             {isEditing && (
-              <p className="text-xs text-muted-foreground/70 mt-1">Registry URL cannot be changed</p>
+              <p className="text-xs text-muted-foreground/70 mt-1">无法修改注册表 URL</p>
             )}
           </div>
 
           {/* Username */}
           <div>
             <label htmlFor="username" className="block text-sm font-medium text-muted-foreground mb-2">
-              Username
+              用户名
             </label>
             <input
               id="username"
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Registry username"
+              placeholder="注册表用户名"
               className="w-full rounded-md border border-border bg-surface-1 px-3 py-2 text-foreground placeholder-muted-foreground/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
               required={!isEditing}
             />
@@ -239,14 +239,14 @@ function CredentialModal({ credential, disabled, onClose }: CredentialModalProps
           {/* Password */}
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-muted-foreground mb-2">
-              {isEditing ? 'New Password (optional)' : 'Password'}
+              {isEditing ? '修改密码 (可选)' : '密码'}
             </label>
             <input
               id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder={isEditing ? 'Leave blank to keep current password' : 'Password or access token'}
+              placeholder={isEditing ? '留空以使用之前保存的密码' : '密码或访问令牌'}
               className="w-full rounded-md border border-border bg-surface-1 px-3 py-2 text-foreground placeholder-muted-foreground/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
               required={!isEditing}
             />
@@ -255,10 +255,10 @@ function CredentialModal({ credential, disabled, onClose }: CredentialModalProps
           {/* Form Actions */}
           <div className="flex gap-3 pt-4">
             <Button type="submit" disabled={isLoading} className="flex-1">
-              {isLoading ? 'Saving...' : isEditing ? 'Update' : 'Create'}
+              {isLoading ? '保存中...' : isEditing ? '更新' : '创建'}
             </Button>
             <Button type="button" variant="outline" onClick={onClose} disabled={isLoading}>
-              Cancel
+              取消
             </Button>
           </div>
           </fieldset>
@@ -292,16 +292,16 @@ function DeleteConfirmationDialog({ credentialId, registryUrl, disabled, onClose
         onClick={(e) => e.stopPropagation()}
       >
         <div className="px-6 py-4 border-b border-border">
-          <h3 className="text-lg font-semibold text-foreground">Delete Registry Credential</h3>
+          <h3 className="text-lg font-semibold text-foreground">删除注册表凭证</h3>
         </div>
 
         <div className="px-6 py-4">
           <p className="text-sm text-muted-foreground">
-            Are you sure you want to delete the credentials for{' '}
-            <span className="font-mono text-foreground">{registryUrl}</span>?
+            确定要删除{' '}
+            <span className="font-mono text-foreground">{registryUrl}</span> 的登录凭证吗?
           </p>
           <p className="text-xs text-muted-foreground/70 mt-2">
-            Update checks for containers using this registry will fail if authentication is required.
+            如果该镜像注册表需要身份验证，则使用此注册表镜像的容器将无法进行更新检查。
           </p>
         </div>
 
@@ -312,10 +312,10 @@ function DeleteConfirmationDialog({ credentialId, registryUrl, disabled, onClose
             variant="outline"
             className="flex-1 border-red-900 text-red-400 hover:bg-red-950/50"
           >
-            {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+            {deleteMutation.isPending ? '删除中...' : '删除'}
           </Button>
           <Button variant="outline" onClick={onClose} disabled={deleteMutation.isPending}>
-            Cancel
+            取消
           </Button>
         </fieldset>
       </div>

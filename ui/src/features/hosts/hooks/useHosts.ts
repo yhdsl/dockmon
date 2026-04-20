@@ -87,7 +87,7 @@ export function useAddHost() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['hosts'] })
       queryClient.invalidateQueries({ queryKey: ['tags'] }) // Invalidate tags cache
-      toast.success(`Host "${data.name}" added successfully`)
+      toast.success(`已成功添加主机 "${data.name}"`)
     },
     onError: (error: unknown) => {
       const apiError = error as ApiError
@@ -95,7 +95,7 @@ export function useAddHost() {
       const detail = typeof apiError.data === 'object' && apiError.data?.detail
         ? apiError.data.detail
         : null
-      const message = detail || apiError.message || 'Failed to add host'
+      const message = detail || apiError.message || '无法添加主机'
       toast.error(message)
     },
   })
@@ -112,7 +112,7 @@ export function useUpdateHost() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['hosts'] })
       queryClient.invalidateQueries({ queryKey: ['tags'] })
-      toast.success(`Host "${data.name}" updated successfully`)
+      toast.success(`已成功更新主机 "${data.name}"`)
     },
     onError: (error: unknown) => {
       const apiError = error as ApiError
@@ -120,7 +120,7 @@ export function useUpdateHost() {
       const detail = typeof apiError.data === 'object' && apiError.data?.detail
         ? apiError.data.detail
         : null
-      const message = detail || apiError.message || 'Failed to update host'
+      const message = detail || apiError.message || '无法更新主机'
       toast.error(message)
     },
   })
@@ -137,7 +137,7 @@ export function useDeleteHost() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['hosts'] })
       queryClient.invalidateQueries({ queryKey: ['tags'] })
-      toast.success('Host deleted successfully')
+      toast.success('已成功删除主机')
     },
     onError: (error: unknown) => {
       const apiError = error as ApiError
@@ -145,7 +145,7 @@ export function useDeleteHost() {
       const detail = typeof apiError.data === 'object' && apiError.data?.detail
         ? apiError.data.detail
         : null
-      const message = detail || apiError.message || 'Failed to delete host'
+      const message = detail || apiError.message || '无法删除主机'
       toast.error(message)
     },
   })

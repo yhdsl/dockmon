@@ -65,10 +65,10 @@ export class ErrorBoundary extends React.Component<
                 </div>
                 <div>
                   <CardTitle className="text-danger">
-                    Something went wrong
+                    我们遇到了一些问题
                   </CardTitle>
                   <CardDescription className="mt-1">
-                    An unexpected error occurred. Please try reloading the page.
+                    发生了意外的错误。请尝试重新加载页面。
                   </CardDescription>
                 </div>
               </div>
@@ -79,7 +79,7 @@ export class ErrorBoundary extends React.Component<
               {process.env.NODE_ENV === 'development' && this.state.error && (
                 <div className="rounded-lg border border-danger/20 bg-danger/5 p-3">
                   <p className="mb-1 text-sm font-semibold text-danger">
-                    Error Details:
+                    错误详情:
                   </p>
                   <pre className="overflow-auto text-xs text-muted-foreground">
                     {this.state.error.message}
@@ -95,13 +95,13 @@ export class ErrorBoundary extends React.Component<
               {/* Action Buttons */}
               <div className="flex gap-2">
                 <Button onClick={this.handleReset} variant="default">
-                  Try Again
+                  重试
                 </Button>
                 <Button
                   onClick={() => window.location.reload()}
                   variant="outline"
                 >
-                  Reload Page
+                  刷新
                 </Button>
               </div>
             </CardContent>

@@ -16,9 +16,9 @@ export function ContainersPage() {
       {/* Page Header */}
       <div className="mb-4 sm:mb-6">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold">Containers</h1>
+          <h1 className="text-xl sm:text-2xl font-bold">容器</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Manage and monitor Docker containers
+            管理并监控 Docker 容器
           </p>
         </div>
       </div>

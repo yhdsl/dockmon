@@ -15,7 +15,7 @@ export function IPAddressCell({ container }: IPAddressCellProps) {
 
   // No IP address
   if (!docker_ip) {
-    return <span className="text-sm text-muted-foreground">Not connected</span>
+    return <span className="text-sm text-muted-foreground">未连接</span>
   }
 
   const networkCount = docker_ips ? Object.keys(docker_ips).length : 1

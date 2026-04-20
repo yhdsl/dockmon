@@ -163,7 +163,7 @@ export function useUpdateAuditRetention() {
       toast.success(response.message)
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to update retention settings')
+      toast.error(error.message || '无法更新日志保留设置')
     },
   })
 }
@@ -181,7 +181,7 @@ export function useCleanupAuditLog() {
       toast.success(response.message)
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to cleanup audit log')
+      toast.error(error.message || '无法清理审计日志')
     },
   })
 }
@@ -242,15 +242,15 @@ export function useExportAuditLog() {
     onSuccess: ({ filename, isTruncated, totalMatching, included }) => {
       if (isTruncated && totalMatching && included) {
         toast.warning(
-          `Export truncated: ${included.toLocaleString()} of ${totalMatching.toLocaleString()} entries. Use date filters for specific ranges.`,
+          `导出时截断: 仅成功导出 ${included.toLocaleString()} / ${totalMatching.toLocaleString()} 条记录.请使用日期筛选功能来限定具体的日志范围。`,
           { duration: 6000 }
         )
       } else {
-        toast.success(`Exported to ${filename}`)
+        toast.success(`已导出至 ${filename}`)
       }
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to export audit log')
+      toast.error(error.message || '无法导出审计日志')
     },
   })
 }

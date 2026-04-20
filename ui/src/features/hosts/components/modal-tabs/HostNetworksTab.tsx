@@ -14,7 +14,6 @@ import { StatusBadge } from '@/components/shared/StatusBadge'
 import { ContainerLinkList } from '@/components/shared/ContainerLinkList'
 import { makeCompositeKeyFrom } from '@/lib/utils/containerKeys'
 import { useAuth } from '@/features/auth/AuthContext'
-import { pluralize } from '@/lib/utils/formatting'
 import type { DockerNetwork } from '@/types/api'
 
 interface HostNetworksTabProps {
@@ -25,20 +24,20 @@ function NetworkStatusBadge({ network }: { network: DockerNetwork }) {
   if (network.is_builtin) {
     return (
       <StatusBadge variant="success" icon={<Shield className="h-3 w-3" />}>
-        System
+        系统
       </StatusBadge>
     )
   }
   if (network.container_count > 0) {
     return (
       <StatusBadge variant="success">
-        In Use ({network.container_count})
+        使用中 ({network.container_count})
       </StatusBadge>
     )
   }
   return (
     <StatusBadge variant="muted">
-      Unused
+      未使用
     </StatusBadge>
   )
 }
@@ -209,7 +208,7 @@ export function HostNetworksTab({ hostId }: HostNetworksTabProps) {
     return (
       <div className="p-6">
         <div className="bg-danger/10 text-danger p-4 rounded-lg">
-          Failed to load networks: {error.message}
+          加载网络时出错: {error.message}
         </div>
       </div>
     )
@@ -220,7 +219,7 @@ export function HostNetworksTab({ hostId }: HostNetworksTabProps) {
     return (
       <div className="p-6 text-center text-muted-foreground">
         <Network className="h-12 w-12 mx-auto mb-3 opacity-50" />
-        No networks found on this host.
+        尚未在此主机中找到网络。
       </div>
     )
   }
@@ -234,7 +233,7 @@ export function HostNetworksTab({ hostId }: HostNetworksTabProps) {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
             type="text"
-            placeholder="Search networks..."
+            placeholder="搜索网络..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2 bg-surface-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent"
@@ -251,7 +250,7 @@ export function HostNetworksTab({ hostId }: HostNetworksTabProps) {
           }`}
         >
           <Filter className="h-4 w-4" />
-          Unused Only
+          仅未使用
           {unusedCount > 0 && (
             <span className="ml-1 px-1.5 py-0.5 bg-black/20 rounded text-xs">
               {unusedCount}
@@ -264,9 +263,9 @@ export function HostNetworksTab({ hostId }: HostNetworksTabProps) {
       {/* Prune button */}
       <div className="flex items-center justify-between">
         <div className="text-sm text-muted-foreground">
-          Showing {filteredNetworks.length} of {networks.length} networks
+          正在展示 {filteredNetworks.length} / {networks.length} 个网络
           {selectedCount > 0 && (
-            <span className="ml-2 text-accent">({selectedCount} selected)</span>
+            <span className="ml-2 text-accent">({selectedCount} 个已选择)</span>
           )}
         </div>
         <button
@@ -275,7 +274,7 @@ export function HostNetworksTab({ hostId }: HostNetworksTabProps) {
           className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg bg-warning/10 text-warning border border-warning/30 hover:bg-warning/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           <Trash2 className="h-4 w-4" />
-          Prune All Unused
+          修剪未使用的网络
         </button>
       </div>
 
@@ -293,13 +292,13 @@ export function HostNetworksTab({ hostId }: HostNetworksTabProps) {
                   className="w-4 h-4 rounded border-border cursor-pointer disabled:opacity-50"
                 />
               </th>
-              <th className="text-left p-3 text-sm font-medium text-muted-foreground">Name</th>
-              <th className="w-24 text-left p-3 text-sm font-medium text-muted-foreground hidden md:table-cell">Driver</th>
-              <th className="w-36 text-left p-3 text-sm font-medium text-muted-foreground hidden md:table-cell">Subnet</th>
-              <th className="w-20 text-left p-3 text-sm font-medium text-muted-foreground hidden 2xl:table-cell">Scope</th>
-              <th className="w-28 text-left p-3 text-sm font-medium text-muted-foreground">Status</th>
-              <th className="w-40 text-left p-3 text-sm font-medium text-muted-foreground hidden xl:table-cell">Containers</th>
-              <th className="w-20 p-3 text-sm font-medium text-muted-foreground">Actions</th>
+              <th className="text-left p-3 text-sm font-medium text-muted-foreground">名称</th>
+              <th className="w-24 text-left p-3 text-sm font-medium text-muted-foreground hidden md:table-cell">驱动</th>
+              <th className="w-36 text-left p-3 text-sm font-medium text-muted-foreground hidden md:table-cell">子网</th>
+              <th className="w-20 text-left p-3 text-sm font-medium text-muted-foreground hidden 2xl:table-cell">作用域</th>
+              <th className="w-28 text-left p-3 text-sm font-medium text-muted-foreground">状态</th>
+              <th className="w-40 text-left p-3 text-sm font-medium text-muted-foreground hidden xl:table-cell">容器</th>
+              <th className="w-20 p-3 text-sm font-medium text-muted-foreground">网络操作</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -337,7 +336,7 @@ export function HostNetworksTab({ hostId }: HostNetworksTabProps) {
                       </div>
                       {network.internal && (
                         <span className="inline-flex items-center px-1.5 py-0.5 text-xs rounded bg-muted/30 text-muted-foreground">
-                          Internal
+                          内部网络
                         </span>
                       )}
                     </div>
@@ -351,7 +350,7 @@ export function HostNetworksTab({ hostId }: HostNetworksTabProps) {
                     </span>
                   </td>
                   <td className="p-3 hidden 2xl:table-cell">
-                    <span className="text-sm capitalize">{network.scope}</span>
+                    <span className="text-sm capitalize">{{local: "本地", swarm: "Swarm", global: "全局", }[network.scope]}</span>
                   </td>
                   <td className="p-3">
                     <NetworkStatusBadge network={network} />
@@ -364,7 +363,7 @@ export function HostNetworksTab({ hostId }: HostNetworksTabProps) {
                       <button
                         disabled
                         className="p-2 rounded-lg text-muted-foreground/30 cursor-not-allowed"
-                        title="Cannot delete system network"
+                        title="无法删除系统创建的网络"
                         aria-label={`Cannot delete system network ${network.name}`}
                       >
                         <Trash2 className="h-4 w-4" />
@@ -373,7 +372,7 @@ export function HostNetworksTab({ hostId }: HostNetworksTabProps) {
                       <button
                         onClick={() => handleDeleteClick(network)}
                         className="p-2 rounded-lg hover:bg-danger/10 text-danger/70 hover:text-danger transition-colors"
-                        title="Delete network"
+                        title="删除网络"
                         aria-label={`Delete network ${network.name}`}
                       >
                         <Trash2 className="h-4 w-4" />
@@ -390,7 +389,7 @@ export function HostNetworksTab({ hostId }: HostNetworksTabProps) {
       {/* Empty filtered state */}
       {filteredNetworks.length === 0 && networks.length > 0 && (
         <div className="text-center text-muted-foreground py-8">
-          No networks match your filters.
+          暂无匹配搜索条件的网络。
         </div>
       )}
 
@@ -400,14 +399,14 @@ export function HostNetworksTab({ hostId }: HostNetworksTabProps) {
           <div className="max-w-screen-xl mx-auto flex items-center justify-between">
             <div className="text-sm">
               <span className="font-medium">{selectedCount}</span>
-              {' '}{pluralize(selectedCount, 'network')} selected
+              {' '}个网络已选择
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={clearSelection}
                 className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                Clear Selection
+                清除选择
               </button>
               <button
                 onClick={handleBulkDeleteClick}
@@ -415,7 +414,7 @@ export function HostNetworksTab({ hostId }: HostNetworksTabProps) {
                 className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg bg-danger text-danger-foreground hover:bg-danger/90 disabled:opacity-50 transition-colors"
               >
                 <Trash2 className="h-4 w-4" />
-                Delete Selected
+                删除所选
               </button>
             </div>
           </div>
@@ -441,16 +440,16 @@ export function HostNetworksTab({ hostId }: HostNetworksTabProps) {
         isOpen={showPruneConfirm}
         onClose={handlePruneClose}
         onConfirm={handlePruneConfirm}
-        title="Prune Unused Networks"
-        description={`This will remove ${unusedCount} unused ${pluralize(unusedCount, 'network')}.`}
-        confirmText="Prune Networks"
-        pendingText="Pruning..."
+        title="修剪未使用的网络"
+        description={`这将删除 ${unusedCount} 个未使用的网络。`}
+        confirmText="修剪网络"
+        pendingText="修剪中..."
         variant="warning"
         isPending={pruneMutation.isPending}
       >
         <p className="text-sm text-muted-foreground">
-          Networks that are not connected to any containers will be permanently deleted.
-          Built-in networks (bridge, host, none) are never removed.
+          未连接到任何容器的网络将会被永久删除。
+          但内置的网络 (bridge、host、none) 永远不会被移除。
         </p>
       </ConfirmModal>
     </div>

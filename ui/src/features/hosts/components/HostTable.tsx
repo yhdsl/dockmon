@@ -63,15 +63,15 @@ import { useAuth } from '@/features/auth/AuthContext'
 // Status icon component
 function StatusIcon({ status }: { status: string }) {
   const statusMap: Record<string, { color: string; fill: string; label: string }> = {
-    online: { color: 'text-success', fill: 'fill-success', label: 'Online' },
-    offline: { color: 'text-danger', fill: 'fill-danger', label: 'Offline' },
-    degraded: { color: 'text-warning', fill: 'fill-warning', label: 'Degraded' },
+    online: { color: 'text-success', fill: 'fill-success', label: '在线' },
+    offline: { color: 'text-danger', fill: 'fill-danger', label: '离线' },
+    degraded: { color: 'text-warning', fill: 'fill-warning', label: '降级' },
   }
 
   const config = statusMap[status?.toLowerCase()] || statusMap.offline
 
   if (!config) {
-    return <span className="text-sm text-muted-foreground">Unknown</span>
+    return <span className="text-sm text-muted-foreground">未知</span>
   }
 
   return (
@@ -91,7 +91,7 @@ function SecurityIndicator({ url, securityStatus }: { url: string; securityStatu
   // For UNIX sockets - always secure (local)
   if (isUnixSocket) {
     return (
-      <div title="Local UNIX socket (TLS not applicable)">
+      <div title="本地 UNIX 套接字 (不支持 TLS)">
         <Shield className="h-4 w-4 text-muted-foreground opacity-70" />
       </div>
     )
@@ -104,13 +104,13 @@ function SecurityIndicator({ url, securityStatus }: { url: string; securityStatu
 
     if (isSecure) {
       return (
-        <div title="Secure (mTLS)">
+        <div title="安全 (已启用 mTLS)">
           <ShieldCheck className="h-4 w-4 text-[--accent] opacity-80" />
         </div>
       )
     } else {
       return (
-        <div title="Insecure connection (no mTLS)">
+        <div title="不安全 (未启用 mTLS)">
           <Shield className="h-4 w-4 text-muted-foreground opacity-70 ring-1 ring-dashed ring-border rounded-sm" />
         </div>
       )
@@ -151,7 +151,7 @@ function AgentIndicator({
     }
 
     return (
-      <div className="relative" title={updateAvailable ? `Agent update available (v${latestVersion})` : 'Agent Connection (WebSocket)'}>
+      <div className="relative" title={updateAvailable ? `代理更新可用 (v${latestVersion})` : '代理连接 (WebSocket)'}>
         <Radio className="h-4 w-4 text-[--accent] opacity-80" />
         {updateAvailable && (
           <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
@@ -444,7 +444,7 @@ export function HostTable({ onEditHost }: HostTableProps = {}) {
       // 1. Status
       {
         accessorKey: 'status',
-        header: 'Status',
+        header: '状态',
         cell: ({ row }) => <StatusIcon status={row.original.status} />,
       },
 
@@ -459,7 +459,7 @@ export function HostTable({ onEditHost }: HostTableProps = {}) {
               onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
               className="flex items-center gap-1"
             >
-              Hostname
+              主机名称
               <ArrowUpDown className={`h-4 w-4 ${sortDirection ? 'text-primary' : 'text-muted-foreground'}`} />
             </Button>
           )
@@ -538,7 +538,7 @@ export function HostTable({ onEditHost }: HostTableProps = {}) {
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
             className="flex items-center gap-1"
           >
-            Containers
+            容器
             <ArrowUpDown className="h-4 w-4" />
           </Button>
         ),
@@ -548,7 +548,7 @@ export function HostTable({ onEditHost }: HostTableProps = {}) {
       // 5. Alerts
       {
         accessorKey: 'alerts',
-        header: 'Alerts',
+        header: '告警数',
         cell: ({ row }) => (
           <AlertSeverityCountsComponent
             hostId={row.original.id}
@@ -561,7 +561,7 @@ export function HostTable({ onEditHost }: HostTableProps = {}) {
       // 6. Uptime
       {
         accessorKey: 'daemon_started_at',
-        header: 'Uptime',
+        header: '运行时长',
         cell: ({ row }) => <Uptime daemonStartedAt={row.original.daemon_started_at} />,
       },
 
@@ -582,14 +582,14 @@ export function HostTable({ onEditHost }: HostTableProps = {}) {
       // 9. OS/Version
       {
         accessorKey: 'os_version',
-        header: 'OS / Version',
+        header: '操作系统 / 版本',
         cell: ({ row }) => <OSVersion osVersion={row.original.os_version} dockerVersion={row.original.docker_version} isPodman={row.original.is_podman} />,
       },
 
       // 9. Actions
       {
         id: 'actions',
-        header: 'Actions',
+        header: '主机操作',
         cell: ({ row }) => (
           <div className="flex items-center gap-1">
             {/* Maximize button - opens full details modal (hidden in simplified workflow) */}
@@ -602,7 +602,7 @@ export function HostTable({ onEditHost }: HostTableProps = {}) {
                   setSelectedHostId(row.original.id)
                   setModalOpen(true)
                 }}
-                title="View full details"
+                title="查看完整信息"
               >
                 <Maximize2 className="h-4 w-4" />
               </Button>
@@ -612,7 +612,7 @@ export function HostTable({ onEditHost }: HostTableProps = {}) {
               variant="ghost"
               size="icon"
               className="h-8 w-8"
-              title="Edit Host"
+              title="编辑主机"
               disabled={!canManage}
               onClick={() => {
                 onEditHost?.(row.original)
@@ -654,7 +654,7 @@ export function HostTable({ onEditHost }: HostTableProps = {}) {
   if (error) {
     return (
       <div className="flex items-center justify-center h-64 text-destructive">
-        <p>Error loading hosts: {error.message}</p>
+        <p>加载主机数据时出错: {error.message}</p>
       </div>
     )
   }
@@ -662,8 +662,8 @@ export function HostTable({ onEditHost }: HostTableProps = {}) {
   if (hosts.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
-        <p className="text-lg font-medium">No hosts configured</p>
-        <p className="text-sm mt-1">Add your first Docker host to get started</p>
+        <p className="text-lg font-medium">尚未配置任何主机</p>
+        <p className="text-sm mt-1">请添加第一个 Docker 主机并开始使用 DockMon</p>
       </div>
     )
   }

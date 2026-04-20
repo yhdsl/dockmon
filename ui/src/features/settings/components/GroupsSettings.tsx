@@ -139,19 +139,19 @@ export function GroupsSettings() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-white">Groups</h2>
+          <h2 className="text-lg font-semibold text-white">群组</h2>
           <p className="mt-1 text-sm text-gray-400">
-            Organize users into groups with customizable permissions
+            通过用户群组组织用户，并向其批量授予权限
           </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={() => refetch()}>
             <RefreshCw className="mr-2 h-4 w-4" />
-            Refresh
+            刷新
           </Button>
           <Button size="sm" onClick={() => setShowCreateModal(true)}>
             <Plus className="mr-2 h-4 w-4" />
-            Create Group
+            创建群组
           </Button>
         </div>
       </div>
@@ -164,13 +164,13 @@ export function GroupsSettings() {
       ) : groups.length === 0 ? (
         <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-8 text-center">
           <Users className="mx-auto h-12 w-12 text-gray-500" />
-          <h3 className="mt-4 text-sm font-medium text-gray-300">No groups yet</h3>
+          <h3 className="mt-4 text-sm font-medium text-gray-300">暂未创建任何群组</h3>
           <p className="mt-1 text-sm text-gray-500">
-            Create a group to organize users together.
+            请创建一个群组以组织管理用户。
           </p>
           <Button size="sm" className="mt-4" onClick={() => setShowCreateModal(true)}>
             <Plus className="mr-2 h-4 w-4" />
-            Create Group
+            创建群组
           </Button>
         </div>
       ) : (
@@ -214,19 +214,19 @@ export function GroupsSettings() {
       <Dialog open={deletingGroup !== null} onOpenChange={() => setDeletingGroup(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Group</DialogTitle>
+            <DialogTitle>删除群组</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete the group "{deletingGroup?.name}"?
+              确定要删除群组 "{deletingGroup?.name}" 吗?
               {deletingGroup && deletingGroup.member_count > 0 && (
                 <span className="mt-2 block text-yellow-400">
-                  This group has {deletingGroup.member_count} member(s) who will be removed.
+                  群组中的 {deletingGroup.member_count} 个成员将会被移除。
                 </span>
               )}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeletingGroup(null)}>
-              Cancel
+              取消
             </Button>
             <Button
               variant="destructive"
@@ -234,7 +234,7 @@ export function GroupsSettings() {
               disabled={deleteGroup.isPending}
             >
               {deleteGroup.isPending && <RefreshCw className="mr-2 h-4 w-4 animate-spin" />}
-              Delete
+              删除
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -253,14 +253,14 @@ export function GroupsSettings() {
       <Dialog open={removingMember !== null} onOpenChange={() => setRemovingMember(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Remove Member</DialogTitle>
+            <DialogTitle>删除成员</DialogTitle>
             <DialogDescription>
-              Are you sure you want to remove user "{removingMember?.username}" from this group?
+              确定要将成员 "{removingMember?.username}" 从此群组中删除吗?
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setRemovingMember(null)}>
-              Cancel
+              取消
             </Button>
             <Button
               variant="destructive"
@@ -268,7 +268,7 @@ export function GroupsSettings() {
               disabled={removeMember.isPending}
             >
               {removeMember.isPending && <RefreshCw className="mr-2 h-4 w-4 animate-spin" />}
-              Remove
+              删除
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -315,11 +315,11 @@ function GroupRow({
           <Users className="h-5 w-5 text-blue-400" />
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-medium text-white">{group.name}</h3>
+              <h3 className="font-medium text-white">{group.name}{group.is_system ? ` (${{'Administrators': "管理群组", 'Operators': "操作群组", 'Read Only': "访客群组"}[group.name]})` : ""}</h3>
               {group.is_system && (
                 <span className="flex items-center gap-1 rounded bg-purple-900/50 px-1.5 py-0.5 text-xs text-purple-300">
                   <Shield className="h-3 w-3" />
-                  System
+                  系统群组
                 </span>
               )}
             </div>
@@ -330,7 +330,7 @@ function GroupRow({
         </div>
         <div className="flex items-center gap-4">
           <span className="rounded-full bg-gray-700 px-2 py-0.5 text-xs text-gray-300">
-            {group.member_count} member{group.member_count !== 1 ? 's' : ''}
+            {group.member_count} 成员
           </span>
           <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
             <Button variant="ghost" size="sm" onClick={onEdit}>
@@ -342,7 +342,7 @@ function GroupRow({
               onClick={onDelete}
               className={group.is_system ? 'text-gray-600 cursor-not-allowed' : 'text-red-400'}
               disabled={group.is_system}
-              title={group.is_system ? 'System groups cannot be deleted' : 'Delete group'}
+              title={group.is_system ? '无法删除系统群组' : '删除群组'}
             >
               {group.is_system ? <Lock className="h-4 w-4" /> : <Trash2 className="h-4 w-4" />}
             </Button>
@@ -354,10 +354,10 @@ function GroupRow({
       {expanded && (
         <div className="border-t border-gray-700 p-4">
           <div className="mb-3 flex items-center justify-between">
-            <h4 className="text-sm font-medium text-gray-300">Members</h4>
+            <h4 className="text-sm font-medium text-gray-300">群组成员</h4>
             <Button size="sm" variant="outline" onClick={onAddMember}>
               <UserPlus className="mr-2 h-4 w-4" />
-              Add Member
+              添加成员
             </Button>
           </div>
 
@@ -366,7 +366,7 @@ function GroupRow({
               <RefreshCw className="h-4 w-4 animate-spin text-gray-400" />
             </div>
           ) : expandedData.members.length === 0 ? (
-            <p className="text-sm text-gray-500">No members in this group yet.</p>
+            <p className="text-sm text-gray-500">此群组中暂无成员</p>
           ) : (
             <div className="space-y-2">
               {expandedData.members.map((member) => (
@@ -400,7 +400,7 @@ function GroupRow({
 
           {group.created_by && (
             <p className="mt-4 text-xs text-gray-500">
-              Created by {group.created_by} on {formatDateTime(group.created_at)}
+              由 {group.created_by} 创建于 {formatDateTime(group.created_at)}
             </p>
           )}
         </div>
@@ -437,38 +437,38 @@ function CreateGroupModal({ isOpen, onClose, onSubmit, isSubmitting }: CreateGro
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Create Group</DialogTitle>
-            <DialogDescription>Create a new group to organize users.</DialogDescription>
+            <DialogTitle>创建用户群组</DialogTitle>
+            <DialogDescription>创建一个新群组来管理用户。</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="name">Group Name</Label>
+              <Label htmlFor="name">群组名称</Label>
               <Input
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g., DevOps Team"
+                placeholder="例如: DevOps 团队"
                 required
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="description">Description (optional)</Label>
+              <Label htmlFor="description">描述 (可选)</Label>
               <Textarea
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="What is this group for?"
+                placeholder="描述此用户群组的用途?"
                 rows={2}
               />
             </div>
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>
-              Cancel
+              取消
             </Button>
             <Button type="submit" disabled={isSubmitting || !name.trim()}>
               {isSubmitting && <RefreshCw className="mr-2 h-4 w-4 animate-spin" />}
-              Create Group
+              创建群组
             </Button>
           </DialogFooter>
         </form>
@@ -514,38 +514,38 @@ function EditGroupModal({ group, isOpen, onClose, onSubmit, isSubmitting }: Edit
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Edit Group</DialogTitle>
-            <DialogDescription>Update group information.</DialogDescription>
+            <DialogTitle>编辑群组</DialogTitle>
+            <DialogDescription>更新用户群组的信息。</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="edit-name">Group Name</Label>
+              <Label htmlFor="edit-name">群组名称</Label>
               <Input
                 id="edit-name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g., DevOps Team"
+                placeholder="例如: DevOps 团队"
                 required
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="edit-description">Description (optional)</Label>
+              <Label htmlFor="edit-description">描述 (可选)</Label>
               <Textarea
                 id="edit-description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="What is this group for?"
+                placeholder="描述此用户群组的用途?"
                 rows={2}
               />
             </div>
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={handleClose}>
-              Cancel
+              取消
             </Button>
             <Button type="submit" disabled={isSubmitting || !name.trim()}>
               {isSubmitting && <RefreshCw className="mr-2 h-4 w-4 animate-spin" />}
-              Save Changes
+              保存修改
             </Button>
           </DialogFooter>
         </form>
@@ -585,20 +585,20 @@ function AddMemberModal({
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Add Member</DialogTitle>
-            <DialogDescription>Select a user to add to this group.</DialogDescription>
+            <DialogTitle>添加成员</DialogTitle>
+            <DialogDescription>选择一个用户以添加至该群组。</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             {availableUsers.length === 0 ? (
               <p className="text-sm text-gray-400">
-                All users are already members of this group.
+                当前全部用户均已加入该群组。
               </p>
             ) : (
               <div className="grid gap-2">
-                <Label>User</Label>
+                <Label>用户</Label>
                 <Select value={selectedUserId} onValueChange={setSelectedUserId}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a user" />
+                    <SelectValue placeholder="请选择一个用户" />
                   </SelectTrigger>
                   <SelectContent>
                     {availableUsers.map((user) => (
@@ -614,14 +614,14 @@ function AddMemberModal({
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>
-              Cancel
+              取消
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting || !selectedUserId || availableUsers.length === 0}
             >
               {isSubmitting && <RefreshCw className="mr-2 h-4 w-4 animate-spin" />}
-              Add Member
+              添加成员
             </Button>
           </DialogFooter>
         </form>

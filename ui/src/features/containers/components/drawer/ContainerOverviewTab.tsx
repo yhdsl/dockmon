@@ -81,7 +81,7 @@ export function ContainerOverviewTab({ containerId, actionButtons }: ContainerOv
   if (!container) {
     return (
       <div className="p-4">
-        <div className="text-muted-foreground text-sm">Loading container details...</div>
+        <div className="text-muted-foreground text-sm">加载容器详细信息中...</div>
       </div>
     )
   }
@@ -112,10 +112,10 @@ export function ContainerOverviewTab({ containerId, actionButtons }: ContainerOv
         enabled: checked,
         container_name: container.name
       })
-      toast.success(`Auto-restart ${checked ? 'enabled' : 'disabled'}`)
+      toast.success(`自动重启${checked ? '已启用' : '已禁用'}`)
     } catch (error) {
       debug.error('ContainerOverviewTab', 'Error toggling auto-restart:', error)
-      toast.error(`Failed to update auto-restart: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      toast.error(`更新自动重启设置时失败: ${error instanceof Error ? error.message : '未知错误'}`)
       setAutoRestart(!checked)
     }
   }
@@ -131,11 +131,11 @@ export function ContainerOverviewTab({ containerId, actionButtons }: ContainerOv
         desired_state: state,
         container_name: container.name
       })
-      const stateLabel = state === 'should_run' ? 'Should Run' : state === 'on_demand' ? 'On-Demand' : 'Unspecified'
-      toast.success(`Desired state set to ${stateLabel}`)
+      const stateLabel = state === 'should_run' ? '始终运行' : state === 'on_demand' ? '按需运行' : '尚未指定'
+      toast.success(`期望状态设置为${stateLabel}`)
     } catch (error) {
       debug.error('ContainerOverviewTab', 'Error setting desired state:', error)
-      toast.error(`Failed to update desired state: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      toast.error(`更新期望状态时失败: ${error instanceof Error ? error.message : '未知错误'}`)
       setDesiredState(previousState)
     }
   }
@@ -162,7 +162,16 @@ export function ContainerOverviewTab({ containerId, actionButtons }: ContainerOv
               ? 'bg-success/10 text-success'
               : 'bg-muted text-muted-foreground'
           }`}>
-            {container.state.charAt(0).toUpperCase() + container.state.slice(1)}
+            {{
+              running: "运行中",
+              stopped: "已停止",
+              exited: "已暂停",
+              created: "已创建",
+              paused: "已暂停",
+              restarting: "重启中",
+              removing: "删除中",
+              dead: "已死亡",
+            }[container.state] || container.state}
           </span>
         </div>
       </div>
@@ -170,12 +179,12 @@ export function ContainerOverviewTab({ containerId, actionButtons }: ContainerOv
       {/* Identity Section */}
       <div className="space-y-3">
         <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-2 text-sm">
-          <span className="text-muted-foreground">Host</span>
+          <span className="text-muted-foreground">主机</span>
           <span className="text-foreground break-all">{container.host_name || '-'}</span>
         </div>
 
         <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-2 text-sm">
-          <span className="text-muted-foreground">Image</span>
+          <span className="text-muted-foreground">镜像</span>
           <span className="text-foreground font-mono text-xs sm:text-sm break-all">{container.image || '-'}</span>
         </div>
 
@@ -191,7 +200,7 @@ export function ContainerOverviewTab({ containerId, actionButtons }: ContainerOv
 
       {/* Controls Section */}
       <fieldset disabled={!canOperate} className="border-t border-border pt-4 space-y-4 disabled:opacity-60">
-        <h4 className="text-sm font-medium text-foreground mb-3">Controls</h4>
+        <h4 className="text-sm font-medium text-foreground mb-3">控制面板</h4>
 
         {/* Auto-Restart Checkbox */}
         <div className="flex items-start gap-2">
@@ -204,19 +213,19 @@ export function ContainerOverviewTab({ containerId, actionButtons }: ContainerOv
           />
           <div className="flex-1 space-y-0.5">
             <label htmlFor="auto-restart" className="text-sm font-medium cursor-pointer">
-              Auto-restart when stopped
+              停止时自动重启
             </label>
             <p className="text-xs text-muted-foreground">
-              DockMon will automatically restart this container if it stops or crashes
+              DockMon 会在该容器意外停止时自动重启
             </p>
           </div>
         </div>
 
         {/* Desired State Selector */}
         <div className="space-y-2">
-          <label className="text-sm font-medium">Desired State</label>
+          <label className="text-sm font-medium">期望状态</label>
           <p className="text-xs text-muted-foreground">
-            Controls how DockMon treats a stopped container. "On-Demand" containers won't trigger warnings when stopped.
+            控制 DockMon 如何处理已停止的容器。其中设置为 `&quot;`按需运行`&quot;` 的容器在停止时不会触发告警。
           </p>
           <div className="flex gap-2">
             <button
@@ -227,7 +236,7 @@ export function ContainerOverviewTab({ containerId, actionButtons }: ContainerOv
                   : 'border-border hover:bg-muted'
               }`}
             >
-              Should Run
+              始终运行
             </button>
             <button
               onClick={() => handleDesiredStateChange('on_demand')}
@@ -237,7 +246,7 @@ export function ContainerOverviewTab({ containerId, actionButtons }: ContainerOv
                   : 'border-border hover:bg-muted'
               }`}
             >
-              On-Demand
+              按需运行
             </button>
             <button
               onClick={() => handleDesiredStateChange('unspecified')}
@@ -247,7 +256,7 @@ export function ContainerOverviewTab({ containerId, actionButtons }: ContainerOv
                   : 'border-border hover:bg-muted'
               }`}
             >
-              Unspecified
+              尚未指定
             </button>
           </div>
         </div>
@@ -255,16 +264,16 @@ export function ContainerOverviewTab({ containerId, actionButtons }: ContainerOv
 
       {/* Information Section */}
       <div className="border-t border-border pt-4 space-y-2">
-        <h4 className="text-sm font-medium text-foreground mb-3">Information</h4>
+        <h4 className="text-sm font-medium text-foreground mb-3">详细信息</h4>
 
         <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-2 text-sm">
-          <span className="text-muted-foreground">Created</span>
+          <span className="text-muted-foreground">创建于</span>
           <span className="text-foreground">
             {container.created
-              ? new Date(container.created).toLocaleDateString('en-US', {
+              ? new Date(container.created).toLocaleDateString('zh-CN', {
+                  year: 'numeric',
                   month: 'long',
-                  day: 'numeric',
-                  year: 'numeric'
+                  day: 'numeric'
                 })
               : '-'
             }
@@ -272,17 +281,17 @@ export function ContainerOverviewTab({ containerId, actionButtons }: ContainerOv
         </div>
 
         <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-2 text-sm">
-          <span className="text-muted-foreground">Uptime</span>
+          <span className="text-muted-foreground">运行时长</span>
           <span className="text-foreground">{uptime || '-'}</span>
         </div>
 
         {/* Ports */}
         <div className="space-y-1">
-          <span className="text-sm text-muted-foreground">Ports</span>
+          <span className="text-sm text-muted-foreground">端口映射</span>
           <div className="text-sm text-foreground font-mono bg-muted/20 p-2 rounded">
             {container.ports && container.ports.length > 0
               ? container.ports.join(', ')
-              : <span className="text-muted-foreground">No ports exposed</span>
+              : <span className="text-muted-foreground">未映射端口</span>
             }
           </div>
         </div>
@@ -290,14 +299,14 @@ export function ContainerOverviewTab({ containerId, actionButtons }: ContainerOv
 
       {/* Stats Section with Sparklines */}
       <div className="border-t border-border pt-4 space-y-4">
-        <h4 className="text-sm font-medium text-foreground mb-3">Performance</h4>
+        <h4 className="text-sm font-medium text-foreground mb-3">性能图表</h4>
 
         {/* CPU Usage */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Cpu className="h-4 w-4 text-amber-500" />
-              <span className="text-sm font-medium">CPU Usage</span>
+              <span className="text-sm font-medium">CPU 使用率</span>
             </div>
             <span className="text-sm font-mono">
               {container.cpu_percent?.toFixed(1) || '0.0'}%
@@ -312,7 +321,7 @@ export function ContainerOverviewTab({ containerId, actionButtons }: ContainerOv
             />
           ) : (
             <div className="h-[100px] flex items-center justify-center bg-muted/20 rounded text-xs text-muted-foreground">
-              {container.state === 'running' ? 'Collecting data...' : 'No data available'}
+              {container.state === 'running' ? '收集数据中...' : '没有可用的数据'}
             </div>
           )}
         </div>
@@ -322,7 +331,7 @@ export function ContainerOverviewTab({ containerId, actionButtons }: ContainerOv
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <MemoryStick className="h-4 w-4 text-blue-500" />
-              <span className="text-sm font-medium">Memory Usage</span>
+              <span className="text-sm font-medium">Memory 使用率</span>
             </div>
             <span className="text-sm font-mono">
               {formatBytes(container.memory_usage)}
@@ -337,7 +346,7 @@ export function ContainerOverviewTab({ containerId, actionButtons }: ContainerOv
             />
           ) : (
             <div className="h-[100px] flex items-center justify-center bg-muted/20 rounded text-xs text-muted-foreground">
-              {container.state === 'running' ? 'Collecting data...' : 'No data available'}
+              {container.state === 'running' ? '收集数据中...' : '没有可用的数据'}
             </div>
           )}
         </div>
@@ -347,7 +356,7 @@ export function ContainerOverviewTab({ containerId, actionButtons }: ContainerOv
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Network className="h-4 w-4 text-green-500" />
-              <span className="text-sm font-medium">Network I/O</span>
+              <span className="text-sm font-medium">网络 I/O</span>
             </div>
             <span className="text-sm font-mono text-xs">
               {container.net_bytes_per_sec !== undefined && container.net_bytes_per_sec !== null
@@ -364,7 +373,7 @@ export function ContainerOverviewTab({ containerId, actionButtons }: ContainerOv
             />
           ) : (
             <div className="h-[100px] flex items-center justify-center bg-muted/20 rounded text-xs text-muted-foreground">
-              {container.state === 'running' ? 'Collecting data...' : 'No data available'}
+              {container.state === 'running' ? '收集数据中...' : '没有可用的数据'}
             </div>
           )}
         </div>

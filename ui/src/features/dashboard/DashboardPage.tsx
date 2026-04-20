@@ -74,7 +74,7 @@ export function DashboardPage() {
   return (
     <div className="flex flex-col h-full gap-4 p-3 sm:p-4 md:p-6 pt-16 md:pt-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <h1 className="text-xl sm:text-2xl font-bold">Dashboard</h1>
+        <h1 className="text-xl sm:text-2xl font-bold">仪表盘</h1>
         <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
           <GroupBySelector value={groupBy} onChange={setGroupBy} />
           <ViewModeSelector viewMode={viewMode} onChange={setViewMode} disabled={isViewModeLoading} />
@@ -93,9 +93,9 @@ export function DashboardPage() {
           />
         ) : (
           <div className="mt-4">
-            <h2 className="text-lg font-semibold mb-4">Hosts</h2>
+            <h2 className="text-lg font-semibold mb-4">主机</h2>
             {isHostsLoading ? (
-              <div className="text-muted-foreground">Loading hosts...</div>
+              <div className="text-muted-foreground">加载主机数据中...</div>
             ) : hosts.length > 0 ? (
               <SortableCompactHostList
                 hosts={compactHosts}
@@ -103,7 +103,7 @@ export function DashboardPage() {
               />
             ) : (
               <div className="p-8 border border-dashed border-border rounded-lg text-center text-muted-foreground">
-                No hosts configured. Add a host to get started.
+                尚未配置任何主机。请添加一个主机以开始使用。
               </div>
             )}
           </div>

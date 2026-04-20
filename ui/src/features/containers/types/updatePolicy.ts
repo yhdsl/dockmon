@@ -116,36 +116,36 @@ export interface CategoryMetadata {
 export const CATEGORY_METADATA: Record<UpdatePolicyCategory, CategoryMetadata> = {
   databases: {
     category: 'databases',
-    label: 'Databases',
-    description: 'Database containers (postgres, mysql, mongodb, etc.)',
+    label: '数据库',
+    description: '数据库容器 (postgres, mysql, mongodb 等)',
     icon: 'database',
     color: 'text-blue-400'
   },
   proxies: {
     category: 'proxies',
-    label: 'Proxies',
-    description: 'Reverse proxy and ingress containers (traefik, nginx, caddy)',
+    label: '代理',
+    description: '反向代理和流量入口容器 (traefik, nginx, caddy)',
     icon: 'network',
     color: 'text-purple-400'
   },
   monitoring: {
     category: 'monitoring',
-    label: 'Monitoring',
-    description: 'Monitoring and observability containers (grafana, prometheus)',
+    label: '监控',
+    description: '监控或指标监视容器 (grafana, prometheus)',
     icon: 'activity',
     color: 'text-green-400'
   },
   critical: {
     category: 'critical',
-    label: 'Critical',
-    description: 'Critical infrastructure containers (portainer, dockmon)',
+    label: '关键设施',
+    description: '关键的基础设施容器 (portainer, dockmon)',
     icon: 'alert-triangle',
     color: 'text-red-400'
   },
   custom: {
     category: 'custom',
-    label: 'Custom Patterns',
-    description: 'User-defined patterns',
+    label: '自定义模式',
+    description: '用户自定义的更新检测模式',
     icon: 'plus-circle',
     color: 'text-gray-400'
   }
@@ -157,23 +157,23 @@ export const CATEGORY_METADATA: Record<UpdatePolicyCategory, CategoryMetadata> =
 export const POLICY_OPTIONS: Array<{ value: UpdatePolicyValue; label: string; description: string }> = [
   {
     value: null,
-    label: 'Use Global Settings',
-    description: 'Use global patterns and Docker labels'
+    label: '使用全局设置',
+    description: '使用全局模式和 Docker 标签'
   },
   {
     value: 'allow',
-    label: 'Always Allow',
-    description: 'Always allow updates without warnings'
+    label: '始终允许',
+    description: '始终允许更新，忽略警告'
   },
   {
     value: 'warn',
-    label: 'Warn Before Update',
-    description: 'Require confirmation before updating'
+    label: '更新前警告',
+    description: '更新前需要确认'
   },
   {
     value: 'block',
-    label: 'Block Updates',
-    description: 'Prevent automatic updates completely'
+    label: '禁止更新',
+    description: '完全禁止自动更新操作'
   }
 ]
 
@@ -183,12 +183,12 @@ export const POLICY_OPTIONS: Array<{ value: UpdatePolicyValue; label: string; de
 export const ACTION_OPTIONS: Array<{ value: UpdatePolicyAction; label: string; description: string }> = [
   {
     value: 'warn',
-    label: 'Warn',
-    description: 'Show confirmation dialog before update'
+    label: '警告',
+    description: '在更新前显示确认对话框'
   },
   {
     value: 'ignore',
-    label: 'Ignore',
-    description: 'Skip from automatic update checks'
+    label: '忽略',
+    description: '跳过自动更新检查'
   }
 ]

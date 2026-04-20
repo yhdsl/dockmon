@@ -91,32 +91,32 @@ export function HostDetailsModal({
   const tabs = [
     {
       id: 'overview',
-      label: 'Overview',
+      label: '概览',
       content: <HostOverviewTab hostId={hostId} host={host} />,
     },
     {
       id: 'containers',
-      label: 'Containers',
+      label: '容器',
       content: <HostContainersTab hostId={hostId} />,
     },
     {
       id: 'images',
-      label: 'Images',
+      label: '镜像',
       content: <HostImagesTab hostId={hostId} />,
     },
     {
       id: 'networks',
-      label: 'Networks',
+      label: '网络',
       content: <HostNetworksTab hostId={hostId} />,
     },
     {
       id: 'volumes',
-      label: 'Volumes',
+      label: '卷',
       content: <HostVolumesTab hostId={hostId} />,
     },
     {
       id: 'events',
-      label: 'Events',
+      label: '事件',
       content: <HostEventsTab hostId={hostId} />,
     },
   ]
@@ -149,7 +149,7 @@ export function HostDetailsModal({
           <div className="flex items-center justify-between px-3 sm:px-4 md:px-6 py-4 border-b border-border shrink-0">
             {/* Breadcrumb */}
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>Hosts</span>
+              <span>主机</span>
               <ChevronRight className="h-4 w-4" />
               <span id="modal-title" className="text-foreground font-medium">
                 {host.name}
@@ -173,7 +173,7 @@ export function HostDetailsModal({
               <div className="text-3xl font-bold">
                 {containerCounts.total || 0}
               </div>
-              <div className="text-sm text-muted-foreground mt-1">Containers</div>
+              <div className="text-sm text-muted-foreground mt-1">容器</div>
             </div>
 
             {/* Running */}
@@ -181,7 +181,7 @@ export function HostDetailsModal({
               <div className="text-3xl font-bold text-green-500">
                 {containerCounts.running || 0}
               </div>
-              <div className="text-sm text-muted-foreground mt-1">Running</div>
+              <div className="text-sm text-muted-foreground mt-1">运行中</div>
             </div>
 
             {/* Stopped */}
@@ -189,7 +189,7 @@ export function HostDetailsModal({
               <div className="text-3xl font-bold">
                 {(containerCounts.total || 0) - (containerCounts.running || 0)}
               </div>
-              <div className="text-sm text-muted-foreground mt-1">Stopped</div>
+              <div className="text-sm text-muted-foreground mt-1">已停止</div>
             </div>
 
             {/* Alerts */}
@@ -197,7 +197,7 @@ export function HostDetailsModal({
               <div className={`text-3xl font-bold ${alertCount > 0 ? 'text-red-500' : ''}`}>
                 {alertCount}
               </div>
-              <div className="text-sm text-muted-foreground mt-1">Alerts</div>
+              <div className="text-sm text-muted-foreground mt-1">告警</div>
             </div>
           </div>
 

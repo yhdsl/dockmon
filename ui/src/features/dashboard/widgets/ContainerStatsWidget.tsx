@@ -56,7 +56,7 @@ export function ContainerStatsWidget() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <ContainerIcon className="h-5 w-5" />
-            Containers
+            容器
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -76,11 +76,11 @@ export function ContainerStatsWidget() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <ContainerIcon className="h-5 w-5" />
-            Containers
+            容器
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-danger">Failed to load container stats</p>
+          <p className="text-sm text-danger">加载容器数据时出错</p>
         </CardContent>
       </Card>
     )
@@ -91,7 +91,7 @@ export function ContainerStatsWidget() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base">
           <ContainerIcon className="h-5 w-5" />
-          Containers
+          容器
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -110,7 +110,7 @@ export function ContainerStatsWidget() {
           aria-label={`View all ${stats.total} containers`}
         >
           <div className="text-3xl font-semibold">{stats.total}</div>
-          <p className="text-sm text-muted-foreground">Total containers</p>
+          <p className="text-sm text-muted-foreground">容器总数</p>
         </div>
 
         {/* Status Breakdown - Each row clickable with state filter */}
@@ -133,7 +133,7 @@ export function ContainerStatsWidget() {
           >
             <div className="flex items-center gap-2">
               <Activity className="h-4 w-4 text-success" />
-              <span className="text-sm">Running</span>
+              <span className="text-sm">运行中</span>
             </div>
             <span className="text-sm font-medium">{stats.running}</span>
           </div>
@@ -156,7 +156,7 @@ export function ContainerStatsWidget() {
           >
             <div className="flex items-center gap-2">
               <Square className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm">Stopped</span>
+              <span className="text-sm">已停止</span>
             </div>
             <span className="text-sm font-medium">{stats.stopped}</span>
           </div>
@@ -180,7 +180,7 @@ export function ContainerStatsWidget() {
             >
               <div className="flex items-center gap-2">
                 <Circle className="h-4 w-4 text-warning" />
-                <span className="text-sm">Paused</span>
+                <span className="text-sm">已暂停</span>
               </div>
               <span className="text-sm font-medium">{stats.paused}</span>
             </div>

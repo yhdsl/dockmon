@@ -82,10 +82,10 @@ export function useUpdatePermissions() {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ROLES_QUERY_KEY })
-      toast.success(data.message || 'Permissions updated successfully')
+      toast.success(data.message || '已成功更新权限')
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to update permissions')
+      toast.error(error.message || '无法更新权限')
     },
   })
 }
@@ -104,10 +104,10 @@ export function useResetPermissions() {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ROLES_QUERY_KEY })
-      toast.success(data.message || 'Permissions reset to defaults')
+      toast.success(data.message || '权限已重置为默认')
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to reset permissions')
+      toast.error(error.message || '无法重置权限为默认')
     },
   })
 }

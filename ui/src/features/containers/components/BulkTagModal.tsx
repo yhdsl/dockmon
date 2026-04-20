@@ -32,22 +32,22 @@ export function BulkTagModal({ isOpen, onClose, mode, selectedContainers, onConf
 
   const validateTag = (tag: string): { valid: boolean; error?: string } => {
     if (!tag || !tag.trim()) {
-      return { valid: false, error: 'Tag cannot be empty' }
+      return { valid: false, error: '标签不能为空' }
     }
 
     if (tag.length > 50) {
-      return { valid: false, error: 'Tag cannot exceed 50 characters' }
+      return { valid: false, error: '标签不能超过 50 个字符' }
     }
 
     // Allow alphanumeric + dash, underscore, colon, dot
     const validPattern = /^[a-zA-Z0-9\p{L}\p{N}\-_:.]+$/u
     if (!validPattern.test(tag)) {
-      return { valid: false, error: 'Tag can only contain alphanumeric characters, dash, underscore, colon, and dot' }
+      return { valid: false, error: '标签只能包含数字和字母、连字符、下划线、冒号以及点' }
     }
 
     const normalizedTag = tag.toLowerCase()
     if (tags.map(t => t.toLowerCase()).includes(normalizedTag)) {
-      return { valid: false, error: 'Tag already in list' }
+      return { valid: false, error: '标签已存在' }
     }
 
     return { valid: true }
@@ -58,7 +58,7 @@ export function BulkTagModal({ isOpen, onClose, mode, selectedContainers, onConf
 
     const validation = validateTag(tag)
     if (!validation.valid) {
-      setError(validation.error || 'Invalid tag')
+      setError(validation.error || '无效的标签')
       return
     }
 
@@ -84,7 +84,7 @@ export function BulkTagModal({ isOpen, onClose, mode, selectedContainers, onConf
 
   const handleSubmit = async () => {
     if (tags.length === 0) {
-      setError('Please add at least one tag')
+      setError('请添加至少一个标签')
       return
     }
 
@@ -98,7 +98,7 @@ export function BulkTagModal({ isOpen, onClose, mode, selectedContainers, onConf
       setInputValue('')
       onClose()
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to update tags'
+      const errorMessage = err instanceof Error ? err.message : '更新标签时出错'
       setError(errorMessage)
     } finally {
       setIsSubmitting(false)
@@ -140,7 +140,7 @@ export function BulkTagModal({ isOpen, onClose, mode, selectedContainers, onConf
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-border">
             <h2 className="text-lg font-semibold text-foreground">
-              {mode === 'add' ? 'Add Tags' : 'Remove Tags'}
+              {mode === 'add' ? '添加标签' : '删除标签'}
             </h2>
             <button
               onClick={handleClose}
@@ -158,8 +158,8 @@ export function BulkTagModal({ isOpen, onClose, mode, selectedContainers, onConf
               <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
               <p className="text-sm">
                 {mode === 'add'
-                  ? `Add tags to ${selectedContainers.length} container${selectedContainers.length !== 1 ? 's' : ''}. Tags will be merged with existing tags.`
-                  : `Remove tags from ${selectedContainers.length} container${selectedContainers.length !== 1 ? 's' : ''}. Only custom tags can be removed.`
+                  ? `添加标签至 ${selectedContainers.length} 个容器。新添加的标签将与现有的标签合并`
+                  : `从 ${selectedContainers.length} 个容器中删除标签。仅有自定义的标签可以被删除`
                 }
               </p>
             </div>
@@ -167,7 +167,7 @@ export function BulkTagModal({ isOpen, onClose, mode, selectedContainers, onConf
             {/* For Remove mode: Show common tags to choose from */}
             {mode === 'remove' && commonTags.length > 0 && (
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Common tags across selected containers:</label>
+                <label className="text-sm font-medium text-foreground">所选容器的公共标签:</label>
                 <div className="flex flex-wrap gap-2">
                   {commonTags.map((tag) => (
                     <button
@@ -194,7 +194,7 @@ export function BulkTagModal({ isOpen, onClose, mode, selectedContainers, onConf
             {/* Input field */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground">
-                {mode === 'add' ? 'Add tags:' : 'Tags to remove:'}
+                {mode === 'add' ? '添加标签:' : '待删除的标签:'}
               </label>
               <div className="flex gap-2">
                 <input
@@ -205,7 +205,7 @@ export function BulkTagModal({ isOpen, onClose, mode, selectedContainers, onConf
                     setError(null)
                   }}
                   onKeyDown={handleKeyPress}
-                  placeholder="Enter tag name..."
+                  placeholder="输入标签名称..."
                   disabled={isSubmitting}
                   className="flex-1 px-3 py-2 text-sm border border-border rounded bg-background focus:outline-none focus:ring-2 focus:ring-primary"
                 />
@@ -219,7 +219,7 @@ export function BulkTagModal({ isOpen, onClose, mode, selectedContainers, onConf
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground">
-                Press Enter to add, or click the + button
+                输入回车以添加标签，或者点击 + 按钮
               </p>
             </div>
 
@@ -227,7 +227,7 @@ export function BulkTagModal({ isOpen, onClose, mode, selectedContainers, onConf
             {tags.length > 0 && (
               <div className="space-y-2">
                 <label className="text-sm font-medium text-foreground">
-                  Tags to {mode === 'add' ? 'add' : 'remove'}:
+                  待{mode === 'add' ? '添加' : '删除'}的标签:
                 </label>
                 <div className="flex flex-wrap gap-2 p-3 bg-muted/20 rounded min-h-[48px]">
                   {tags.map((tag) => (
@@ -265,13 +265,13 @@ export function BulkTagModal({ isOpen, onClose, mode, selectedContainers, onConf
               onClick={handleClose}
               disabled={isSubmitting}
             >
-              Cancel
+              取消
             </Button>
             <Button
               onClick={handleSubmit}
               disabled={isSubmitting || tags.length === 0}
             >
-              {isSubmitting ? 'Processing...' : mode === 'add' ? 'Add Tags' : 'Remove Tags'}
+              {isSubmitting ? '处理中...' : mode === 'add' ? '添加标签' : '删除标签'}
             </Button>
           </div>
         </div>

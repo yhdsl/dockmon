@@ -157,7 +157,7 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
 
         // Container update warning - show toast when dependent containers fail
         case 'container_update_warning':
-          toast.warning(`Update warning for ${message.data.container_name}`, {
+          toast.warning(`${message.data.container_name} 存在更新警告`, {
             description: message.data.warning,
             duration: 10000, // Show for 10 seconds - important information
           })
@@ -167,8 +167,8 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
         case 'container_update_complete':
           queryClient.invalidateQueries({ queryKey: ['containers'] })
           if (message.data.failed_dependents && message.data.failed_dependents.length > 0) {
-            toast.warning(`Update warning for ${message.data.container_name}`, {
-              description: message.data.warning || `Failed to recreate ${message.data.failed_dependents.length} dependent container(s)`,
+            toast.warning(`${message.data.container_name} 存在更新警告`, {
+              description: message.data.warning || `无法重新创建 ${message.data.failed_dependents.length} 个依赖的容器`,
               duration: 10000,
             })
           }

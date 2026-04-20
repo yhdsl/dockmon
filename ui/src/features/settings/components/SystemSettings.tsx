@@ -11,13 +11,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAuth } from '@/features/auth/AuthContext'
 
 const SESSION_TIMEOUT_OPTIONS = [
-  { value: '24', label: '24 hours' },
-  { value: '168', label: '7 days' },
-  { value: '720', label: '30 days' },
-  { value: '2160', label: '3 months' },
-  { value: '4320', label: '6 months' },
-  { value: '8760', label: '12 months' },
-  { value: '0', label: 'Never' },
+  { value: '24', label: '24 小时' },
+  { value: '168', label: '7 天' },
+  { value: '720', label: '30 天' },
+  { value: '2160', label: '3 个月' },
+  { value: '4320', label: '6 个月' },
+  { value: '8760', label: '12 个月' },
+  { value: '0', label: '永久' },
 ]
 
 export function SystemSettings() {
@@ -56,9 +56,9 @@ export function SystemSettings() {
     if (pollingInterval !== settings?.polling_interval) {
       try {
         await updateSettings.mutateAsync({ polling_interval: pollingInterval })
-        toast.success('Polling interval updated')
+        toast.success('已成功更新轮询间隔')
       } catch (error) {
-        toast.error('Failed to update polling interval')
+        toast.error('无法更新轮询间隔')
       }
     }
   }
@@ -67,9 +67,9 @@ export function SystemSettings() {
     if (connectionTimeout !== settings?.connection_timeout) {
       try {
         await updateSettings.mutateAsync({ connection_timeout: connectionTimeout })
-        toast.success('Connection timeout updated')
+        toast.success('已成功更新连接超时时长')
       } catch (error) {
-        toast.error('Failed to update connection timeout')
+        toast.error('无法更新连接超时时长')
       }
     }
   }
@@ -78,9 +78,9 @@ export function SystemSettings() {
     if (maxRetries !== settings?.max_retries) {
       try {
         await updateSettings.mutateAsync({ max_retries: maxRetries })
-        toast.success('Max retries updated')
+        toast.success('已成功更新最大重试次数')
       } catch (error) {
-        toast.error('Failed to update max retries')
+        toast.error('无法更新最大重试次数')
       }
     }
   }
@@ -89,9 +89,9 @@ export function SystemSettings() {
     if (retryDelay !== settings?.retry_delay) {
       try {
         await updateSettings.mutateAsync({ retry_delay: retryDelay })
-        toast.success('Retry delay updated')
+        toast.success('已成功更新重试间隔')
       } catch (error) {
-        toast.error('Failed to update retry delay')
+        toast.error('无法更新重试间隔')
       }
     }
   }
@@ -100,9 +100,9 @@ export function SystemSettings() {
     if (unusedTagRetentionDays !== settings?.unused_tag_retention_days) {
       try {
         await updateSettings.mutateAsync({ unused_tag_retention_days: unusedTagRetentionDays })
-        toast.success('Tag retention updated')
+        toast.success('已成功更新标签保留时长')
       } catch (error) {
-        toast.error('Failed to update tag retention')
+        toast.error('无法更新标签保留时长')
       }
     }
   }
@@ -111,9 +111,9 @@ export function SystemSettings() {
     if (eventRetentionDays !== settings?.event_retention_days) {
       try {
         await updateSettings.mutateAsync({ event_retention_days: eventRetentionDays })
-        toast.success('Event retention updated')
+        toast.success('已成功更新事件保留时长')
       } catch (error) {
-        toast.error('Failed to update event retention')
+        toast.error('无法更新事件保留时长')
       }
     }
   }
@@ -122,9 +122,9 @@ export function SystemSettings() {
     if (alertRetentionDays !== settings?.alert_retention_days) {
       try {
         await updateSettings.mutateAsync({ alert_retention_days: alertRetentionDays })
-        toast.success('Alert retention updated')
+        toast.success('已成功更新告警保留时长')
       } catch (error) {
-        toast.error('Failed to update alert retention')
+        toast.error('无法更新告警保留时长')
       }
     }
   }
@@ -134,9 +134,9 @@ export function SystemSettings() {
     setDefaultAutoRestart(checked)
     try {
       await updateSettings.mutateAsync({ default_auto_restart: checked })
-      toast.success(checked ? 'Auto-restart enabled by default' : 'Auto-restart disabled by default')
+      toast.success(checked ? '默认自动重启已启用' : '默认自动重启已禁用')
     } catch (error) {
-      toast.error('Failed to update auto-restart setting')
+      toast.error('无法更新默认自动重启设置')
       setDefaultAutoRestart(!checked) // Revert on error
     }
   }
@@ -149,9 +149,9 @@ export function SystemSettings() {
         // Save empty string as null to clear the override
         await updateSettings.mutateAsync({ external_url: normalizedUrl || null })
         setExternalUrl(normalizedUrl)
-        toast.success('External URL updated')
+        toast.success('已成功更新外部 URL')
       } catch (error) {
-        toast.error('Failed to update external URL')
+        toast.error('无法更新外部 URL')
       }
     }
   }
@@ -161,13 +161,13 @@ export function SystemSettings() {
       {/* External Access */}
       <div>
         <div className="mb-4">
-          <h3 className="text-lg font-semibold text-white">External Access</h3>
-          <p className="text-xs text-gray-400 mt-1">Configure how DockMon is accessed from outside your network</p>
+          <h3 className="text-lg font-semibold text-white">外部访问</h3>
+          <p className="text-xs text-gray-400 mt-1">配置如何从外部网络访问 DockMon</p>
         </div>
         <div className="space-y-4">
           <div>
             <label htmlFor="external-url" className="block text-sm font-medium text-gray-300 mb-2">
-              External URL
+              外部 URL
             </label>
             <input
               id="external-url"
@@ -179,10 +179,10 @@ export function SystemSettings() {
               className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
             <p className="mt-1 text-xs text-gray-400">
-              The URL used to access DockMon from outside (e.g., https://dockmon.example.com). Used for action links in notifications.
+              从外部访问 DockMon 的链接 (例如 https://dockmon.example.com)。用于配置通知中的快速操作链接。
               {settings?.external_url_from_env && (
                 <span className="block mt-1 text-gray-500">
-                  Environment default: {settings.external_url_from_env}
+                  默认环境变量: {settings.external_url_from_env}
                 </span>
               )}
             </p>
@@ -193,13 +193,13 @@ export function SystemSettings() {
       {/* Security */}
       <div>
         <div className="mb-4">
-          <h3 className="text-lg font-semibold text-white">Security</h3>
-          <p className="text-xs text-gray-400 mt-1">Authentication and session settings</p>
+          <h3 className="text-lg font-semibold text-white">系统安全</h3>
+          <p className="text-xs text-gray-400 mt-1">身份验证与会话设置</p>
         </div>
         <div className="space-y-4">
           <div>
             <label htmlFor="session-timeout" className="block text-sm font-medium text-gray-300 mb-2">
-              Session Timeout
+              会话有效期
             </label>
             <Select
               value={String(settings?.session_timeout_hours ?? 24)}
@@ -207,15 +207,15 @@ export function SystemSettings() {
                 const value = Number(v)
                 try {
                   await updateSettings.mutateAsync({ session_timeout_hours: value })
-                  toast.success('Session timeout updated')
+                  toast.success('已成功更新会话有效期')
                 } catch (error) {
-                  toast.error('Failed to update session timeout')
+                  toast.error('无法更新会话有效期')
                 }
               }}
             >
               <SelectTrigger id="session-timeout" className="w-full max-w-xs">
                 <SelectValue>
-                  {SESSION_TIMEOUT_OPTIONS.find(o => o.value === String(settings?.session_timeout_hours ?? 24))?.label ?? '24 hours'}
+                  {SESSION_TIMEOUT_OPTIONS.find(o => o.value === String(settings?.session_timeout_hours ?? 24))?.label ?? '24 小时'}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
@@ -225,7 +225,7 @@ export function SystemSettings() {
               </SelectContent>
             </Select>
             <p className="mt-1 text-xs text-gray-400">
-              How long login sessions remain valid. Changes take effect immediately for all sessions.
+              保持登录会话有效状态的时间长度。更改后将立即对所有的会话生效。
             </p>
           </div>
         </div>
@@ -234,13 +234,13 @@ export function SystemSettings() {
       {/* Monitoring */}
       <div>
         <div className="mb-4">
-          <h3 className="text-lg font-semibold text-white">Monitoring</h3>
-          <p className="text-xs text-gray-400 mt-1">Configure how frequently DockMon checks your Docker hosts</p>
+          <h3 className="text-lg font-semibold text-white">状态检测</h3>
+          <p className="text-xs text-gray-400 mt-1">配置 DockMon 检测 Docker 主机的频率</p>
         </div>
         <div className="space-y-4">
           <div>
             <label htmlFor="polling-interval" className="block text-sm font-medium text-gray-300 mb-2">
-              Polling Interval (seconds)
+              轮询间隔 (秒)
             </label>
             <input
               id="polling-interval"
@@ -252,7 +252,7 @@ export function SystemSettings() {
               onBlur={handlePollingIntervalBlur}
               className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
-            <p className="mt-1 text-xs text-gray-400">How often to check Docker hosts (1-600 seconds)</p>
+            <p className="mt-1 text-xs text-gray-400">检测 Docker 主机的间隔时长 (1-600 秒)</p>
           </div>
         </div>
       </div>
@@ -260,13 +260,13 @@ export function SystemSettings() {
       {/* Connection */}
       <div>
         <div className="mb-4">
-          <h3 className="text-lg font-semibold text-white">Connection</h3>
-          <p className="text-xs text-gray-400 mt-1">Connection timeout and retry settings</p>
+          <h3 className="text-lg font-semibold text-white">主机连接</h3>
+          <p className="text-xs text-gray-400 mt-1">连接超时与重试设置</p>
         </div>
         <div className="space-y-4">
           <div>
             <label htmlFor="connection-timeout" className="block text-sm font-medium text-gray-300 mb-2">
-              Connection Timeout (seconds)
+              连接超时时长 (秒)
             </label>
             <input
               id="connection-timeout"
@@ -278,12 +278,12 @@ export function SystemSettings() {
               onBlur={handleConnectionTimeoutBlur}
               className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
-            <p className="mt-1 text-xs text-gray-400">Timeout for Docker API connections (5-120 seconds)</p>
+            <p className="mt-1 text-xs text-gray-400">连接至 Docker API 的超时时长 (5-120 秒)</p>
           </div>
 
           <div>
             <label htmlFor="max-retries" className="block text-sm font-medium text-gray-300 mb-2">
-              Max Retries
+              最大重试次数
             </label>
             <input
               id="max-retries"
@@ -295,12 +295,12 @@ export function SystemSettings() {
               onBlur={handleMaxRetriesBlur}
               className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
-            <p className="mt-1 text-xs text-gray-400">Number of retry attempts for failed connections (0-10)</p>
+            <p className="mt-1 text-xs text-gray-400">连接超时后的最多重试次数 (0-10)</p>
           </div>
 
           <div>
             <label htmlFor="retry-delay" className="block text-sm font-medium text-gray-300 mb-2">
-              Retry Delay (seconds)
+              重试间隔 (秒)
             </label>
             <input
               id="retry-delay"
@@ -312,7 +312,7 @@ export function SystemSettings() {
               onBlur={handleRetryDelayBlur}
               className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
-            <p className="mt-1 text-xs text-gray-400">Delay between retry attempts (5-300 seconds)</p>
+            <p className="mt-1 text-xs text-gray-400">重试行为的间隔时长 (5-300 秒)</p>
           </div>
         </div>
       </div>
@@ -320,14 +320,14 @@ export function SystemSettings() {
       {/* Container Behavior */}
       <div>
         <div className="mb-4">
-          <h3 className="text-lg font-semibold text-white">Container Behavior</h3>
-          <p className="text-xs text-gray-400 mt-1">Default behavior for containers</p>
+          <h3 className="text-lg font-semibold text-white">容器行为</h3>
+          <p className="text-xs text-gray-400 mt-1">容器的默认操作行为</p>
         </div>
         <div className="divide-y divide-border">
           <ToggleSwitch
             id="default-auto-restart"
-            label="Auto-restart containers by default"
-            description="Automatically restart containers that stop unexpectedly (can be overridden per container)"
+            label="默认自动重启容器"
+            description="当容器意外退出时自动重启 (可单独对容器进行配置)"
             checked={defaultAutoRestart}
             onChange={handleDefaultAutoRestartToggle}
             disabled={!canManage}
@@ -338,13 +338,13 @@ export function SystemSettings() {
       {/* Data Retention */}
       <div>
         <div className="mb-4">
-          <h3 className="text-lg font-semibold text-white">Data Retention</h3>
-          <p className="text-xs text-gray-400 mt-1">Configure how long DockMon keeps historical data</p>
+          <h3 className="text-lg font-semibold text-white">数据保留</h3>
+          <p className="text-xs text-gray-400 mt-1">配置 DockMon 历史数据的保留时长</p>
         </div>
         <div className="space-y-4">
           <div>
             <label htmlFor="event-retention" className="block text-sm font-medium text-gray-300 mb-2">
-              Event Retention (days)
+              事件保留时长 (天)
             </label>
             <input
               id="event-retention"
@@ -357,13 +357,13 @@ export function SystemSettings() {
               className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
             <p className="mt-1 text-xs text-gray-400">
-              How long to keep event logs and history. Events older than this are automatically deleted during nightly maintenance. Set to 0 to keep events forever. (0-365 days)
+              事件日志与历史记录的保留时长。超过此时长的事件将在每晚维护时自动删除。设置为 0 表示永久保留事件。 (0-365 天)
             </p>
           </div>
 
           <div>
             <label htmlFor="unused-tag-retention" className="block text-sm font-medium text-gray-300 mb-2">
-              Unused Tag Retention (days)
+              未使用标签保留时长 (天)
             </label>
             <input
               id="unused-tag-retention"
@@ -376,13 +376,13 @@ export function SystemSettings() {
               className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
             <p className="mt-1 text-xs text-gray-400">
-              Automatically delete tags that haven't been assigned to anything for this many days. Set to 0 to keep unused tags forever. (0-365 days)
+              自动删除在指定天数内未分配给任何容器或主机的标签。设置为 0 表示永久保留未使用的标签。 (0-365 天)
             </p>
           </div>
 
           <div>
             <label htmlFor="alert-retention" className="block text-sm font-medium text-gray-300 mb-2">
-              Alert Retention (days)
+              告警保留时长 (天)
             </label>
             <input
               id="alert-retention"
@@ -395,7 +395,7 @@ export function SystemSettings() {
               className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
             <p className="mt-1 text-xs text-gray-400">
-              How long to keep resolved alerts. Resolved alerts older than this are automatically deleted during nightly maintenance. Set to 0 to keep alerts forever. (0-730 days)
+              已解决告警的保留时长。超过此时长的已解决告警将在每晚维护时自动删除。设置为 0 表示永久保留已解决告警。 (0-730 天)
             </p>
           </div>
         </div>

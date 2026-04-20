@@ -71,7 +71,7 @@ export function MigrationBanner() {
           </span>
         </div>
         <span className="text-xs text-blue-200 flex-shrink-0 hidden sm:block">
-          Migrated to agent
+          已迁移至代理模式
         </span>
         <button
           onClick={() => setIsDismissed(true)}

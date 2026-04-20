@@ -80,10 +80,10 @@ export function BatchUpdateValidationConfirmModal({
                 id="batch-validation-modal-title"
                 className="text-lg font-semibold text-text-primary"
               >
-                Confirm Bulk Container Update
+                批量容器更新确认
               </h2>
               <p className="mt-1 text-sm text-text-secondary">
-                {totalContainers} container{totalContainers !== 1 ? 's' : ''} selected
+                {totalContainers} 个容器已选择
               </p>
             </div>
           </div>
@@ -96,15 +96,15 @@ export function BatchUpdateValidationConfirmModal({
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
                 <div className="text-2xl font-bold text-success">{allowed.length}</div>
-                <div className="text-xs text-text-tertiary">Allowed</div>
+                <div className="text-xs text-text-tertiary">启用</div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-warning">{warned.length}</div>
-                <div className="text-xs text-text-tertiary">Warned</div>
+                <div className="text-xs text-text-tertiary">警告</div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-danger">{blocked.length}</div>
-                <div className="text-xs text-text-tertiary">Blocked</div>
+                <div className="text-xs text-text-tertiary">禁止</div>
               </div>
             </div>
           </div>
@@ -115,7 +115,7 @@ export function BatchUpdateValidationConfirmModal({
               <div className="flex items-start gap-2">
                 <XCircle className="h-4 w-4 text-red-400 mt-0.5 flex-shrink-0" />
                 <div className="text-xs text-red-200/90">
-                  <strong>{blocked.length} container{blocked.length !== 1 ? 's' : ''}</strong> will be excluded from this update (blocked by policy)
+                  <strong>{blocked.length} 个容器</strong>将被排除在此次更新之外 (被更新策略阻止)
                 </div>
               </div>
             </div>
@@ -127,7 +127,7 @@ export function BatchUpdateValidationConfirmModal({
               <div className="flex items-start gap-2">
                 <AlertTriangle className="h-4 w-4 text-yellow-400 mt-0.5 flex-shrink-0" />
                 <div className="text-xs text-yellow-200/90">
-                  <strong>{warned.length} container{warned.length !== 1 ? 's' : ''}</strong> matched warning patterns. Review carefully before proceeding.
+                  <strong>{warned.length} 个容器</strong>存在警告。请在更新前仔细检查。
                 </div>
               </div>
             </div>
@@ -139,7 +139,7 @@ export function BatchUpdateValidationConfirmModal({
               <div className="flex items-center gap-2 mb-2">
                 <CheckCircle className="h-4 w-4 text-success" />
                 <h3 className="text-sm font-medium text-text-primary">
-                  Allowed ({allowed.length})
+                  允许更新 ({allowed.length})
                 </h3>
               </div>
               <div className="bg-surface-2 rounded-md border border-border/50 divide-y divide-border/50 max-h-32 overflow-y-auto">
@@ -161,7 +161,7 @@ export function BatchUpdateValidationConfirmModal({
               <div className="flex items-center gap-2 mb-2">
                 <AlertTriangle className="h-4 w-4 text-warning" />
                 <h3 className="text-sm font-medium text-text-primary">
-                  Warned ({warned.length})
+                  存在警告 ({warned.length})
                 </h3>
               </div>
               <div className="bg-surface-2 rounded-md border border-yellow-500/20 divide-y divide-border/50 max-h-48 overflow-y-auto">
@@ -173,7 +173,7 @@ export function BatchUpdateValidationConfirmModal({
                     <div className="text-xs text-text-secondary mt-1">{container.reason}</div>
                     {container.matched_pattern && (
                       <div className="flex items-center gap-1 mt-1">
-                        <span className="text-xs text-text-tertiary">Pattern:</span>
+                        <span className="text-xs text-text-tertiary">警告模式:</span>
                         <span className="text-xs font-mono text-yellow-400 bg-surface-3 px-1.5 py-0.5 rounded">
                           {container.matched_pattern}
                         </span>
@@ -191,7 +191,7 @@ export function BatchUpdateValidationConfirmModal({
               <div className="flex items-center gap-2 mb-2">
                 <XCircle className="h-4 w-4 text-danger" />
                 <h3 className="text-sm font-medium text-text-primary">
-                  Blocked ({blocked.length})
+                  禁止更新 ({blocked.length})
                 </h3>
               </div>
               <div className="bg-surface-2 rounded-md border border-red-500/20 divide-y divide-border/50 max-h-32 overflow-y-auto">
@@ -212,7 +212,7 @@ export function BatchUpdateValidationConfirmModal({
             <div className="flex items-start gap-2">
               <Info className="h-4 w-4 text-blue-400 mt-0.5 flex-shrink-0" />
               <div className="text-xs text-blue-200/90">
-                <strong>Recommendation:</strong> Review warned containers carefully. Ensure you have recent backups before proceeding. Blocked containers will not be updated.
+                <strong>强烈建议:</strong> 请仔细检查存在警告的容器。并在继续之前进行备份。被禁止的容器将不会被更新。
               </div>
             </div>
           </div>
@@ -221,11 +221,11 @@ export function BatchUpdateValidationConfirmModal({
         {/* Footer */}
         <div className="px-6 py-4 bg-surface-2 rounded-b-lg border-t border-border flex justify-between items-center">
           <div className="text-xs text-text-tertiary">
-            {totalWillUpdate} container{totalWillUpdate !== 1 ? 's' : ''} will be updated
+            {totalWillUpdate} 个容器将会被更新
           </div>
           <div className="flex gap-3">
             <Button variant="outline" onClick={onClose} className="min-w-[100px]">
-              Cancel
+              取消
             </Button>
             <Button
               variant="default"
@@ -233,7 +233,7 @@ export function BatchUpdateValidationConfirmModal({
               className="min-w-[120px] bg-yellow-600 hover:bg-yellow-700 text-white"
               disabled={totalWillUpdate === 0}
             >
-              Update Anyway
+              仍然更新
             </Button>
           </div>
         </div>

@@ -9,13 +9,13 @@ import { toast } from 'sonner'
 import { RotateCcw, Copy, Check } from 'lucide-react'
 import { useAuth } from '@/features/auth/AuthContext'
 
-const DEFAULT_TEMPLATE = `**{SEVERITY} Alert: {KIND}**
+const DEFAULT_TEMPLATE = `**{SEVERITY} 告警: {KIND}**
 
 **{SCOPE_TYPE}:** \`{CONTAINER_NAME}\`
-**Host:** {HOST_NAME}
-**Current Value:** {CURRENT_VALUE} (threshold: {THRESHOLD})
-**Time:** {TIMESTAMP}
-**Rule:** {RULE_NAME}
+**主机:** {HOST_NAME}
+**当前数值:** {CURRENT_VALUE} (threshold: {THRESHOLD})
+**时间:** {TIMESTAMP}
+**告警规则:** {RULE_NAME}
 ───────────────────────`
 
 export function AlertNotificationSettings() {
@@ -45,23 +45,23 @@ export function AlertNotificationSettings() {
     try {
       await updateSettings.mutateAsync({ alert_template: template })
       setHasChanges(false)
-      toast.success('Alert template saved successfully')
+      toast.success('已成功保存告警消息模板')
     } catch (error) {
-      toast.error('Failed to save alert template')
+      toast.error('无法保存告警消息模板')
     }
   }
 
   const handleReset = () => {
     setTemplate(DEFAULT_TEMPLATE)
     setHasChanges(true)
-    toast.info('Template reset to default (click Save to apply)')
+    toast.info('消息模板已重置为默认 (请点击保存按钮确认更改)')
   }
 
   const handleCopyVariable = (variable: string) => {
     navigator.clipboard.writeText(variable)
     setCopiedVar(variable)
     setTimeout(() => setCopiedVar(null), 2000)
-    toast.success('Variable copied to clipboard')
+    toast.success('已复制变量至剪切板')
   }
 
   return (
@@ -69,25 +69,25 @@ export function AlertNotificationSettings() {
       {/* Alert Message Template Section */}
       <div className="bg-surface border border-border rounded-lg p-6">
         <div className="mb-4">
-          <h2 className="text-lg font-semibold">Alert Message Template</h2>
+          <h2 className="text-lg font-semibold">告警消息模板</h2>
           <p className="text-sm text-muted-foreground mt-1">
-            Customize the message format for all alert notifications. Use variables to insert dynamic values.
+            自定义所有告警通知的消息模板。可使用变量插入动态文本内容。
           </p>
         </div>
 
         <div className="space-y-4">
           {/* Template Editor */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Message Template</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">消息模板</label>
             <textarea
               value={template}
               onChange={(e) => handleTemplateChange(e.target.value)}
               rows={12}
               className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white font-mono text-sm placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              placeholder="Enter your custom alert template..."
+              placeholder="请输入自定义的告警模板..."
             />
             <p className="mt-2 text-xs text-gray-400">
-              Supports markdown formatting. Use variables like {'{CONTAINER_NAME}'} for dynamic content.
+              支持 Markdown 格式。可使用例如 {'{CONTAINER_NAME}'} 这样的变量插入动态文本内容。
             </p>
           </div>
 
@@ -98,14 +98,14 @@ export function AlertNotificationSettings() {
               disabled={!hasChanges || updateSettings.isPending}
               className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
             >
-              {updateSettings.isPending ? 'Saving...' : 'Save Template'}
+              {updateSettings.isPending ? '保存中...' : '保存模板'}
             </button>
             <button
               onClick={handleReset}
               className="flex items-center gap-2 rounded-md bg-gray-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-600"
             >
               <RotateCcw className="h-4 w-4" />
-              Reset to Default
+              重置为默认
             </button>
           </div>
         </div>
@@ -114,9 +114,9 @@ export function AlertNotificationSettings() {
       {/* Available Variables Section */}
       <div className="bg-surface border border-border rounded-lg p-6">
         <div className="mb-4">
-          <h2 className="text-lg font-semibold">Available Variables</h2>
+          <h2 className="text-lg font-semibold">可用变量</h2>
           <p className="text-sm text-muted-foreground mt-1">
-            Click to copy a variable to your clipboard
+            点击以复制变量至剪切板
           </p>
         </div>
 

@@ -42,10 +42,10 @@ export function ContainerDrawer({ isOpen, onClose, containerId, onExpand }: Cont
     setIsActionLoading(true)
     try {
       await apiClient.post(`/hosts/${container.host_id}/containers/${container.id}/${action}`)
-      toast.success(`Container ${action === 'restart' ? 'restarting' : action === 'stop' ? 'stopping' : 'starting'}...`)
+      toast.success(`容器${action === 'restart' ? '重启中' : action === 'stop' ? '停止中' : '启动中'}...`)
     } catch (error) {
       debug.error('ContainerDrawer', `Error ${action}ing container:`, error)
-      toast.error(`Failed to ${action} container: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      toast.error(`无法${action === 'restart' ? '重启' : action === 'stop' ? '停止' : '启动'}容器: ${error instanceof Error ? error.message : '未知错误'}`)
     } finally {
       setIsActionLoading(false)
     }
@@ -64,7 +64,7 @@ export function ContainerDrawer({ isOpen, onClose, containerId, onExpand }: Cont
             className="text-danger hover:text-danger hover:bg-danger/10"
           >
             <Square className="w-3.5 h-3.5 mr-1.5" />
-            Stop
+            停止
           </Button>
           <Button
             variant="outline"
@@ -74,7 +74,7 @@ export function ContainerDrawer({ isOpen, onClose, containerId, onExpand }: Cont
             className="text-info hover:text-info hover:bg-info/10"
           >
             <RotateCw className="w-3.5 h-3.5 mr-1.5" />
-            Restart
+            重启
           </Button>
         </>
       ) : (
@@ -86,7 +86,7 @@ export function ContainerDrawer({ isOpen, onClose, containerId, onExpand }: Cont
           className="text-success hover:text-success hover:bg-success/10"
         >
           <Play className="w-3.5 h-3.5 mr-1.5" />
-          Start
+          启动
         </Button>
       )}
     </fieldset>
@@ -95,23 +95,23 @@ export function ContainerDrawer({ isOpen, onClose, containerId, onExpand }: Cont
   const tabs = [
     {
       id: 'overview',
-      label: 'Overview',
+      label: '概览',
       content: <ContainerOverviewTab containerId={containerId} actionButtons={actionButtons} />,
     },
     {
       id: 'events',
-      label: 'Events',
+      label: '事件',
       content: container ? (
         <ContainerEventsTab hostId={container.host_id} containerId={container.id} />
       ) : (
         <div className="p-4 text-muted-foreground text-sm">
-          Loading...
+          加载中...
         </div>
       ),
     },
     ...(canViewLogs ? [{
       id: 'logs',
-      label: 'Logs',
+      label: '日志',
       content: <ContainerLogsTab containerId={containerId} />,
     }] : []),
   ]
@@ -120,7 +120,7 @@ export function ContainerDrawer({ isOpen, onClose, containerId, onExpand }: Cont
     <Drawer
       open={isOpen}
       onClose={onClose}
-      title="Container Details"
+      title="容器详细信息"
       width="w-[480px]"
     >
       {/* Header Actions */}
@@ -132,7 +132,7 @@ export function ContainerDrawer({ isOpen, onClose, containerId, onExpand }: Cont
             className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent hover:bg-accent/90 text-accent-foreground transition-colors text-sm"
           >
             <Maximize2 className="h-4 w-4" />
-            <span>Expand</span>
+            <span>展开</span>
           </button>
         )}
       </div>

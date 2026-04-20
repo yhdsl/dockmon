@@ -64,10 +64,10 @@ export function useUpdateApiKey() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: API_KEYS_QUERY_KEY })
-      toast.success('API key updated successfully')
+      toast.success('已成功更新 API 密钥')
     },
     onError: (error) => {
-      toast.error('Failed to update API key')
+      toast.error('无法更新 API 密钥')
       console.error('Failed to update API key:', error)
     },
   })
@@ -85,10 +85,10 @@ export function useRevokeApiKey() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: API_KEYS_QUERY_KEY })
-      toast.success('API key revoked successfully')
+      toast.success('已成功撤销 API 密钥')
     },
     onError: (error) => {
-      toast.error('Failed to revoke API key')
+      toast.error('无法撤销 API 密钥')
       console.error('Failed to revoke API key:', error)
     },
   })

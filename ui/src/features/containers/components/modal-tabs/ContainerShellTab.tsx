@@ -129,13 +129,13 @@ export function ContainerShellTab({
 
       ws.onerror = () => {
         setIsConnected(false)
-        setError('Connection error')
+        setError('连接错误')
       }
 
       ws.onclose = (event) => {
         setIsConnected(false)
         if (event.code !== 1000) {
-          setError(event.reason || 'Connection closed')
+          setError(event.reason || '连接关闭')
         }
       }
 
@@ -214,9 +214,9 @@ export function ContainerShellTab({
         <div className="text-center space-y-4">
           <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto" />
           <div>
-            <h3 className="font-medium">Permission Denied</h3>
+            <h3 className="font-medium">权限不足</h3>
             <p className="text-sm text-muted-foreground mt-1">
-              You do not have permission to access the container shell.
+              你无权访问此容器的 Shell。
             </p>
           </div>
         </div>
@@ -231,9 +231,9 @@ export function ContainerShellTab({
         <div className="text-center space-y-4">
           <AlertCircle className="h-12 w-12 text-warning mx-auto" />
           <div>
-            <h3 className="font-medium">Container Not Running</h3>
+            <h3 className="font-medium">容器尚未运行</h3>
             <p className="text-sm text-muted-foreground mt-1">
-              Start the container to access its shell.
+              启动此容器以连接至容器的 Shell。
             </p>
           </div>
         </div>
@@ -250,7 +250,7 @@ export function ContainerShellTab({
           <span className="text-sm font-medium">{containerName}</span>
           {isConnected && (
             <span className="text-xs px-2 py-0.5 rounded bg-success/20 text-success">
-              connected
+              已连接
             </span>
           )}
         </div>
@@ -259,7 +259,7 @@ export function ContainerShellTab({
             <RotateCw className="h-4 w-4" />
           </Button>
           <span className="absolute right-0 top-full mt-1 px-2 py-1 text-xs bg-surface-1 border border-border rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
-            Reset shell session
+            重置 Shell 会话
           </span>
         </div>
       </div>

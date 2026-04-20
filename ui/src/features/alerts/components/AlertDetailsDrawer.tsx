@@ -19,11 +19,11 @@ interface AlertDetailsDrawerProps {
 }
 
 const SNOOZE_DURATIONS = [
-  { value: 15, label: '15 minutes' },
-  { value: 30, label: '30 minutes' },
-  { value: 60, label: '1 hour' },
-  { value: 240, label: '4 hours' },
-  { value: 1440, label: '24 hours' },
+  { value: 15, label: '15 分钟' },
+  { value: 30, label: '30 分钟' },
+  { value: 60, label: '1 小时' },
+  { value: 240, label: '4 小时' },
+  { value: 1440, label: '24 小时' },
 ]
 
 export function AlertDetailsDrawer({ alertId, onClose }: AlertDetailsDrawerProps) {
@@ -137,7 +137,7 @@ export function AlertDetailsDrawer({ alertId, onClose }: AlertDetailsDrawerProps
   if (isLoading || !alert) {
     return (
       <div className="fixed inset-y-0 right-0 z-50 w-[600px] bg-[#0d1117] shadow-2xl">
-        <div className="flex h-full items-center justify-center text-gray-400">Loading...</div>
+        <div className="flex h-full items-center justify-center text-gray-400">加载中...</div>
       </div>
     )
   }
@@ -152,7 +152,7 @@ export function AlertDetailsDrawer({ alertId, onClose }: AlertDetailsDrawerProps
         <div className="flex h-full flex-col">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-gray-800 px-6 py-4">
-            <h2 className="text-lg font-semibold text-white">Alert Details</h2>
+            <h2 className="text-lg font-semibold text-white">告警详情</h2>
             <div className="flex items-center gap-2">
               {/* Kebab Menu */}
               <div className="relative">
@@ -177,7 +177,7 @@ export function AlertDetailsDrawer({ alertId, onClose }: AlertDetailsDrawerProps
                         className="w-full px-4 py-2 text-left text-sm text-gray-300 hover:bg-gray-700 flex items-center gap-3"
                       >
                         <Activity className="h-4 w-4" />
-                        View Events
+                        查看相关事件
                       </button>
                       {alert.rule_id && (
                         <button
@@ -189,7 +189,7 @@ export function AlertDetailsDrawer({ alertId, onClose }: AlertDetailsDrawerProps
                           className="w-full px-4 py-2 text-left text-sm text-gray-300 hover:bg-gray-700 flex items-center gap-3"
                         >
                           <Settings className="h-4 w-4" />
-                          Edit Rule
+                          编辑告警规则
                         </button>
                       )}
                     </div>
@@ -211,12 +211,21 @@ export function AlertDetailsDrawer({ alertId, onClose }: AlertDetailsDrawerProps
             {/* Status Badges */}
             <div className="mb-4 flex items-center gap-2">
               <span className={`rounded-full px-3 py-1 text-sm font-medium ${getStateColor(alert.state)}`}>
-                {alert.state}
+                {{
+                  open: "未解决",
+                  snoozed: "稍后解决",
+                  resolved: "已解决"
+                }[alert.state]}
               </span>
               <span
                 className={`rounded-full border px-3 py-1 text-sm font-medium ${getSeverityColor(alert.severity)}`}
               >
-                {alert.severity}
+                {{
+                  critical: "严重",
+                  error: "错误",
+                  warning: "警告",
+                  info: "通知"
+                }[alert.severity]}
               </span>
             </div>
 
@@ -236,7 +245,7 @@ export function AlertDetailsDrawer({ alertId, onClose }: AlertDetailsDrawerProps
                   className="flex items-center gap-1.5 rounded-md bg-gray-800 px-2.5 py-1 text-xs text-gray-300 hover:bg-gray-700 transition-colors"
                 >
                   <Server className="h-3.5 w-3.5" />
-                  Host: {alert.host_name}
+                  主机: {alert.host_name}
                 </button>
               )}
 
@@ -251,7 +260,7 @@ export function AlertDetailsDrawer({ alertId, onClose }: AlertDetailsDrawerProps
                   className="flex items-center gap-1.5 rounded-md bg-gray-800 px-2.5 py-1 text-xs text-gray-300 hover:bg-gray-700 transition-colors"
                 >
                   <Server className="h-3.5 w-3.5" />
-                  Host: {alert.host_name}
+                  主机: {alert.host_name}
                 </button>
               )}
 
@@ -265,7 +274,7 @@ export function AlertDetailsDrawer({ alertId, onClose }: AlertDetailsDrawerProps
                   className="flex items-center gap-1.5 rounded-md bg-gray-800 px-2.5 py-1 text-xs text-gray-300 hover:bg-gray-700 transition-colors"
                 >
                   <Container className="h-3.5 w-3.5" />
-                  Container: {alert.container_name}
+                  容器: {alert.container_name}
                 </button>
               )}
 
@@ -279,7 +288,19 @@ export function AlertDetailsDrawer({ alertId, onClose }: AlertDetailsDrawerProps
                   className="flex items-center gap-1.5 rounded-md bg-gray-800 px-2.5 py-1 text-xs text-gray-300 hover:bg-gray-700 transition-colors"
                 >
                   <Settings className="h-3.5 w-3.5" />
-                  Rule: {alert.kind}
+                  告警规则: {{
+                  cpu_high: 'CPU占用高',
+                  memory_high: '内存占用高',
+                  disk_low: '磁盘可用低',
+                  container_unhealthy: '容器不健康(内置)',
+                  health_check_failed: '容器不健康',
+                  container_stopped: '容器已停止',
+                  container_restart: '容器已重启',
+                  host_down: '主机离线',
+                  update_available: '更新可用',
+                  update_completed: '更新完成',
+                  update_failed: '更新失败',
+                }[alert.kind]}
                 </button>
               )}
             </div>
@@ -289,40 +310,40 @@ export function AlertDetailsDrawer({ alertId, onClose }: AlertDetailsDrawerProps
             {/* Metadata Grid */}
             <div className="mb-6 grid grid-cols-2 gap-4 rounded-lg bg-gray-900/50 p-4">
               <div>
-                <div className="text-xs text-gray-500">First Seen</div>
+                <div className="text-xs text-gray-500">首次告警</div>
                 <div className="text-sm text-white">{formatDateTime(alert.first_seen)}</div>
               </div>
               <div>
-                <div className="text-xs text-gray-500">Last Seen</div>
+                <div className="text-xs text-gray-500">上次告警</div>
                 <div className="text-sm text-white">{formatDateTime(alert.last_seen)}</div>
               </div>
               {alert.current_value != null && (
                 <div>
-                  <div className="text-xs text-gray-500">Current Value</div>
+                  <div className="text-xs text-gray-500">当前数值</div>
                   <div className="text-sm text-white">{alert.current_value.toFixed(2)}</div>
                 </div>
               )}
               {alert.threshold != null && (
                 <div>
-                  <div className="text-xs text-gray-500">Threshold</div>
+                  <div className="text-xs text-gray-500">阈值</div>
                   <div className="text-sm text-white">{alert.threshold.toFixed(2)}</div>
                 </div>
               )}
               {alert.snoozed_until && (
                 <div className="col-span-2">
-                  <div className="text-xs text-gray-500">Snoozed Until</div>
+                  <div className="text-xs text-gray-500">延迟至</div>
                   <div className="text-sm text-white">{formatDateTime(alert.snoozed_until)}</div>
                 </div>
               )}
               {alert.resolved_at && (
                 <>
                   <div>
-                    <div className="text-xs text-gray-500">Resolved At</div>
+                    <div className="text-xs text-gray-500">解决于</div>
                     <div className="text-sm text-white">{formatDateTime(alert.resolved_at)}</div>
                   </div>
                   {alert.resolved_reason && (
                     <div>
-                      <div className="text-xs text-gray-500">Reason</div>
+                      <div className="text-xs text-gray-500">原因</div>
                       <div className="text-sm text-white">{alert.resolved_reason}</div>
                     </div>
                   )}
@@ -334,13 +355,13 @@ export function AlertDetailsDrawer({ alertId, onClose }: AlertDetailsDrawerProps
             <div className="mb-6">
               <h4 className="mb-3 flex items-center gap-2 text-sm font-semibold text-white">
                 <Activity className="h-4 w-4" />
-                Related Events ({events.length})
+                相关事件 ({events.length})
               </h4>
 
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {events.length === 0 ? (
                   <div className="rounded-lg bg-gray-900/30 px-4 py-3 text-center text-sm text-gray-500">
-                    No events found
+                    未找到相关事件
                   </div>
                 ) : (
                   events.map((event) => (
@@ -353,10 +374,23 @@ export function AlertDetailsDrawer({ alertId, onClose }: AlertDetailsDrawerProps
                           <span
                             className={`rounded-full border px-2 py-0.5 text-xs font-medium ${getEventCategoryColor(event.category)}`}
                           >
-                            {event.category}
+                            {{
+                              "alert": "告警",
+                              "host": "主机",
+                              "container": "容器",
+                              "system": "系统",
+                              "notification": "通知",
+                              "user": "用户",
+                            }[event.category]}
                           </span>
                           <span className={`text-xs font-medium ${getEventSeverityColor(event.severity)}`}>
-                            {event.severity}
+                            {{
+                              "debug": "调试",
+                              "info": "通知",
+                              "warning": "警告",
+                              "error": "错误",
+                              "critical": "严重",
+                            }[event.severity]}
                           </span>
                         </div>
                         <span className="text-xs text-gray-500 whitespace-nowrap">
@@ -369,7 +403,7 @@ export function AlertDetailsDrawer({ alertId, onClose }: AlertDetailsDrawerProps
                       )}
                       {event.old_state && event.new_state && (
                         <div className="mt-2 text-xs text-gray-500">
-                          State: <span className="text-gray-400">{event.old_state}</span>
+                          状态: <span className="text-gray-400">{event.old_state}</span>
                           {' → '}
                           <span className="text-gray-300">{event.new_state}</span>
                         </div>
@@ -385,7 +419,7 @@ export function AlertDetailsDrawer({ alertId, onClose }: AlertDetailsDrawerProps
               <div className="mb-3 flex items-center justify-between">
                 <h4 className="flex items-center gap-2 text-sm font-semibold text-white">
                   <MessageSquare className="h-4 w-4" />
-                  Annotations ({annotations.length})
+                  注释 ({annotations.length})
                 </h4>
                 {alert.state !== 'resolved' && (
                   <fieldset disabled={!canManage} className="disabled:opacity-60">
@@ -393,7 +427,7 @@ export function AlertDetailsDrawer({ alertId, onClose }: AlertDetailsDrawerProps
                       onClick={() => setShowAnnotationForm(!showAnnotationForm)}
                       className="text-sm text-blue-400 hover:text-blue-300"
                     >
-                      Add Note
+                      添加注释
                     </button>
                   </fieldset>
                 )}
@@ -406,7 +440,7 @@ export function AlertDetailsDrawer({ alertId, onClose }: AlertDetailsDrawerProps
                     <textarea
                       value={annotationText}
                       onChange={(e) => setAnnotationText(e.target.value)}
-                      placeholder="Add a note about this alert..."
+                      placeholder="为此告警添加注释..."
                       className="mb-2 w-full rounded-md bg-gray-800 px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       rows={3}
                     />
@@ -419,14 +453,14 @@ export function AlertDetailsDrawer({ alertId, onClose }: AlertDetailsDrawerProps
                         }}
                         className="rounded-md px-3 py-1.5 text-sm text-gray-400 hover:text-white"
                       >
-                        Cancel
+                        取消
                       </button>
                       <button
                         onClick={handleAddAnnotation}
                         disabled={!annotationText.trim()}
                         className="rounded-md bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        Add Note
+                        添加注释
                       </button>
                     </div>
                   </fieldset>
@@ -437,14 +471,14 @@ export function AlertDetailsDrawer({ alertId, onClose }: AlertDetailsDrawerProps
               <div className="space-y-2">
                 {annotations.length === 0 ? (
                   <div className="rounded-lg bg-gray-900/30 px-4 py-3 text-center text-sm text-gray-500">
-                    No annotations yet
+                    尚未添加注释
                   </div>
                 ) : (
                   annotations.map((annotation) => (
                     <div key={annotation.id} className="rounded-lg bg-gray-900/50 p-3">
                       <div className="mb-1 flex items-center justify-between">
                         <span className="text-xs text-gray-500">
-                          {annotation.user || 'Unknown'} • {formatDateTime(annotation.timestamp)}
+                          {annotation.user || '未知用户'} • {formatDateTime(annotation.timestamp)}
                         </span>
                       </div>
                       <p className="text-sm text-gray-300">{annotation.text}</p>
@@ -463,14 +497,14 @@ export function AlertDetailsDrawer({ alertId, onClose }: AlertDetailsDrawerProps
                 {alert.state === 'snoozed' ? (
                   <div className="flex flex-1 flex-col gap-2">
                     <div className="text-xs text-gray-400 text-center">
-                      Snoozed until {alert.snoozed_until ? formatDateTime(alert.snoozed_until) : 'unknown'}
+                      将于 {alert.snoozed_until ? formatDateTime(alert.snoozed_until) : '未知时间'} 后解冻
                     </div>
                     <button
                       onClick={handleUnsnooze}
                       className="flex items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
                     >
                       <AlertCircle className="h-4 w-4" />
-                      Unsnooze
+                      解冻
                     </button>
                   </div>
                 ) : (
@@ -480,7 +514,7 @@ export function AlertDetailsDrawer({ alertId, onClose }: AlertDetailsDrawerProps
                       className="flex w-full items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
                     >
                       <Clock className="h-4 w-4" />
-                      <span>Snooze</span>
+                      <span>冻结</span>
                       <ChevronDown className="h-4 w-4" />
                     </button>
 
@@ -509,7 +543,7 @@ export function AlertDetailsDrawer({ alertId, onClose }: AlertDetailsDrawerProps
                   className="flex flex-1 items-center justify-center gap-2 rounded-md bg-green-600 px-4 py-2 text-white transition-colors hover:bg-green-700"
                 >
                   <CheckCircle2 className="h-4 w-4" />
-                  Resolve
+                  已解决
                 </button>
               </div>
             </div>
@@ -527,9 +561,9 @@ export function AlertDetailsDrawer({ alertId, onClose }: AlertDetailsDrawerProps
                 <CheckCircle2 className="h-6 w-6 text-green-500" />
               </div>
               <div className="flex-1">
-                <h3 className="text-lg font-semibold mb-2 text-white">Resolve Alert</h3>
+                <h3 className="text-lg font-semibold mb-2 text-white">解决告警</h3>
                 <p className="text-sm text-gray-400">
-                  Are you sure you want to mark this alert as resolved? This will close{' '}
+                  确定要将此告警标记为已解决吗？这将关闭{' '}
                   <span className="font-semibold text-white">{alert.title}</span>.
                 </p>
               </div>
@@ -540,14 +574,14 @@ export function AlertDetailsDrawer({ alertId, onClose }: AlertDetailsDrawerProps
                 disabled={resolveAlert.isPending}
                 className="px-4 py-2 rounded-lg border border-gray-700 bg-gray-800 hover:bg-gray-700 transition-colors text-sm text-gray-300 disabled:opacity-50"
               >
-                Cancel
+                取消
               </button>
               <button
                 onClick={handleResolve}
                 disabled={!canManage || resolveAlert.isPending}
                 className="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white transition-colors text-sm disabled:opacity-50"
               >
-                {resolveAlert.isPending ? 'Resolving...' : 'Resolve Alert'}
+                {resolveAlert.isPending ? '标记中...' : '解决告警'}
               </button>
             </div>
           </div>

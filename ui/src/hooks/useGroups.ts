@@ -74,11 +74,11 @@ export function useCreateGroup() {
     mutationFn: (request: CreateGroupRequest) => apiClient.post<Group>('/v2/groups', request),
     onSuccess: (group) => {
       queryClient.invalidateQueries({ queryKey: GROUPS_QUERY_KEY })
-      toast.success(`Group "${group.name}" created successfully`)
+      toast.success(`已成功创建用户群组 "${group.name}"`)
     },
     onError: (error: Error) => {
       console.error('Failed to create group:', error)
-      toast.error('Failed to create group. Please try again.')
+      toast.error('无法创建用户群组。请稍后再试。')
     },
   })
 }
@@ -94,11 +94,11 @@ export function useUpdateGroup() {
       apiClient.put<Group>(`/v2/groups/${groupId}`, request),
     onSuccess: (group) => {
       queryClient.invalidateQueries({ queryKey: GROUPS_QUERY_KEY })
-      toast.success(`Group "${group.name}" updated successfully`)
+      toast.success(`已成功更新用户群组 "${group.name}"`)
     },
     onError: (error: Error) => {
       console.error('Failed to update group:', error)
-      toast.error('Failed to update group. Please try again.')
+      toast.error('无法更新用户群组。请稍后再试。')
     },
   })
 }
@@ -113,11 +113,11 @@ export function useDeleteGroup() {
     mutationFn: (groupId: number) => apiClient.delete<DeleteGroupResponse>(`/v2/groups/${groupId}`),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: GROUPS_QUERY_KEY })
-      toast.success(data.message || 'Group deleted successfully')
+      toast.success(data.message || '已成功删除用户群组')
     },
     onError: (error: Error) => {
       console.error('Failed to delete group:', error)
-      toast.error('Failed to delete group. Please try again.')
+      toast.error('无法删除用户群组。请稍后再试。')
     },
   })
 }
@@ -133,11 +133,11 @@ export function useAddGroupMember() {
       apiClient.post<AddMemberResponse>(`/v2/groups/${groupId}/members`, request),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: GROUPS_QUERY_KEY })
-      toast.success(data.message || 'Member added successfully')
+      toast.success(data.message || '已成功添加成员')
     },
     onError: (error: Error) => {
       console.error('Failed to add member:', error)
-      toast.error('Failed to add member. Please try again.')
+      toast.error('无法添加成员。请稍后再试。')
     },
   })
 }
@@ -153,11 +153,11 @@ export function useRemoveGroupMember() {
       apiClient.delete<RemoveMemberResponse>(`/v2/groups/${groupId}/members/${userId}`),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: GROUPS_QUERY_KEY })
-      toast.success(data.message || 'Member removed successfully')
+      toast.success(data.message || '已成功删除成员')
     },
     onError: (error: Error) => {
       console.error('Failed to remove member:', error)
-      toast.error('Failed to remove member. Please try again.')
+      toast.error('无法删除成员。请稍后再试。')
     },
   })
 }
@@ -210,11 +210,11 @@ export function useUpdateGroupPermissions() {
       apiClient.put<UpdatePermissionsResponse>(`/v2/groups/${groupId}/permissions`, request),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: PERMISSIONS_QUERY_KEY })
-      toast.success(data.message || 'Permissions updated successfully')
+      toast.success(data.message || '已成功更新权限')
     },
     onError: (error: Error) => {
       console.error('Failed to update permissions:', error)
-      toast.error('Failed to update permissions. Please try again.')
+      toast.error('无法更新权限。请稍后再试。')
     },
   })
 }
@@ -234,12 +234,12 @@ export function useCopyGroupPermissions() {
       if (data.warning) {
         toast.warning(data.warning)
       } else {
-        toast.success(data.message || 'Permissions copied successfully')
+        toast.success(data.message || '已成功复制权限')
       }
     },
     onError: (error: Error) => {
       console.error('Failed to copy permissions:', error)
-      toast.error('Failed to copy permissions. Please try again.')
+      toast.error('无法复制权限。请稍后再试。')
     },
   })
 }

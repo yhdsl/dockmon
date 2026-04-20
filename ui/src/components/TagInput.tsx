@@ -39,7 +39,7 @@ export function TagInput({
   value,
   onChange,
   suggestions = [],
-  placeholder = 'Add tags...',
+  placeholder = '添加标签...',
   maxTags = 50,
   disabled = false,
   error,
@@ -249,7 +249,7 @@ export function TagInput({
               {isPrimary && (
                 <div className="flex items-center gap-1">
                   <Star className="h-3 w-3 text-primary fill-primary" />
-                  <span className="text-xs font-medium text-primary">Primary</span>
+                  <span className="text-xs font-medium text-primary">主标签</span>
                 </div>
               )}
 
@@ -266,7 +266,7 @@ export function TagInput({
                   className="ml-1 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100"
                 >
                   <X className="h-3 w-3" />
-                  <span className="sr-only">Remove {tag}</span>
+                  <span className="sr-only">删除 {tag}</span>
                 </button>
               )}
             </div>
@@ -290,7 +290,7 @@ export function TagInput({
 
         {/* Max tags indicator */}
         {value.length >= maxTags && (
-          <span className="text-xs text-muted-foreground">Max tags reached</span>
+          <span className="text-xs text-muted-foreground">已达到标签上限</span>
         )}
       </div>
 
@@ -326,8 +326,8 @@ export function TagInput({
       {/* Helper text */}
       {!error && (
         <p className="mt-1 text-xs text-muted-foreground">
-          {value.length}/{maxTags} tags • Press Enter to add • Backspace to remove
-          {value.length > 1 && showPrimaryIndicator && ' • Drag to reorder (first tag = primary)'}
+          {value.length}/{maxTags} 个标签 • 键入回车以添加标签 • 键入退格以删除标签
+          {value.length > 1 && showPrimaryIndicator && ' • 拖动以重新排序 (第一个标签为主标签)'}
         </p>
       )}
     </div>

@@ -103,9 +103,9 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
         enabled: checked,
         container_name: container.name
       })
-      toast.success(`Auto-restart ${checked ? 'enabled' : 'disabled'}`)
+      toast.success(`自动重启${checked ? '已启用' : '已禁用'}`)
     } catch (error) {
-      toast.error(`Failed to update auto-restart: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      toast.error(`更新自动重新设置时失败: ${error instanceof Error ? error.message : '未知错误'}`)
       setAutoRestart(!checked)
     }
   }
@@ -120,9 +120,9 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
         container_name: container.name,
         web_ui_url: isEditingWebUi ? (container.web_ui_url || null) : (webUiUrl || null)
       })
-      toast.success(`Desired state set to "${newState}"`)
+      toast.success(`期望状态设置为"${newState}"`)
     } catch (error) {
-      toast.error(`Failed to update desired state: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      toast.error(`更新期望状态时失败: ${error instanceof Error ? error.message : '未知错误'}`)
       setDesiredState(previousState)
     }
   }
@@ -134,10 +134,10 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
         container_name: container.name,
         web_ui_url: webUiUrl || null
       })
-      toast.success('WebUI URL saved')
+      toast.success('WebUI URL 已保存')
       setIsEditingWebUi(false)
     } catch (error) {
-      toast.error(`Failed to save WebUI URL: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      toast.error(`已保存 WebUI URL 时失败: ${error instanceof Error ? error.message : '未知错误'}`)
     }
   }
 
@@ -175,14 +175,14 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
 
     switch (state) {
       case 'running':
-        return <span className="text-success">Running</span>
+        return <span className="text-success">运行中</span>
       case 'paused':
-        return <span className="text-warning">Paused</span>
+        return <span className="text-warning">已暂停</span>
       case 'restarting':
-        return <span className="text-info">Restarting</span>
+        return <span className="text-info">重启中</span>
       case 'exited':
       case 'dead':
-        return <span className="text-danger">Stopped</span>
+        return <span className="text-danger">已停止</span>
       default:
         return <span className="text-muted-foreground capitalize">{state}</span>
     }
@@ -196,15 +196,15 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
           <div className="space-y-6">
             {/* Overview */}
             <div>
-              <h4 className="text-lg font-medium text-foreground mb-3">Overview</h4>
+              <h4 className="text-lg font-medium text-foreground mb-3">概览</h4>
               <div className="space-y-1.5">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">State</span>
+                  <span className="text-muted-foreground">状态</span>
                   {getStateColor()}
                 </div>
                 {container.restart_policy && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Docker Engine Restart Policy</span>
+                    <span className="text-muted-foreground">Docker Engine 重启策略</span>
                     <span className="font-mono text-xs">{container.restart_policy}</span>
                   </div>
                 )}
@@ -229,7 +229,7 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
                       onClick={handleSaveWebUiUrl}
                       className="flex-1"
                     >
-                      Save
+                      保存
                     </Button>
                     <Button
                       size="sm"
@@ -240,7 +240,7 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
                       }}
                       className="flex-1"
                     >
-                      Cancel
+                      取消
                     </Button>
                   </div>
                 </div>
@@ -266,7 +266,7 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
                         onClick={() => setIsEditingWebUi(true)}
                         className="text-xs text-primary hover:text-primary/80"
                       >
-                        Edit
+                        编辑
                       </button>
                     </div>
                   ) : (
@@ -274,7 +274,7 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
                       onClick={() => setIsEditingWebUi(true)}
                       className="text-sm text-muted-foreground hover:text-foreground"
                     >
-                      + Add URL
+                      + 添加 URL
                     </button>
                   )}
                 </div>
@@ -286,13 +286,13 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
               {isEditingTags ? (
                 <fieldset disabled={!canManageTags} className="space-y-2 disabled:opacity-60">
                   <div className="flex items-center justify-between">
-                    <h4 className="text-lg font-medium text-foreground">Tags</h4>
+                    <h4 className="text-lg font-medium text-foreground">标签</h4>
                   </div>
                   <TagInput
                     value={editedTags}
                     onChange={setEditedTags}
                     suggestions={tagSuggestions}
-                    placeholder="Add tags..."
+                    placeholder="添加标签..."
                     maxTags={20}
                   />
                   <div className="flex gap-2">
@@ -302,7 +302,7 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
                       disabled={isLoadingTags}
                       className="flex-1"
                     >
-                      {isLoadingTags ? 'Saving...' : 'Save'}
+                      {isLoadingTags ? '保存中...' : '保存'}
                     </Button>
                     <Button
                       size="sm"
@@ -311,20 +311,20 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
                       disabled={isLoadingTags}
                       className="flex-1"
                     >
-                      Cancel
+                      取消
                     </Button>
                   </div>
                 </fieldset>
               ) : (
                 <div>
                   <div className="flex items-center justify-between mb-3">
-                    <h4 className="text-lg font-medium text-foreground">Tags</h4>
+                    <h4 className="text-lg font-medium text-foreground">标签</h4>
                     <button
                       onClick={handleStartEdit}
                       disabled={!canManageTags}
                       className="text-xs text-primary hover:text-primary/80 disabled:opacity-60 disabled:cursor-not-allowed"
                     >
-                      + Edit
+                      + 编辑
                     </button>
                   </div>
                   {currentTags.length > 0 ? (
@@ -334,7 +334,7 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sm text-muted-foreground">No tags</p>
+                    <p className="text-sm text-muted-foreground">暂无标签</p>
                   )}
                 </div>
               )}
@@ -342,7 +342,7 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
 
             {/* Image */}
             <div>
-              <h4 className="text-lg font-medium text-foreground mb-3">Image</h4>
+              <h4 className="text-lg font-medium text-foreground mb-3">镜像</h4>
               <div className="text-sm font-mono bg-surface-1 px-3 py-2 rounded" data-testid="container-image">
                 {container.image}
               </div>
@@ -351,7 +351,7 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
             {/* Ports */}
             {container.ports && container.ports.length > 0 && (
               <div>
-                <h4 className="text-lg font-medium text-foreground mb-3">Ports</h4>
+                <h4 className="text-lg font-medium text-foreground mb-3">端口映射</h4>
                 <div className="flex flex-wrap gap-2">
                   {container.ports.map((port) => (
                     <div key={port} className="text-sm font-mono bg-surface-1 px-3 py-1.5 rounded">
@@ -365,7 +365,7 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
             {/* Volumes */}
             {container.volumes && container.volumes.length > 0 && (
               <div>
-                <h4 className="text-lg font-medium text-foreground mb-3">Volumes</h4>
+                <h4 className="text-lg font-medium text-foreground mb-3">卷</h4>
                 <div className="space-y-1">
                   {container.volumes.map((volume) => (
                     <div key={volume} className="text-xs font-mono bg-surface-1 px-3 py-1.5 rounded break-all">
@@ -379,9 +379,9 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
             {/* Environment Variables */}
             {canViewEnv && (filteredEnv.length > 0 || inspectError) && (
               <div>
-                <h4 className="text-lg font-medium text-foreground mb-3">Environment Variables</h4>
+                <h4 className="text-lg font-medium text-foreground mb-3">环境变量</h4>
                 {inspectError && filteredEnv.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">Failed to load environment variables</p>
+                  <p className="text-sm text-muted-foreground">无法加载环境变量</p>
                 ) : filteredEnv.length > 0 ? (
                   <div className="space-y-1.5 max-h-64 overflow-y-auto">
                     {filteredEnv.map(([key, value]) => (
@@ -394,7 +394,7 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground">No application environment variables</p>
+                  <p className="text-sm text-muted-foreground">尚未添加容器环境变量</p>
                 )}
               </div>
             )}
@@ -405,7 +405,7 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
             <fieldset disabled={!canOperate} className="space-y-6 disabled:opacity-60">
               {/* Auto-restart Toggle */}
               <div>
-                <h4 className="text-lg font-medium text-foreground mb-3">Auto-restart</h4>
+                <h4 className="text-lg font-medium text-foreground mb-3">自动重启</h4>
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input
                     type="checkbox"
@@ -414,14 +414,14 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
                     className="w-4 h-4 rounded border-border bg-surface-1 checked:bg-primary"
                   />
                   <span className="text-sm">
-                    Automatically restart container if it stops unexpectedly
+                    如果容器意外停止，则自动重启
                   </span>
                 </label>
               </div>
 
               {/* Desired State */}
               <div>
-                <h4 className="text-lg font-medium text-foreground mb-3">Desired State</h4>
+                <h4 className="text-lg font-medium text-foreground mb-3">期望状态</h4>
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleDesiredStateChange('should_run')}
@@ -431,7 +431,7 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
                         : 'bg-surface-1 hover:bg-surface-2'
                     }`}
                   >
-                    Should Run
+                    始终运行
                   </button>
                   <button
                     onClick={() => handleDesiredStateChange('on_demand')}
@@ -441,7 +441,7 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
                         : 'bg-surface-1 hover:bg-surface-2'
                     }`}
                   >
-                    On Demand
+                    按需运行
                   </button>
                   <button
                     onClick={() => handleDesiredStateChange('unspecified')}
@@ -451,7 +451,7 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
                         : 'bg-surface-1 hover:bg-surface-2'
                     }`}
                   >
-                    Unspecified
+                    尚未指定
                   </button>
                 </div>
               </div>
@@ -459,7 +459,7 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
 
             {/* Live Stats Header */}
             <div className="-mb-3">
-              <h4 className="text-lg font-medium text-foreground">Live Stats</h4>
+              <h4 className="text-lg font-medium text-foreground">实时统计数据</h4>
             </div>
 
             {/* CPU */}
@@ -467,7 +467,7 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <Cpu className="h-4 w-4 text-amber-500" />
-                  <span className="font-medium text-sm">CPU Usage</span>
+                  <span className="font-medium text-sm">CPU 使用率</span>
                 </div>
                 <span className="text-xs text-muted-foreground">
                   {container.cpu_percent !== null && container.cpu_percent !== undefined
@@ -481,7 +481,7 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
                 </div>
               ) : (
                 <div className="h-[120px] flex items-center justify-center text-muted-foreground text-xs">
-                  No data available
+                  没有可用的数据
                 </div>
               )}
             </div>
@@ -491,7 +491,7 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <MemoryStick className="h-4 w-4 text-green-500" />
-                  <span className="font-medium text-sm">Memory Usage</span>
+                  <span className="font-medium text-sm">Memory 使用率</span>
                 </div>
                 <span className="text-xs text-muted-foreground">
                   {container.memory_usage ? formatBytes(container.memory_usage) : '-'}
@@ -504,7 +504,7 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
                 </div>
               ) : (
                 <div className="h-[120px] flex items-center justify-center text-muted-foreground text-xs">
-                  No data available
+                  没有可用的数据
                 </div>
               )}
             </div>
@@ -514,7 +514,7 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <Network className="h-4 w-4 text-orange-500" />
-                  <span className="font-medium text-sm">Network I/O</span>
+                  <span className="font-medium text-sm">网络 I/O</span>
                 </div>
                 <span className="text-xs text-muted-foreground">
                   {formatNetworkRate(container.net_bytes_per_sec)}
@@ -526,7 +526,7 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
                 </div>
               ) : (
                 <div className="h-[120px] flex items-center justify-center text-muted-foreground text-xs">
-                  No data available
+                  没有可用的数据
                 </div>
               )}
             </div>

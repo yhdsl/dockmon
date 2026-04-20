@@ -21,13 +21,13 @@ export function HostOverviewSection({ host }: HostOverviewSectionProps) {
   }
 
   const statusLabels: Record<string, string> = {
-    online: 'Online',
-    offline: 'Offline',
-    degraded: 'Degraded',
+    online: '在线',
+    offline: '离线',
+    degraded: '降级',
   }
 
   return (
-    <DrawerSection title="Overview">
+    <DrawerSection title="概览">
       <div className="space-y-4">
         {/* Host Name & Status */}
         <div className="flex items-center gap-3">
@@ -50,7 +50,7 @@ export function HostOverviewSection({ host }: HostOverviewSectionProps) {
           <div>
             {host.host_ips && host.host_ips.length > 0 ? (
               <>
-                <label className="text-xs font-medium text-muted-foreground">IP Addresses</label>
+                <label className="text-xs font-medium text-muted-foreground">IP 地址</label>
                 <div className="flex flex-col gap-0.5 mt-1">
                   {host.host_ips.map((ip) => (
                     <span key={ip} className="text-sm text-muted-foreground">{ip}</span>
@@ -59,7 +59,7 @@ export function HostOverviewSection({ host }: HostOverviewSectionProps) {
               </>
             ) : (
               <>
-                <label className="text-xs font-medium text-muted-foreground">Endpoint</label>
+                <label className="text-xs font-medium text-muted-foreground">端点</label>
                 <p className="text-sm mt-1">{host.url}</p>
               </>
             )}
@@ -68,7 +68,7 @@ export function HostOverviewSection({ host }: HostOverviewSectionProps) {
             const uptime = formatUptime(host.daemon_started_at)
             return uptime ? (
               <div>
-                <label className="text-xs font-medium text-muted-foreground">Uptime</label>
+                <label className="text-xs font-medium text-muted-foreground">运行时长</label>
                 <p className="text-sm mt-1">{uptime}</p>
               </div>
             ) : null
@@ -80,7 +80,7 @@ export function HostOverviewSection({ host }: HostOverviewSectionProps) {
           <div className="grid grid-cols-2 gap-4">
             {host.os_version && (
               <div>
-                <label className="text-xs font-medium text-muted-foreground">OS</label>
+                <label className="text-xs font-medium text-muted-foreground">操作系统</label>
                 <p className="text-sm mt-1">{host.os_version}</p>
               </div>
             )}
@@ -96,7 +96,7 @@ export function HostOverviewSection({ host }: HostOverviewSectionProps) {
         {/* Description */}
         {host.description && (
           <div>
-            <label className="text-xs font-medium text-muted-foreground">Description</label>
+            <label className="text-xs font-medium text-muted-foreground">描述</label>
             <p className="text-sm mt-1 text-muted-foreground">{host.description}</p>
           </div>
         )}

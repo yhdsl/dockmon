@@ -92,7 +92,7 @@ export function useContainerTagEditor({
       const tagsChanged = JSON.stringify(editedTags) !== JSON.stringify(currentTags)
 
       if (!tagsChanged) {
-        toast.info('No changes to save')
+        toast.info('没有更改可供保存')
         setIsEditing(false)
         return
       }
@@ -120,14 +120,14 @@ export function useContainerTagEditor({
         })
       }
 
-      toast.success('Container tags updated successfully')
+      toast.success('已成功更新容器标签')
       setIsEditing(false)
 
       // Refetch containers to get updated tags
       queryClient.invalidateQueries({ queryKey: ['containers'] })
     } catch (error) {
       console.error('Failed to update container tags:', error)
-      toast.error('Failed to update container tags')
+      toast.error('无法更新容器标签')
     } finally {
       setIsLoading(false)
     }

@@ -91,7 +91,7 @@ export function AgentUpdateBanner({ isCollapsed }: AgentUpdateBannerProps) {
     return (
       <div
         className="mb-2 flex items-center justify-center rounded-lg bg-gradient-to-r from-amber-500/20 to-orange-500/20 p-2 cursor-pointer hover:from-amber-500/30 hover:to-orange-500/30 transition-all duration-200"
-        title={`${agentCount} agent${agentCount > 1 ? 's' : ''} need${agentCount === 1 ? 's' : ''} update`}
+        title={`${agentCount} 个代理需要更新`}
         onClick={handleSeeWhatsNew}
       >
         <ArrowUpCircle className="h-4 w-4 text-amber-400" />
@@ -106,10 +106,10 @@ export function AgentUpdateBanner({ isCollapsed }: AgentUpdateBannerProps) {
         <ArrowUpCircle className="h-4 w-4 text-amber-400 flex-shrink-0 mt-0.5" />
         <div className="flex-1 min-w-0">
           <div className="text-xs font-medium text-foreground mb-1">
-            Agent update available
+            代理更新可用
           </div>
           <div className="text-xs text-muted-foreground mb-2">
-            {agentCount} agent{agentCount > 1 ? 's' : ''} can update to v{settings?.latest_agent_version}
+            {agentCount} 个代理可以更新至 v{settings?.latest_agent_version}
           </div>
           <div className="flex flex-col gap-1.5">
             <Button
@@ -119,7 +119,7 @@ export function AgentUpdateBanner({ isCollapsed }: AgentUpdateBannerProps) {
               onClick={handleSeeWhatsNew}
             >
               <ExternalLink className="h-3 w-3 mr-1.5" />
-              See what's new
+              查看新增内容
             </Button>
             <Button
               variant="ghost"
@@ -128,7 +128,7 @@ export function AgentUpdateBanner({ isCollapsed }: AgentUpdateBannerProps) {
               onClick={handleDismiss}
             >
               <X className="h-3 w-3 mr-1.5" />
-              Dismiss
+              忽略
             </Button>
           </div>
         </div>

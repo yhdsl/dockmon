@@ -82,8 +82,8 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
 
   const handleCheckNow = async () => {
     if (!container.host_id) {
-      toast.error('Cannot check for updates', {
-        description: 'Container missing host information',
+      toast.error('无法检查更新', {
+        description: '容器缺乏主机信息',
       })
       return
     }
@@ -93,7 +93,7 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
     const MIN_CHECK_INTERVAL_MS = 5000 // 5 seconds
     if (now - lastCheckTime < MIN_CHECK_INTERVAL_MS) {
       const remainingSeconds = Math.ceil((MIN_CHECK_INTERVAL_MS - (now - lastCheckTime)) / 1000)
-      toast.warning(`Please wait ${remainingSeconds} second${remainingSeconds > 1 ? 's' : ''} before checking again`)
+      toast.warning(`请等待 ${remainingSeconds} 秒后再执行更新操作`)
       return
     }
     setLastCheckTime(now)
@@ -103,11 +103,11 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
         hostId: container.host_id,
         containerId: containerShortId,
       })
-      toast.success('Update check complete')
+      toast.success('检查更新完成')
       // Query will auto-invalidate via the mutation's onSuccess
     } catch (error) {
-      toast.error('Failed to check for updates', {
-        description: error instanceof Error ? error.message : 'Unknown error',
+      toast.error('检查更新时出错', {
+        description: error instanceof Error ? error.message : '未知错误',
       })
     }
   }
@@ -118,8 +118,8 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
 
   const handleAutoUpdateToggle = async (enabled: boolean) => {
     if (!container.host_id) {
-      toast.error('Cannot configure auto-update', {
-        description: 'Container missing host information',
+      toast.error('无法配置自动更新', {
+        description: '容器缺乏主机信息',
       })
       return
     }
@@ -134,19 +134,19 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
       })
       // Update local state only after successful server save
       setAutoUpdateEnabled(result.auto_update_enabled ?? false)
-      toast.success(enabled ? 'Auto-update enabled' : 'Auto-update disabled')
+      toast.success(enabled ? '自动更新已启用' : '自动更新已禁用')
     } catch (error) {
       // No need to revert - we never changed it optimistically
-      toast.error('Failed to update configuration', {
-        description: error instanceof Error ? error.message : 'Unknown error',
+      toast.error('更新自动更新设置时出错', {
+        description: error instanceof Error ? error.message : '未知错误',
       })
     }
   }
 
   const handleTrackingModeChange = async (mode: string) => {
     if (!container.host_id) {
-      toast.error('Cannot configure tracking mode', {
-        description: 'Container missing host information',
+      toast.error('无法配置追踪模式', {
+        description: '容器缺乏主机信息',
       })
       return
     }
@@ -161,19 +161,19 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
       })
       // Update local state only after successful server save
       setTrackingMode(result.floating_tag_mode || 'exact')
-      toast.success('Tracking mode updated')
+      toast.success('追踪模式已更新')
     } catch (error) {
       // No need to revert - we never changed it optimistically
-      toast.error('Failed to update tracking mode', {
-        description: error instanceof Error ? error.message : 'Unknown error',
+      toast.error('无法更新追踪模式', {
+        description: error instanceof Error ? error.message : '未知错误',
       })
     }
   }
 
   const handlePolicyChange = async (policy: UpdatePolicyValue) => {
     if (!container.host_id) {
-      toast.error('Cannot configure update policy', {
-        description: 'Container missing host information',
+      toast.error('无法配置更新策略', {
+        description: '容器缺乏主机信息',
       })
       return
     }
@@ -188,19 +188,19 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
       // Update local state only after successful server save
       setUpdatePolicy(result.update_policy ?? null)
       const policyLabel = POLICY_OPTIONS.find((opt) => opt.value === policy)?.label || 'Auto-detect'
-      toast.success(`Update policy set to ${policyLabel}`)
+      toast.success(`更新更新策略为${policyLabel}`)
     } catch (error) {
       // No need to revert - we never changed it optimistically
-      toast.error('Failed to update policy', {
-        description: error instanceof Error ? error.message : 'Unknown error',
+      toast.error('更新更新策略时失败', {
+        description: error instanceof Error ? error.message : '未知错误',
       })
     }
   }
 
   const handleChangelogSave = async () => {
     if (!container.host_id) {
-      toast.error('Cannot save changelog URL', {
-        description: 'Container missing host information',
+      toast.error('无法保存更新日志 URL', {
+        description: '容器缺乏主机信息',
       })
       return
     }
@@ -210,8 +210,8 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
       try {
         new URL(changelogUrl.trim())
       } catch {
-        toast.error('Invalid URL format', {
-          description: 'Please enter a valid URL (e.g., https://github.com/user/repo/releases)',
+        toast.error('无效的 URL', {
+          description: '请输入一个合法的 URL (例如 https://github.com/user/repo/releases)',
         })
         return
       }
@@ -228,20 +228,20 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
       })
       // Update local state only after successful server save
       setChangelogUrl(result.changelog_url || '')
-      toast.success(changelogUrl.trim() ? 'Changelog URL saved' : 'Changelog URL cleared')
+      toast.success(changelogUrl.trim() ? '更新日志 URL 已保存' : '更新日志 URL 已清空')
       setIsEditingChangelog(false)
     } catch (error) {
       // No need to revert - we never changed it optimistically
-      toast.error('Failed to save changelog URL', {
-        description: error instanceof Error ? error.message : 'Unknown error',
+      toast.error('保存更新日志 URL 时失败', {
+        description: error instanceof Error ? error.message : '未知错误',
       })
     }
   }
 
   const handleRegistrySave = async () => {
     if (!container.host_id) {
-      toast.error('Cannot save registry URL', {
-        description: 'Container missing host information',
+      toast.error('无法保存注册表 URL', {
+        description: '容器缺乏主机信息',
       })
       return
     }
@@ -251,8 +251,8 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
       try {
         new URL(registryPageUrl.trim())
       } catch {
-        toast.error('Invalid URL format', {
-          description: 'Please enter a valid URL (e.g., https://hub.docker.com/r/user/image)',
+        toast.error('无效的 URL', {
+          description: '请输入一个合法的 URL (例如 https://hub.docker.com/r/user/image)',
         })
         return
       }
@@ -269,12 +269,12 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
       })
       // Update local state only after successful server save
       setRegistryPageUrl(result.registry_page_url || '')
-      toast.success(registryPageUrl.trim() ? 'Registry URL saved' : 'Registry URL cleared')
+      toast.success(registryPageUrl.trim() ? '注册表 URL 已保存' : '注册表 URL 已清空')
       setIsEditingRegistry(false)
     } catch (error) {
       // No need to revert - we never changed it optimistically
-      toast.error('Failed to save registry URL', {
-        description: error instanceof Error ? error.message : 'Unknown error',
+      toast.error('保存注册表 URL 时失败', {
+        description: error instanceof Error ? error.message : '未知错误',
       })
     }
   }
@@ -286,8 +286,8 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
 
   const performUpdate = async (force: boolean = false) => {
     if (!container.host_id) {
-      toast.error('Cannot execute update', {
-        description: 'Container missing host information',
+      toast.error('无法执行更新操作', {
+        description: '容器缺乏主机信息',
       })
       return
     }
@@ -305,15 +305,15 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
       // Check if update is blocked by policy
       if (result.status === 'blocked' || result.validation === 'block') {
         setIsUpdating(false)
-        toast.error('Update blocked by policy', {
-          description: result.reason || 'This container has a block policy that prevents updates',
+        toast.error('被更新策略阻止', {
+          description: result.reason || '此容器包含一个禁止策略阻止了更新操作',
         })
         return
       }
 
       // Check if validation warning returned
       if (!force && result.validation === 'warn') {
-        setValidationReason(result.reason || 'Container matched validation pattern')
+        setValidationReason(result.reason || '此容器匹配到了一个更新验证模式')
         setValidationPattern(result.matched_pattern)
         setValidationConfirmOpen(true)
         setIsUpdating(false)
@@ -323,22 +323,22 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
       // Check if update failed (e.g., health check timeout, startup issues)
       if (result.status === 'failed') {
         setIsUpdating(false)
-        toast.error(result.message || 'Container update failed', {
-          description: result.detail || 'The update failed and your container has been automatically restored to its previous state.',
+        toast.error(result.message || '容器更新失败', {
+          description: result.detail || '更新失败，此容器已自动恢复到之前的状态。',
           duration: 10000, // Longer duration for important failure message
         })
         return
       }
 
-      toast.success('Container updated successfully', {
+      toast.success('容器已成功更新', {
         description: result.message,
       })
       setIsUpdating(false)
       // Query will auto-invalidate via the mutation's onSuccess
     } catch (error) {
       setIsUpdating(false)
-      toast.error('Failed to update container', {
-        description: error instanceof Error ? error.message : 'Unknown error',
+      toast.error('更新容器时失败', {
+        description: error instanceof Error ? error.message : '未知错误',
       })
     }
   }
@@ -354,7 +354,7 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
   const hasUpdate = updateStatus?.update_available
   const lastChecked = updateStatus?.last_checked_at
     ? formatDateTime(updateStatus.last_checked_at, timeFormat)
-    : 'Not Checked'
+    : '从未进行'
 
   // Check if auto-updates are enabled but won't work due to blockers
   const isComposeBlocked = updateStatus?.is_compose_container && updateStatus?.skip_compose_enabled
@@ -372,9 +372,9 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
             <>
               <Package className="h-8 w-8 text-amber-500" />
               <div>
-                <h3 className="text-lg font-semibold text-amber-500">Update Available</h3>
+                <h3 className="text-lg font-semibold text-amber-500">更新可用</h3>
                 <p className="text-sm text-muted-foreground">
-                  A newer version of this container image is available
+                  此容器的镜像有可用的新版本。
                 </p>
               </div>
             </>
@@ -382,9 +382,9 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
             <>
               <Check className="h-8 w-8 text-success" />
               <div>
-                <h3 className="text-lg font-semibold">Up to Date</h3>
+                <h3 className="text-lg font-semibold">已是最新</h3>
                 <p className="text-sm text-muted-foreground">
-                  This container is running the latest available image
+                  此容器正在使用最新的镜像版本。
                 </p>
               </div>
             </>
@@ -402,12 +402,12 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
                 {executeUpdate.isPending ? (
                   <>
                     <Download className="mr-2 h-4 w-4 animate-spin" />
-                    Updating...
+                    更新中...
                   </>
                 ) : (
                   <>
                     <Download className="mr-2 h-4 w-4" />
-                    Update Now
+                    立即更新
                   </>
                 )}
               </Button>
@@ -420,19 +420,19 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
               {checkUpdate.isPending ? (
                 <>
                   <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                  Checking...
+                  检查中...
                 </>
               ) : (
                 <>
                   <RefreshCw className="mr-2 h-4 w-4" />
-                  Check Now
+                  立即检查
                 </>
               )}
             </Button>
           </fieldset>
           {updateStatus && (
             <p className="text-xs text-muted-foreground">
-              Last checked: {lastChecked}
+              上次检查时间: {lastChecked}
             </p>
           )}
         </div>
@@ -445,17 +445,17 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
             <AlertCircle className="h-5 w-5 text-yellow-400 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
               <h4 className="text-sm font-semibold text-yellow-200 mb-2">
-                Auto-Update Won't Run Automatically
+                自动更新操作不会被自动运行
               </h4>
               <p className="text-sm text-yellow-200/90 mb-3">
-                Despite enabling auto-updates, this container won't update automatically because:
+                尽管已启用自动更新操作，但此容器不会被自动更新，因为:
               </p>
               <ul className="text-sm text-yellow-200/90 space-y-1.5">
                 {isComposeBlocked && (
                   <li className="flex flex-col gap-1">
-                    <span>• This container uses Docker Compose which is blocked by system settings</span>
+                    <span>• 此容器由 Docker Compose 创建，但该功能已被 DockMon 设置阻止。</span>
                     <span className="text-xs text-yellow-200/70 ml-4">
-                      Change in Settings → Container Updates → "Skip Docker Compose containers"
+                      请更改设置 → 容器更新 → "跳过 Docker Compose 容器"
                     </span>
                   </li>
                 )}
@@ -464,26 +464,26 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
                     <span>• {updateStatus.validation_info.reason}</span>
                     <span className="text-xs text-yellow-200/70 ml-4">
                       {updateStatus.validation_info.matched_pattern
-                        ? `Change in Settings → Update Validation → Edit pattern "${updateStatus.validation_info.matched_pattern}"`
-                        : 'Change in Settings → Update Validation or update the container policy'
+                        ? `请更改设置 → 更新验证 → 编辑模式 "${updateStatus.validation_info.matched_pattern}"`
+                        : '请更改设置 → 更新验证或者更新容器策略'
                       }
                     </span>
                   </li>
                 )}
                 {isValidationWarned && updateStatus?.validation_info && (
                   <li className="flex flex-col gap-1">
-                    <span>• Requires manual confirmation: {updateStatus.validation_info.reason}</span>
+                    <span>• 需要手动确认: {updateStatus.validation_info.reason}</span>
                     <span className="text-xs text-yellow-200/70 ml-4">
                       {updateStatus.validation_info.matched_pattern
-                        ? `Matched pattern "${updateStatus.validation_info.matched_pattern}" - confirmation required for each update`
-                        : 'Manual confirmation required for each update'
+                        ? `匹配到模式 "${updateStatus.validation_info.matched_pattern}" - 每次更新前都需要确认`
+                        : '每次更新前都需要手动确认'
                       }
                     </span>
                   </li>
                 )}
               </ul>
               <p className="text-xs text-yellow-200/70 mt-3">
-                Manual updates are still available using the "Update Now" button above.
+                注意，仍然可使用上方的 "立即更新" 按钮进行手动更新。
               </p>
             </div>
           </div>
@@ -498,7 +498,7 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
           eventType="container_update_layer_progress"
           simpleProgressEventType="container_update_progress"
           initialProgress={0}
-          initialMessage="Initializing update..."
+          initialMessage="初始化更新中..."
         />
       )}
 
@@ -508,24 +508,24 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <AlertCircle className="h-4 w-4 text-muted-foreground" />
-            <h4 className="text-sm font-medium text-muted-foreground">Current Image</h4>
+            <h4 className="text-sm font-medium text-muted-foreground">当前镜像</h4>
           </div>
           <div className="bg-muted rounded-lg p-4 space-y-2">
             <div>
-              <p className="text-xs text-muted-foreground">Image</p>
+              <p className="text-xs text-muted-foreground">镜像</p>
               <p className="text-sm font-mono break-all">
                 {updateStatus?.current_image || container.image}
               </p>
             </div>
             {updateStatus?.current_version && (
               <div>
-                <p className="text-xs text-muted-foreground">Version</p>
+                <p className="text-xs text-muted-foreground">版本</p>
                 <p className="text-sm font-semibold">{updateStatus.current_version}</p>
               </div>
             )}
             {updateStatus?.current_digest && (
               <div>
-                <p className="text-xs text-muted-foreground">Digest</p>
+                <p className="text-xs text-muted-foreground">摘要</p>
                 <p className="text-sm font-mono text-xs">{updateStatus.current_digest}</p>
               </div>
             )}
@@ -537,22 +537,22 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <Package className="h-4 w-4 text-amber-500" />
-              <h4 className="text-sm font-medium text-amber-500">Latest Available</h4>
+              <h4 className="text-sm font-medium text-amber-500">最新可用</h4>
             </div>
             <div className="bg-muted rounded-lg p-4 space-y-2">
               <div>
-                <p className="text-xs text-muted-foreground">Image</p>
+                <p className="text-xs text-muted-foreground">镜像</p>
                 <p className="text-sm font-mono break-all">{updateStatus.latest_image}</p>
               </div>
               {updateStatus.latest_version && (
                 <div>
-                  <p className="text-xs text-muted-foreground">Version</p>
+                  <p className="text-xs text-muted-foreground">版本</p>
                   <p className="text-sm font-semibold text-amber-500">{updateStatus.latest_version}</p>
                 </div>
               )}
               {updateStatus.latest_digest && (
                 <div>
-                  <p className="text-xs text-muted-foreground">Digest</p>
+                  <p className="text-xs text-muted-foreground">摘要</p>
                   <p className="text-sm font-mono text-xs">{updateStatus.latest_digest}</p>
                 </div>
               )}
@@ -563,18 +563,18 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
 
       {/* Changelog & Registry Links (v2.0.2+) */}
       <fieldset disabled={!canUpdate} className="border-t pt-6 disabled:opacity-60">
-        <h4 className="text-lg font-medium text-foreground mb-4">Resource Links</h4>
+        <h4 className="text-lg font-medium text-foreground mb-4">资源链接</h4>
 
         <div className="grid grid-cols-2 gap-6">
           {/* Changelog URL */}
           <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">Changelog</label>
+            <label className="text-sm font-medium">更新日志</label>
             {updateStatus?.changelog_source === 'manual' && (
-              <span className="text-xs text-blue-400 px-2 py-0.5 bg-blue-400/10 rounded">Manual</span>
+              <span className="text-xs text-blue-400 px-2 py-0.5 bg-blue-400/10 rounded">手动添加</span>
             )}
             {updateStatus?.changelog_source && updateStatus.changelog_source !== 'manual' && updateStatus.changelog_source !== 'failed' && (
-              <span className="text-xs text-blue-400 px-2 py-0.5 bg-blue-400/10 rounded">Auto-detected</span>
+              <span className="text-xs text-blue-400 px-2 py-0.5 bg-blue-400/10 rounded">自动检测</span>
             )}
           </div>
 
@@ -587,7 +587,7 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
                 className="flex-1"
               />
               <Button onClick={handleChangelogSave} size="sm" disabled={updateAutoUpdateConfig.isPending}>
-                {updateAutoUpdateConfig.isPending ? 'Saving...' : 'Save'}
+                {updateAutoUpdateConfig.isPending ? '保存中...' : '保存'}
               </Button>
               <Button onClick={() => {
                 setChangelogUrl(updateStatus?.changelog_url || '')
@@ -610,7 +610,7 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
                 </a>
               ) : (
                 <div className="flex-1 text-sm text-muted-foreground bg-muted rounded-lg p-3">
-                  No changelog URL configured
+                  未设置更新日志 URL
                 </div>
               )}
               <Button
@@ -620,26 +620,26 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
                 className="flex-shrink-0"
               >
                 <Edit2 className="h-4 w-4 mr-1" />
-                {changelogUrl ? 'Edit' : 'Add'}
+                {changelogUrl ? '编辑' : '添加'}
               </Button>
             </div>
           )}
           <p className="text-xs text-muted-foreground">
             {updateStatus?.changelog_source === 'manual'
-              ? 'Manual URLs are preserved and not overwritten by auto-detection. Clear to re-enable auto-detection.'
-              : 'Auto-detected changelog links can be overridden with a custom URL.'}
+              ? '手动添加的 URL 会被保留，不会被自动检测功能覆盖。清除后可重新启用自动检测功能。'
+              : '自动检测得到的更新日志链接可以被自定义的 URL 覆盖。'}
           </p>
         </div>
 
           {/* Docker Registry Link */}
           <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">Docker Registry</label>
+            <label className="text-sm font-medium">Docker 注册表</label>
             {updateStatus?.registry_page_source === 'manual' && (
-              <span className="text-xs text-blue-400 px-2 py-0.5 bg-blue-400/10 rounded">Manual</span>
+              <span className="text-xs text-blue-400 px-2 py-0.5 bg-blue-400/10 rounded">手动添加</span>
             )}
             {!updateStatus?.registry_page_source && (
-              <span className="text-xs text-blue-400 px-2 py-0.5 bg-blue-400/10 rounded">Auto-detected</span>
+              <span className="text-xs text-blue-400 px-2 py-0.5 bg-blue-400/10 rounded">自动检测</span>
             )}
           </div>
 
@@ -652,7 +652,7 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
                 className="flex-1"
               />
               <Button onClick={handleRegistrySave} size="sm" disabled={updateAutoUpdateConfig.isPending}>
-                {updateAutoUpdateConfig.isPending ? 'Saving...' : 'Save'}
+                {updateAutoUpdateConfig.isPending ? '保存中...' : '保存'}
               </Button>
               <Button onClick={() => {
                 setRegistryPageUrl(updateStatus?.registry_page_url || '')
@@ -666,7 +666,7 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
               {/* Use manual URL if set, otherwise auto-detect */}
               {(() => {
                 const displayUrl = registryPageUrl || getRegistryUrl(container.image)
-                const displayName = registryPageUrl ? 'View Registry' : `View on ${getRegistryName(container.image)}`
+                const displayName = registryPageUrl ? '查看注册表' : `在 ${getRegistryName(container.image)} 上查看`
                 return (
                   <a
                     href={displayUrl}
@@ -686,14 +686,14 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
                 className="flex-shrink-0"
               >
                 <Edit2 className="h-4 w-4 mr-1" />
-                {registryPageUrl ? 'Edit' : 'Add'}
+                {registryPageUrl ? '编辑' : '添加'}
               </Button>
             </div>
           )}
           <p className="text-xs text-muted-foreground">
             {updateStatus?.registry_page_source === 'manual'
-              ? 'Manual URLs are preserved and not overwritten by auto-detection. Clear to re-enable auto-detection.'
-              : 'Auto-detected registry links can be overridden with a custom URL.'}
+              ? '手动添加的 URL 会被保留，不会被自动检测功能覆盖。清除后可重新启用自动检测功能。'
+              : '自动检测得到的更新日志链接可以被自定义的 URL 覆盖。'}
           </p>
           </div>
         </div>
@@ -701,7 +701,7 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
 
       {/* Settings */}
       <div className="space-y-4 border-t pt-6">
-        <h4 className="text-lg font-medium text-foreground mb-3">Update Settings</h4>
+        <h4 className="text-lg font-medium text-foreground mb-3">更新设置</h4>
 
         <div className="space-y-4">
           {/* Auto-update toggle */}
@@ -709,10 +709,10 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
           <div className="flex items-start justify-between py-4">
             <div className="flex-1 mr-4">
               <label htmlFor="auto-update" className="text-sm font-medium cursor-pointer">
-                Auto-update
+                自动更新
               </label>
               <p className="text-sm text-muted-foreground mt-1">
-                Automatically update this container when new versions are available
+                当有新版本镜像可用时，自动更新此容器。
               </p>
             </div>
             <Switch
@@ -727,10 +727,10 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
           <div className="py-4">
             <div className="mb-3">
               <label className="text-sm font-medium">
-                Tracking Mode
+                追踪模式
               </label>
               <p className="text-sm text-muted-foreground mt-1">
-                Choose how DockMon should track updates for this container
+                选择 DockMon 追踪此容器镜像更新的策略。
               </p>
             </div>
 
@@ -753,11 +753,10 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
                   className="mt-0.5 h-4 w-4 text-primary"
                 />
                 <div className="flex-1">
-                  <div className="font-medium text-sm">Respect Tag</div>
+                  <div className="font-medium text-sm">遵循标签</div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Use the image tag defined in your container or Compose configuration. If the tag is fixed (e.g., nginx:1.25.3),
-                    the container will stay on that version. If it's a floating tag (e.g., :latest), DockMon will pull the newest
-                    image for that tag.
+                    使用容器或者 Compose 配置文件中定义的镜像标签。如果标签是确定的 (例如 nginx:1.25.3)，
+                    则容器将保持在该版本。如果是可变的 (例如 :latest)，则 DockMon 将拉取该标签对应的最新镜像。
                   </p>
                 </div>
               </label>
@@ -780,10 +779,10 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
                   className="mt-0.5 h-4 w-4 text-primary"
                 />
                 <div className="flex-1">
-                  <div className="font-medium text-sm">Patch Updates</div>
+                  <div className="font-medium text-sm">补丁更新</div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Track patch updates only (bug fixes). Example: nginx:1.25.3 → tracks 1.25.x
-                    (will detect 1.25.4, 1.25.99, but not 1.26.0). Most conservative option.
+                    仅追踪补丁类型的更新 (或者错误修复)。
+                    例如: nginx:1.25.3 → 将追踪 1.25.x (会更新至 1.25.4、1.25.99，但不会更新至 1.26.0)。最为保守的选项。
                   </p>
                 </div>
               </label>
@@ -806,10 +805,10 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
                   className="mt-0.5 h-4 w-4 text-primary"
                 />
                 <div className="flex-1">
-                  <div className="font-medium text-sm">Minor Updates</div>
+                  <div className="font-medium text-sm">小型更新</div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Track minor and patch updates within the same major version. Example: nginx:1.25.3 → tracks 1.x
-                    (will detect 1.26.0, 1.99.0, but not 2.0.0). Recommended for most users.
+                    在同一个主版本内追踪次要版本和补丁更新。
+                    例如: nginx:1.25.3 → 将追踪 1.x (会更新至 1.26.0、1.99.0，但不会更新至 2.0.0)。推荐大多数用户使用。
                   </p>
                 </div>
               </label>
@@ -832,10 +831,9 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
                   className="mt-0.5 h-4 w-4 text-primary"
                 />
                 <div className="flex-1">
-                  <div className="font-medium text-sm">Always Latest</div>
+                  <div className="font-medium text-sm">保持最新</div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Always track the :latest tag regardless of your current version. This will pull the newest available
-                    version, which may include breaking changes.
+                    始终追踪 :latest 标签，而不考虑当前版本情况。这将始终拉取最新可用的镜像版本，但可能会包含破坏性的更改。
                   </p>
                 </div>
               </label>
@@ -849,10 +847,10 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
             <div className="flex-1 mr-4">
               <label htmlFor="update-policy" className="text-sm font-medium flex items-center gap-2">
                 <Shield className="h-4 w-4" />
-                Update Policy
+                更新策略
               </label>
               <p className="text-sm text-muted-foreground mt-1">
-                Control when this container can be updated
+                控制此容器何时可以被更新。
               </p>
             </div>
             <Select
@@ -862,7 +860,7 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
             >
               <SelectTrigger id="update-policy" className="w-[180px]">
                 <SelectValue>
-                  {POLICY_OPTIONS.find((opt) => opt.value === updatePolicy)?.label || 'Use Global Settings'}
+                  {POLICY_OPTIONS.find((opt) => opt.value === updatePolicy)?.label || '使用全局设置'}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
@@ -890,14 +888,14 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
 
       {/* Help text */}
       <div className="bg-muted/50 rounded-lg p-4 text-sm text-muted-foreground space-y-2">
-        <p className="font-medium">About Container Updates</p>
+        <p className="font-medium">关于容器更新</p>
         <ul className="list-disc list-inside space-y-1 text-xs">
-          <li>DockMon checks for updates daily at the configured time</li>
-          <li>Click "Check Now" to manually check for updates immediately</li>
-          <li>Auto-update will automatically pull and recreate containers when updates are available</li>
-          <li>Container health is verified after updates to ensure successful deployment</li>
-          <li>Updates are detected by comparing image digests, not just tags</li>
-          <li>For Compose-managed containers, updates apply to the running container only. Update your compose file to persist changes</li>
+          <li>DockMon 会根据配置的时间每天自动检查更新</li>
+          <li>点击 "立即检查" 按钮可用手动检查更新</li>
+          <li>启用自动更新后，在有可用更新时会自动拉取并重建容器</li>
+          <li>更新后会验证容器的健康状态，以确保更新成功</li>
+          <li>更新检查基于镜像的摘要进行比较，而非仅根据标签</li>
+          <li>对于由 Compose 文件管理的容器，更新仅针对正在运行的容器本身。请及时更新你的 compose 文件以持久化更改</li>
         </ul>
       </div>
     </div>

@@ -55,8 +55,8 @@ const formatMessage = (event: Event) => {
         pattern: 'from-to',
         oldState: event.old_state,
         newState: event.new_state,
-        prefix: message.match(pattern)?.[1] || 'from ',
-        infix: message.match(pattern)?.[3] || ' to ',
+        prefix: message.match(pattern)?.[1] || '从 ',
+        infix: message.match(pattern)?.[3] || ' 到 ',
         beforeText: message.split(pattern)[0],
         afterText: message.split(new RegExp(escapeRegExp(event.new_state), 'i'))[1] || '',
       }
@@ -111,7 +111,7 @@ const MetadataLinks = ({
           }}
           className="hover:text-primary hover:underline transition-colors"
         >
-          container={event.container_name}
+          所属容器: {event.container_name}
         </button>
       )}
       {hasHost && event.host_id && (
@@ -122,7 +122,7 @@ const MetadataLinks = ({
           }}
           className="hover:text-primary hover:underline transition-colors"
         >
-          host={event.host_name}
+          所属主机: {event.host_name}
         </button>
       )}
     </div>

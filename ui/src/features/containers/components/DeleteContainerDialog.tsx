@@ -50,7 +50,7 @@ function detectProtectedContainer(image: string): {
       category: 'databases',
       icon: Database,
       iconColor: 'text-blue-400',
-      reason: 'This appears to be a database container. Deleting it may result in data loss.',
+      reason: '这似乎是一个数据库容器。删除它可能会导致其他容器的数据丢失。',
     }
   }
 
@@ -67,7 +67,7 @@ function detectProtectedContainer(image: string): {
       category: 'proxies',
       icon: Network,
       iconColor: 'text-purple-400',
-      reason: 'This appears to be a proxy/reverse proxy. Deleting it may affect network routing.',
+      reason: '这似乎是一个代理/反向代理容器。删除它可能会影响网络路由。\n',
     }
   }
 
@@ -85,7 +85,7 @@ function detectProtectedContainer(image: string): {
       category: 'monitoring',
       icon: Activity,
       iconColor: 'text-green-400',
-      reason: 'This appears to be a monitoring/logging container. Deleting it may affect observability.',
+      reason: '这似乎是一个监控/日志记录容器。删除它可能会影响数据监控。\n',
     }
   }
 
@@ -144,11 +144,11 @@ export function DeleteContainerDialog({
               </div>
               <div className="flex-1">
                 <h2 className="text-lg font-semibold text-text-primary">
-                  Cannot Delete DockMon
+                  无法删除 DockMon
                 </h2>
                 <p className="mt-2 text-sm text-text-secondary">
-                  DockMon cannot delete itself. If you need to remove DockMon, please stop and
-                  remove the container manually via Docker CLI or another management tool.
+                  DockMon 无法删除自身。如果需要删除 DockMon，
+                  请使用 Docker CLI 或者其他管理工具手动停止并删除该容器。
                 </p>
               </div>
             </div>
@@ -156,7 +156,7 @@ export function DeleteContainerDialog({
 
           <div className="px-6 py-4 bg-surface-2 rounded-b-lg border-t border-border flex justify-end">
             <Button variant="outline" onClick={onClose} className="min-w-[100px]">
-              Close
+              关闭
             </Button>
           </div>
         </div>
@@ -195,7 +195,7 @@ export function DeleteContainerDialog({
             </div>
             <div className="flex-1">
               <h2 id="delete-modal-title" className="text-lg font-semibold text-text-primary">
-                {protectionInfo.isProtected ? 'Confirm Deletion of Protected Container' : 'Delete Container'}
+                {protectionInfo.isProtected ? '确定删除受保护的容器' : '删除容器'}
               </h2>
               <p className="mt-1 text-sm text-text-secondary">{containerName}</p>
             </div>
@@ -208,10 +208,10 @@ export function DeleteContainerDialog({
           {protectionInfo.isProtected && (
             <div className="bg-surface-2 rounded-md p-4 border border-border/50 mb-4">
               <p className="text-sm text-text-secondary mb-2">
-                <strong className="text-text-primary">Warning:</strong> {protectionInfo.reason}
+                <strong className="text-text-primary">警告:</strong> {protectionInfo.reason}
               </p>
               <p className="text-xs text-text-tertiary">
-                Please ensure you have backups and understand the impact of deleting this container.
+                请确保以进行了备份，并充分了解删除此容器后的影响。
               </p>
             </div>
           )}
@@ -219,10 +219,10 @@ export function DeleteContainerDialog({
           {/* Standard confirmation message */}
           <div className="mb-4">
             <p className="text-sm text-text-secondary">
-              Are you sure you want to delete <strong className="text-text-primary">{containerName}</strong>?
+              确定要删除 <strong className="text-text-primary">{containerName}</strong> 吗?
             </p>
             <p className="text-xs text-text-tertiary mt-2">
-              This action will permanently remove the container. This cannot be undone.
+              此操作将永久删除该容器，并且无法撤销。
             </p>
           </div>
 
@@ -237,11 +237,10 @@ export function DeleteContainerDialog({
               />
               <div className="flex-1">
                 <span className="text-sm text-text-primary font-medium">
-                  Also remove anonymous volumes
+                  同时删除匿名卷
                 </span>
                 <p className="text-xs text-text-tertiary mt-1">
-                  This will delete unnamed volumes associated with this container. Named volumes
-                  will always be preserved.
+                  这将删除由此容器创建的但未关联到任何数据卷的匿名卷。注意命名卷仍然会被保留
                 </p>
               </div>
             </label>
@@ -251,7 +250,7 @@ export function DeleteContainerDialog({
         {/* Footer */}
         <div className="px-6 py-4 bg-surface-2 rounded-b-lg border-t border-border flex justify-end gap-3">
           <Button variant="outline" onClick={onClose} className="min-w-[100px]">
-            Cancel
+            取消
           </Button>
           <Button
             variant="destructive"
@@ -259,7 +258,7 @@ export function DeleteContainerDialog({
             className="min-w-[100px] bg-red-600 hover:bg-red-700 text-white"
           >
             <Trash2 className="w-4 h-4 mr-2" />
-            Delete
+            删除
           </Button>
         </div>
       </div>

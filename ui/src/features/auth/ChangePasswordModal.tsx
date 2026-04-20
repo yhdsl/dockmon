@@ -43,22 +43,22 @@ export function ChangePasswordModal({
 
     // Validation
     if (!currentPassword || !newPassword || !confirmPassword) {
-      setError('Please fill in all fields')
+      setError('请填写所有字段内容')
       return
     }
 
     if (newPassword.length < 8) {
-      setError('New password must be at least 8 characters long')
+      setError('新密码长度必须至少为 8 个字符')
       return
     }
 
     if (newPassword === currentPassword) {
-      setError('New password must be different from current password')
+      setError('新密码必须与当前密码不同')
       return
     }
 
     if (newPassword !== confirmPassword) {
-      setError('New password and confirmation do not match')
+      setError('新密码与确认密码不同')
       return
     }
 
@@ -84,21 +84,21 @@ export function ChangePasswordModal({
     } catch (err) {
       if (err instanceof ApiError) {
         if (err.status === 401) {
-          setError('Current password is incorrect')
+          setError('当前密码不正确')
         } else if (err.status === 400) {
           const msg = (err.message || '').toLowerCase()
           if (msg.includes('same as') || msg.includes('reuse')) {
-            setError('New password cannot be the same as current password')
+            setError('新密码不能与旧密码相同')
           } else if (msg.includes('too short') || msg.includes('min')) {
-            setError('New password does not meet minimum length requirements')
+            setError('新密码未能满足最小字符长度要求')
           } else {
-            setError('Invalid password. Please check requirements and try again.')
+            setError('无效的密码。请检查密码要求后重试。')
           }
         } else {
-          setError('Failed to change password. Please try again.')
+          setError('修改密码时失败，请再试一次。')
         }
       } else {
-        setError('Connection error. Please check if the backend is running.')
+        setError('连接错误。请检查后端服务是否正常运行。')
       }
     } finally {
       setIsSubmitting(false)
@@ -123,12 +123,12 @@ export function ChangePasswordModal({
               <Lock className="h-6 w-6 text-primary" />
             </div>
             <h2 className="text-xl font-semibold">
-              {isRequired ? 'Change Your Password' : 'Update Password'}
+              {isRequired ? '更改你的密码' : '重置密码'}
             </h2>
             <p className="text-sm text-muted-foreground mt-1">
               {isRequired
-                ? 'For security reasons, you must change your password before continuing.'
-                : 'Enter your current password and choose a new one.'}
+                ? '出于安全原因，必须先更改密码才能继续使用。'
+                : '请输入当前密码并设置一个新密码。'}
             </p>
           </div>
           {!isRequired && (
@@ -137,7 +137,7 @@ export function ChangePasswordModal({
               className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100"
             >
               <X className="h-4 w-4" />
-              <span className="sr-only">Close</span>
+              <span className="sr-only">关闭</span>
             </button>
           )}
         </div>
@@ -160,7 +160,7 @@ export function ChangePasswordModal({
               htmlFor="current-password"
               className="block text-sm font-medium mb-1"
             >
-              Current Password <span className="text-destructive">*</span>
+              当前密码 <span className="text-destructive">*</span>
             </label>
             <Input
               id="current-password"
@@ -183,7 +183,7 @@ export function ChangePasswordModal({
               htmlFor="new-password"
               className="block text-sm font-medium mb-1"
             >
-              New Password <span className="text-destructive">*</span>
+              新密码 <span className="text-destructive">*</span>
             </label>
             <Input
               id="new-password"
@@ -199,7 +199,7 @@ export function ChangePasswordModal({
               minLength={8}
             />
             <p className="text-xs text-muted-foreground mt-1">
-              Minimum 8 characters
+              至少为 8 个字符
             </p>
           </div>
 
@@ -209,7 +209,7 @@ export function ChangePasswordModal({
               htmlFor="confirm-password"
               className="block text-sm font-medium mb-1"
             >
-              Confirm New Password <span className="text-destructive">*</span>
+              确认新的密码 <span className="text-destructive">*</span>
             </label>
             <Input
               id="confirm-password"
@@ -235,7 +235,7 @@ export function ChangePasswordModal({
                 disabled={isSubmitting}
                 className="flex-1"
               >
-                Cancel
+                取消
               </Button>
             )}
             <Button
@@ -246,10 +246,10 @@ export function ChangePasswordModal({
               {isSubmitting ? (
                 <>
                   <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
-                  Changing...
+                  重置中...
                 </>
               ) : (
-                'Change Password'
+                '重置密码'
               )}
             </Button>
           </div>

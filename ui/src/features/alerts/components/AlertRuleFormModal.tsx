@@ -70,9 +70,9 @@ interface ContainerSelector {
 const RULE_KINDS = [
   {
     value: 'cpu_high',
-    label: 'High CPU Usage',
-    description: 'Alert when CPU usage exceeds threshold',
-    category: 'Performance',
+    label: 'CPU 使用率过高',
+    description: '当 CPU 使用率超过阈值时告警',
+    category: '性能',
     requiresMetric: true,
     metric: 'cpu_percent',
     defaultOperator: '>=',
@@ -81,9 +81,9 @@ const RULE_KINDS = [
   },
   {
     value: 'memory_high',
-    label: 'High Memory Usage',
-    description: 'Alert when memory usage exceeds threshold',
-    category: 'Performance',
+    label: '内存使用率过高',
+    description: '当内存使用率超过阈值时告警',
+    category: '性能',
     requiresMetric: true,
     metric: 'memory_percent',
     defaultOperator: '>=',
@@ -92,9 +92,9 @@ const RULE_KINDS = [
   },
   {
     value: 'disk_low',
-    label: 'Low Disk Space',
-    description: 'Alert when disk usage exceeds threshold',
-    category: 'Performance',
+    label: '磁盘剩余空间过低',
+    description: '当磁盘使用率超过阈值时告警',
+    category: '性能',
     requiresMetric: true,
     metric: 'disk_percent',
     defaultOperator: '>=',
@@ -103,75 +103,75 @@ const RULE_KINDS = [
   },
   {
     value: 'container_unhealthy',
-    label: 'Container Health Check Failing',
-    description: 'Alert when Docker native health check fails (HEALTHCHECK in Dockerfile)',
-    category: 'Container State',
+    label: '容器内建健康检查失败',
+    description: '当 Docker 内建的健康检查失败时告警 (Dockerfile 中的 HEALTHCHECK 配置)',
+    category: '容器状态',
     requiresMetric: false,
     scopes: ['container']
   },
   {
     value: 'health_check_failed',
-    label: 'Health Check Failed',
-    description: 'Alert when HTTP/HTTPS health check fails (configured in Health Check tab)',
-    category: 'Container State',
+    label: '容器健康检查失败',
+    description: '当 HTTP/HTTPS 健康检查失败时告警 (在容器健康检查标签中配置)',
+    category: '容器状态',
     requiresMetric: false,
     scopes: ['container']
   },
   {
     value: 'container_stopped',
-    label: 'Container Stopped/Died',
-    description: 'Alert when container stops or crashes (any exit code). Use grace period to avoid false positives during restarts.',
-    category: 'Container State',
+    label: '容器停止/异常退出',
+    description: '当容器停止或异常退出 (任何退出码) 时告警。可设置冷却期避免在重启期间误报。',
+    category: '容器状态',
     requiresMetric: false,
     scopes: ['container']
   },
   {
     value: 'container_restart',
-    label: 'Container Restarted',
-    description: 'Alert when container restarts (any restart, expected or unexpected)',
-    category: 'Container State',
+    label: '容器重启',
+    description: '当容器重启时告警 (无论是预期还是非预期重启)',
+    category: '容器状态',
     requiresMetric: false,
     scopes: ['container']
   },
   {
     value: 'host_down',
-    label: 'Host Offline',
-    description: 'Alert when host becomes unreachable',
-    category: 'Host State',
+    label: '主机离线',
+    description: '当无法访问主机时告警',
+    category: '主机状态',
     requiresMetric: false,
     scopes: ['host']
   },
   {
     value: 'update_available',
-    label: 'Update Available',
-    description: 'Alert when a container image update is available',
-    category: 'Updates',
+    label: '更新可用',
+    description: '当容器的镜像有可用更新时告警',
+    category: '更新',
     requiresMetric: false,
     scopes: ['container']
   },
   {
     value: 'update_completed',
-    label: 'Update Completed',
-    description: 'Alert when a container update completes successfully',
-    category: 'Updates',
+    label: '更新完成',
+    description: '当容器的镜像成功更新时告警',
+    category: '更新',
     requiresMetric: false,
     scopes: ['container']
   },
   {
     value: 'update_failed',
-    label: 'Update Failed',
-    description: 'Alert when a container update fails or rollback occurs',
-    category: 'Updates',
+    label: '更新失败',
+    description: '当容器的镜像更新失败或回滚时告警',
+    category: '更新',
     requiresMetric: false,
     scopes: ['container']
   },
 ]
 
 const OPERATORS = [
-  { value: '>=', label: '>= (Greater than or equal)' },
-  { value: '<=', label: '<= (Less than or equal)' },
-  { value: '>', label: '> (Greater than)' },
-  { value: '<', label: '< (Less than)' },
+  { value: '>=', label: '>= (大于等于)' },
+  { value: '<=', label: '<= (小于等于)' },
+  { value: '>', label: '> (大于)' },
+  { value: '<', label: '< (小于)' },
 ]
 
 // Channel type metadata for icons and labels
@@ -317,7 +317,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
 
   // Tag selector state (always available, not scope-dependent)
   // Tags now include source metadata to distinguish user-created vs derived (from Docker labels)
-  // See: https://github.com/darthnorse/dockmon/issues/88
+  // See: https://github.com/yhdsl/dockmon/issues/88
   type TagWithSource = { name: string; source: 'user' | 'derived'; color?: string | null }
   const [tagSearchInput, setTagSearchInput] = useState('')
   const [availableTags, setAvailableTags] = useState<TagWithSource[]>([])
@@ -538,7 +538,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
       }
       onClose()
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to save rule'
+      const errorMessage = err instanceof Error ? err.message : '保存告警规则时失败'
       setError(errorMessage)
     }
   }
@@ -617,76 +617,78 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
     // Trigger type
     if (requiresMetric) {
       const metricName = formData.metric?.replace('_', ' ')
-      parts.push(`Trigger: ${metricName || 'metric'}`)
-      parts.push(`Threshold: ${formData.operator} ${formData.threshold}%`)
-      parts.push(`Alert Active Delay: ${formData.alert_active_delay_seconds}s (${formData.occurrences} breaches)`)
+      parts.push(`告警条件: ${
+          (metricName || 'metric').replace("cpu percent", "CPU 占用率").replace("memory percent", "内存占用率").replace("disk percent", "磁盘占用率")
+      }`)
+      parts.push(`阈值: ${formData.operator} ${formData.threshold}%`)
+      parts.push(`告警触发延迟: ${formData.alert_active_delay_seconds}s (触发 ${formData.occurrences} 次后告警)`)
     } else {
       const kindLabel = selectedKind?.label || formData.kind
-      parts.push(`Trigger: ${kindLabel}`)
+      parts.push(`告警条件: ${kindLabel}`)
       if (formData.alert_active_delay_seconds > 0) {
-        parts.push(`Alert Active Delay: ${formData.alert_active_delay_seconds}s`)
+        parts.push(`告警触发延迟: ${formData.alert_active_delay_seconds}s`)
       }
     }
 
     // Scope
     if (formData.scope === 'host') {
       if (selectedTags.length > 0) {
-        parts.push(`Scope: All hosts with tags [${selectedTags.join(', ')}]`)
+        parts.push(`范围: 全部拥有 [${selectedTags.join(', ')}] 标签的主机`)
       } else if (formData.host_selector_all) {
-        parts.push('Scope: All hosts')
+        parts.push('范围: 全部主机')
       } else if (formData.host_selector_ids.length > 0) {
-        parts.push(`Scope: ${formData.host_selector_ids.length} selected host${formData.host_selector_ids.length > 1 ? 's' : ''}`)
+        parts.push(`范围: ${formData.host_selector_ids.length} 个选择的主机`)
       }
     } else if (formData.scope === 'container') {
       let scopeText = ''
       if (selectedTags.length > 0) {
-        scopeText = `All containers with tags [${selectedTags.join(', ')}]`
+        scopeText = `全部拥有 [${selectedTags.join(', ')}] 标签的容器`
       } else if (formData.container_selector_all) {
-        scopeText = 'All containers'
+        scopeText = '全部容器'
       } else if (formData.container_selector_included.length > 0) {
-        scopeText = `${formData.container_selector_included.length} selected container${formData.container_selector_included.length > 1 ? 's' : ''}`
+        scopeText = `${formData.container_selector_included.length} 个选择的容器`
       }
       // Add run mode filter
       if (formData.container_run_mode === 'should_run') {
-        scopeText += ' (Should Run only)'
+        scopeText += ' (始终运行)'
       } else if (formData.container_run_mode === 'on_demand') {
-        scopeText += ' (On-Demand only)'
+        scopeText += ' (按需运行)'
       }
       if (scopeText) {
-        parts.push(`Scope: ${scopeText}`)
+        parts.push(`范围: ${scopeText}`)
       }
     } else {
-      parts.push(`Scope: ${formData.scope}`)
+      parts.push(`范围: ${formData.scope}`)
     }
 
     // Severity
-    parts.push(`Severity: ${formData.severity}`)
+    parts.push(`严重程度: ${{'info': '通知','warning': '警告','error': '错误','critical': '严重',}[formData.severity]}`)
 
     // Timing Configuration
     if (!requiresMetric) {
       // For event-driven rules, show notification active delay
       if (formData.notification_active_delay_seconds > 0) {
-        parts.push(`Notification Delay: ${formData.notification_active_delay_seconds}s`)
+        parts.push(`通知触发延迟: ${formData.notification_active_delay_seconds}s`)
       }
       if (formData.alert_clear_delay_seconds > 0) {
-        parts.push(`Alert Clear Delay: ${formData.alert_clear_delay_seconds}s`)
+        parts.push(`告警清除延迟: ${formData.alert_clear_delay_seconds}s`)
       }
     } else {
       // For metric-driven rules, show clear threshold/delay if set
       if (formData.clear_threshold !== undefined && formData.clear_threshold !== null) {
-        parts.push(`Clear Threshold: ${formData.clear_threshold}%`)
+        parts.push(`自动解决阈值: ${formData.clear_threshold}%`)
       }
       if (formData.alert_clear_delay_seconds > 0) {
-        parts.push(`Alert Clear Delay: ${formData.alert_clear_delay_seconds}s`)
+        parts.push(`告警清除延迟: ${formData.alert_clear_delay_seconds}s`)
       }
     }
 
     // Cooldown
-    parts.push(`Notification Cooldown: ${formData.notification_cooldown_seconds}s`)
+    parts.push(`通知冷却时长: ${formData.notification_cooldown_seconds}s`)
 
     // Suppress during updates (container scope only)
     if (formData.scope === 'container') {
-      parts.push(`Suppress during updates: ${formData.suppress_during_updates ? 'Yes' : 'No'}`)
+      parts.push(`在更新期间禁用: ${formData.suppress_during_updates ? '是' : '否'}`)
     }
 
     // Notifications - filter out channels that no longer exist
@@ -695,9 +697,9 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
       .filter((c): c is NonNullable<typeof c> => c !== undefined)
     if (existingChannels.length > 0) {
       const channelNames = existingChannels.map(c => c.name).join(', ')
-      parts.push(`Notifications: ${channelNames}`)
+      parts.push(`通知频道: ${channelNames}`)
     } else {
-      parts.push('Notifications: None')
+      parts.push('通知频道: 无')
     }
 
     return parts
@@ -705,7 +707,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
 
   // Compute button text - avoid nested ternary in JSX
   const isSaving = createRule.isPending || updateRule.isPending
-  const submitButtonText = isSaving ? 'Saving...' : (isEditing ? 'Update Rule' : 'Create Rule')
+  const submitButtonText = isSaving ? '保存中...' : (isEditing ? '更新规则' : '保存规则')
 
   return (
     <>
@@ -721,7 +723,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
         <div className="w-full max-w-6xl rounded-lg border border-gray-700 bg-[#0d1117] shadow-2xl max-h-[90vh] overflow-y-auto pointer-events-auto">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-700 px-6 py-4">
-          <h2 className="text-xl font-semibold text-white">{isEditing ? 'Edit Alert Rule' : 'Create Alert Rule'}</h2>
+          <h2 className="text-xl font-semibold text-white">{isEditing ? '编辑告警规则' : '创建告警规则'}</h2>
           <button
             onClick={onClose}
             className="rounded-md p-1 text-gray-400 transition-colors hover:bg-gray-800 hover:text-white"
@@ -744,55 +746,55 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
           {/* Basic Info */}
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Rule Name *</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">告警规则名称*</label>
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => handleChange('name', e.target.value)}
                 required
                 className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                placeholder="e.g., High CPU Alert"
+                placeholder="例如: CPU 使用率过高时告警"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Description</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">描述</label>
               <textarea
                 value={formData.description}
                 onChange={(e) => handleChange('description', e.target.value)}
                 rows={2}
                 className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                placeholder="Optional description of what this rule monitors"
+                placeholder="该告警规则监控的指标的可选描述"
               />
             </div>
           </div>
 
           {/* Scope Selection */}
           <div className="space-y-4 rounded-lg border border-gray-700 bg-gray-800/30 p-4">
-            <h3 className="text-sm font-semibold text-white">Alert Scope</h3>
+            <h3 className="text-sm font-semibold text-white">告警范围</h3>
             <p className="text-xs text-gray-400">
-              Choose whether this rule applies to hosts or containers
+              选择该告警规则作用于主机还是容器
             </p>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Scope *</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">范围*</label>
               <select
                 value={formData.scope}
                 onChange={(e) => handleChange('scope', e.target.value as AlertScope)}
                 required
                 className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
-                <option value="host">Host</option>
-                <option value="container">Container</option>
+                <option value="host">主机</option>
+                <option value="container">容器</option>
               </select>
             </div>
           </div>
 
           {/* Rule Configuration */}
           <div className="space-y-4 rounded-lg border border-gray-700 bg-gray-800/30 p-4">
-            <h3 className="text-sm font-semibold text-white">Rule Configuration</h3>
+            <h3 className="text-sm font-semibold text-white">配置告警规则</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Rule Type *</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1">告警规则类型*</label>
                 <select
                   value={formData.kind}
                   onChange={(e) => handleChange('kind', e.target.value)}
@@ -802,7 +804,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                   {/* Group rule kinds by category */}
                   {Object.entries(
                     availableRuleKinds.reduce((groups: Record<string, typeof availableRuleKinds>, kind) => {
-                      const category = kind.category || 'Other'
+                      const category = kind.category || '其他'
                       if (!groups[category]) groups[category] = []
                       groups[category].push(kind)
                       return groups
@@ -823,17 +825,17 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Severity *</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1">严重程度*</label>
                 <select
                   value={formData.severity}
                   onChange={(e) => handleChange('severity', e.target.value as AlertSeverity)}
                   required
                   className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 >
-                  <option value="info">Info</option>
-                  <option value="warning">Warning</option>
-                  <option value="error">Error</option>
-                  <option value="critical">Critical</option>
+                  <option value="info">通知</option>
+                  <option value="warning">警告</option>
+                  <option value="error">错误</option>
+                  <option value="critical">严重</option>
                 </select>
               </div>
             </div>
@@ -841,21 +843,21 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
 
           {/* Tag Filter (Optional) - Always available */}
           <div className="space-y-4 rounded-lg border border-gray-700 bg-gray-800/30 p-4">
-            <h3 className="text-sm font-semibold text-white">Tag-Based Filter (Optional)</h3>
+            <h3 className="text-sm font-semibold text-white">基于标签的过滤器 (可选)</h3>
             <p className="text-xs text-gray-400">
-              Select tags to apply this rule to all {formData.scope === 'host' ? 'hosts' : 'containers'} with ANY of these tags.
-              When tags are selected, individual selection below is disabled.
+              选择标签以便将告警规则作用于任何具有其中一个已选择标签的{formData.scope === 'host' ? '主机' : '容器'}。
+              当选择了标签后，下方的单独选择卡片将会被禁用。
             </p>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Search and Select Tags</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">搜索并选择标签</label>
                 <div className="relative mb-2">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
                   <input
                     type="text"
                     value={tagSearchInput}
                     onChange={(e) => setTagSearchInput(e.target.value)}
-                    placeholder="Search tags..."
+                    placeholder="搜索标签..."
                     className="w-full pl-9 pr-3 py-2 rounded-md border border-gray-700 bg-gray-800 text-white placeholder-gray-500 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
@@ -863,7 +865,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                 {/* Available Tags */}
                 <div className="space-y-1 max-h-40 overflow-y-auto border border-gray-700 rounded-md p-2 bg-gray-900">
                   {availableTags.length === 0 ? (
-                    <div className="text-sm text-gray-400 text-center py-2">No tags found</div>
+                    <div className="text-sm text-gray-400 text-center py-2">未找到匹配的标签</div>
                   ) : (
                     availableTags.map((tag) => {
                       const isSelected = selectedTags.includes(tag.name)
@@ -891,7 +893,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                           </div>
                           <span className={isDerived ? 'text-gray-300 italic' : 'text-white'}>{tag.name}</span>
                           {isDerived && (
-                            <span className="text-xs text-gray-500 ml-auto">(from label)</span>
+                            <span className="text-xs text-gray-500 ml-auto">(来自派生标签)</span>
                           )}
                         </button>
                       )
@@ -902,7 +904,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                 {/* Selected Tags Display */}
                 {selectedTags.length > 0 && (
                   <div className="mt-3">
-                    <label className="block text-xs font-medium text-gray-400 mb-2">Selected Tags ({selectedTags.length})</label>
+                    <label className="block text-xs font-medium text-gray-400 mb-2">已选择的标签 ({selectedTags.length})</label>
                     <div className="flex flex-wrap gap-2">
                       {selectedTags.map((tag) => (
                         <span
@@ -928,12 +930,12 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
           {/* Metric Conditions (only for metric-based rules) */}
           {requiresMetric && (
             <div className="space-y-4 rounded-lg border border-gray-700 bg-gray-800/30 p-4">
-              <h3 className="text-sm font-semibold text-white">Threshold Configuration</h3>
+              <h3 className="text-sm font-semibold text-white">配置阈值</h3>
 
               <div className="grid grid-cols-2 gap-4">
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Operator *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">运算符*</label>
                   <select
                     value={formData.operator}
                     onChange={(e) => handleChange('operator', e.target.value)}
@@ -950,7 +952,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-1">
-                    Threshold (%) *
+                    阈值 (%) *
                   </label>
                   <input
                     type="number"
@@ -963,14 +965,14 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                     className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                   <p className="mt-1 text-xs text-gray-400">
-                    Alert when {formData.metric?.replace('_', ' ')} {formData.operator} {formData.threshold}%
+                    当{{'cpu percent': ' CPU 占用率','memory percent': '内存占用率','disk percent': '磁盘占用率',}[formData.metric?.replace('_', ' ') ?? '']} {formData.operator} {formData.threshold}% 时触发告警
                   </p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Clear Threshold</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">自动解决阈值</label>
                   <input
                     type="number"
                     value={formData.clear_threshold || ''}
@@ -979,9 +981,9 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                     max={100}
                     step={0.1}
                     className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    placeholder="Optional"
+                    placeholder="可选"
                   />
-                  <p className="mt-1 text-xs text-gray-400">Metric value that triggers auto-resolve (e.g., CPU drops below 80%). Defaults to alert threshold if not specified.</p>
+                  <p className="mt-1 text-xs text-gray-400">触发后自动解决告警的阈值 (例如，当 CPU 占用率降低到 80% 以下)。如果未指定，则默认为规则设定的阈值。</p>
                 </div>
               </div>
             </div>
@@ -991,7 +993,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
           {formData.scope === 'host' && (
             <div className="space-y-4 rounded-lg border border-gray-700 bg-gray-800/30 p-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-white">Host Selection</h3>
+                <h3 className="text-sm font-semibold text-white">单独主机选择</h3>
                 {selectedTags.length === 0 && (
                   <div className="flex gap-2">
                     <button
@@ -1002,7 +1004,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                       }}
                       className="text-xs text-blue-400 hover:text-blue-300 underline"
                     >
-                      Select All
+                      全选
                     </button>
                     <span className="text-gray-600">|</span>
                     <button
@@ -1013,7 +1015,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                       }}
                       className="text-xs text-blue-400 hover:text-blue-300 underline"
                     >
-                      Deselect All
+                      取消全选
                     </button>
                   </div>
                 )}
@@ -1022,19 +1024,19 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
               {selectedTags.length > 0 ? (
                 <div className="rounded-md bg-gray-900/50 border border-gray-700 p-4 text-center">
                   <p className="text-sm text-gray-400">
-                    Individual host selection is disabled. This rule applies to all hosts with the selected tags above.
-                    Remove tags to manually select hosts.
+                    单独的主机选择卡片已被禁用。该告警规则适用于任何具有其中一个已选择标签的主机。
+                    删除已选择的标签以便手动指定主机。
                   </p>
                 </div>
               ) : (
                 <div ref={hostDropdownRef} className="relative">
                   <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Select Hosts
+                    选择主机
                     {formData.host_selector_all && hosts.length > 0 && (
-                      <span className="ml-2 text-xs text-blue-400">({hosts.length} hosts - all selected)</span>
+                      <span className="ml-2 text-xs text-blue-400">({hosts.length} 个主机 - 已全部选择)</span>
                     )}
                     {!formData.host_selector_all && formData.host_selector_ids.length > 0 && (
-                      <span className="ml-2 text-xs text-blue-400">({formData.host_selector_ids.length} selected)</span>
+                      <span className="ml-2 text-xs text-blue-400">({formData.host_selector_ids.length} 个主机已选择)</span>
                     )}
                   </label>
                   <div className="relative">
@@ -1044,7 +1046,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                       value={hostSearchInput}
                       onChange={(e) => setHostSearchInput(e.target.value)}
                       onFocus={() => setShowHostDropdown(true)}
-                      placeholder="Search hosts..."
+                      placeholder="搜索主机..."
                       className="w-full pl-9 pr-3 py-2 rounded-md border border-gray-700 bg-gray-800 text-white placeholder-gray-500 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
                   </div>
@@ -1053,7 +1055,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                 {showHostDropdown && (
                   <div className="absolute z-50 w-full mt-1 py-1 rounded-md border border-gray-700 bg-gray-800 shadow-lg max-h-[240px] overflow-y-auto">
                     {filteredHosts.length === 0 ? (
-                      <div className="px-3 py-2 text-sm text-gray-400">No hosts found</div>
+                      <div className="px-3 py-2 text-sm text-gray-400">未找到匹配的主机</div>
                     ) : (
                       filteredHosts.map((host: Host) => {
                         const isSelected = formData.host_selector_all || formData.host_selector_ids.includes(host.id)
@@ -1106,7 +1108,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
           {formData.scope === 'container' && (
             <div className="space-y-4 rounded-lg border border-gray-700 bg-gray-800/30 p-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-white">Container Selection</h3>
+                <h3 className="text-sm font-semibold text-white">单独容器选择</h3>
                 {selectedTags.length === 0 && (
                   <div className="flex gap-2">
                     <button
@@ -1117,7 +1119,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                       }}
                       className="text-xs text-blue-400 hover:text-blue-300 underline"
                     >
-                      Select All
+                      全选
                     </button>
                     <span className="text-gray-600">|</span>
                     <button
@@ -1129,7 +1131,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                       }}
                       className="text-xs text-blue-400 hover:text-blue-300 underline"
                     >
-                      Deselect All
+                      取消全选
                     </button>
                   </div>
                 )}
@@ -1138,15 +1140,15 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
               {selectedTags.length > 0 ? (
                 <div className="rounded-md bg-gray-900/50 border border-gray-700 p-4 text-center">
                   <p className="text-sm text-gray-400">
-                    Individual container selection is disabled. This rule applies to all containers with the selected tags above.
-                    Remove tags to manually select containers.
+                    单独的容器选择卡片已被禁用。该告警规则适用于任何具有其中一个已选择标签的容器。
+                    删除已选择的标签以便手动指定容器。
                   </p>
                 </div>
               ) : (
                 <>
                   {/* Container Run Mode Selector */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Container Run Mode</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">容器运行模式</label>
                     <div className="grid grid-cols-3 gap-2">
                       <button
                         type="button"
@@ -1157,7 +1159,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                             : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                         }`}
                       >
-                        All Containers
+                        全部容器
                       </button>
                       <button
                         type="button"
@@ -1168,7 +1170,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                             : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                         }`}
                       >
-                        Should Run Only
+                        始终运行
                       </button>
                       <button
                         type="button"
@@ -1179,11 +1181,11 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                             : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                         }`}
                       >
-                        On-Demand Only
+                        按需运行
                       </button>
                     </div>
                     <p className="mt-2 text-xs text-gray-400">
-                      Filter containers by run mode to create separate rules for different severity levels
+                      根据不同的运行模式过滤容器，以便为不同的严重程度创建独立的告警规则
                     </p>
                   </div>
 
@@ -1191,12 +1193,12 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                   {formData.container_run_mode === 'all' ? (
                     <div ref={containerDropdownRef} className="relative">
                   <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Select Containers
+                    选择容器
                     {formData.container_selector_all && filteredContainers.length > 0 && (
-                      <span className="ml-2 text-xs text-blue-400">({filteredContainers.length} containers - all selected)</span>
+                      <span className="ml-2 text-xs text-blue-400">({filteredContainers.length} 个容器 - 已全部选择)</span>
                     )}
                     {!formData.container_selector_all && formData.container_selector_included.length > 0 && (
-                      <span className="ml-2 text-xs text-blue-400">({formData.container_selector_included.length} selected)</span>
+                      <span className="ml-2 text-xs text-blue-400">({formData.container_selector_included.length} 个容器已选择)</span>
                     )}
                   </label>
                 <div className="relative">
@@ -1206,7 +1208,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                     value={containerSearchInput}
                     onChange={(e) => setContainerSearchInput(e.target.value)}
                     onFocus={() => setShowContainerDropdown(true)}
-                    placeholder="Search containers..."
+                    placeholder="搜索容器..."
                     className="w-full pl-9 pr-3 py-2 rounded-md border border-gray-700 bg-gray-800 text-white placeholder-gray-500 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
@@ -1215,7 +1217,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                 {showContainerDropdown && (
                   <div className="absolute z-50 w-full mt-1 py-1 rounded-md border border-gray-700 bg-gray-800 shadow-lg max-h-[240px] overflow-y-auto">
                     {filteredContainers.length === 0 ? (
-                      <div className="px-3 py-2 text-sm text-gray-400">No containers found</div>
+                      <div className="px-3 py-2 text-sm text-gray-400">未找到匹配的容器</div>
                     ) : (
                       filteredContainers.map((container: Container) => {
                         // Issue #99: Use composite key (host_id:name) to differentiate same-named containers on different hosts
@@ -1273,13 +1275,13 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
               /* Show read-only info when a specific run mode is selected */
               <div className="space-y-2">
                 <div className="text-sm text-gray-300">
-                  <span className="font-medium">Matching Containers:</span>
-                  <span className="ml-2 text-xs text-blue-400">{filteredContainers.length} container{filteredContainers.length !== 1 ? 's' : ''}</span>
+                  <span className="font-medium">匹配的容器数目:</span>
+                  <span className="ml-2 text-xs text-blue-400">{filteredContainers.length} 个</span>
                 </div>
                 <div className="rounded-lg border border-blue-500/30 bg-blue-500/10 p-3">
                   <p className="text-xs text-blue-300">
-                    All containers with run mode "{formData.container_run_mode === 'should_run' ? 'Should Run' : 'On-Demand'}" will be monitored automatically.
-                    To exclude specific containers from this rule, change their run mode in the container settings.
+                    所有运行模式为"{formData.container_run_mode === 'should_run' ? '始终运行' : '按需运行'}"的容器将会被自动监控。
+                    如果需要将特定容器排除在此告警规则之外，请在对应容器的设置中更改运行模式。
                   </p>
                 </div>
               </div>
@@ -1293,8 +1295,8 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
           {!['update_available', 'update_completed', 'update_failed'].includes(formData.kind) && (
           <div className="space-y-4 rounded-lg border border-gray-700 bg-gray-800/30 p-4">
             <div>
-              <h3 className="text-sm font-semibold text-white">Alert Timing</h3>
-              <p className="text-xs text-gray-400 mt-1">Controls when alerts become active and when they clear</p>
+              <h3 className="text-sm font-semibold text-white">告警时间</h3>
+              <p className="text-xs text-gray-400 mt-1">控制告警何时触发以及何时清除</p>
             </div>
 
             {/* Metric-driven alert timing */}
@@ -1302,7 +1304,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
               <>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Alert Active Delay (seconds) *</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">告警激活延迟 (秒) *</label>
                     <input
                       type="number"
                       value={formData.alert_active_delay_seconds}
@@ -1311,11 +1313,11 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                       min={0}
                       className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
-                    <p className="mt-1 text-xs text-gray-500">How long condition must be true before alert triggers</p>
+                    <p className="mt-1 text-xs text-gray-500">需要告警条件保持为真多久后触发告警</p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Alert Clear Delay (seconds)</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">告警清除延迟 (秒)</label>
                     <input
                       type="number"
                       value={formData.alert_clear_delay_seconds}
@@ -1324,13 +1326,13 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                       placeholder="60"
                       className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
-                    <p className="mt-1 text-xs text-gray-500">How long condition must be false before alert clears</p>
+                    <p className="mt-1 text-xs text-gray-500">需要告警条件保持为假多久后清除告警</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Occurrences *</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">触发次数*</label>
                     <input
                       type="number"
                       value={formData.occurrences}
@@ -1340,7 +1342,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                       max={100}
                       className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
-                    <p className="mt-1 text-xs text-gray-500">Breaches needed to trigger alert</p>
+                    <p className="mt-1 text-xs text-gray-500">需要重复达到多少次告警条件后触发告警</p>
                   </div>
                 </div>
               </>
@@ -1350,7 +1352,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
             {!requiresMetric && (
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Alert Active Delay (seconds)</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">告警激活延迟 (秒)</label>
                   <input
                     type="number"
                     value={formData.alert_active_delay_seconds}
@@ -1360,12 +1362,12 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                     className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                   <p className="mt-1 text-xs text-gray-400">
-                    Condition must be true for this long before alert triggers. Set to 0 for immediate alerts.
+                    需要告警条件保持为真多久后触发告警？设置为 0 以立即触发告警。
                   </p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Alert Clear Delay (seconds)</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">告警清除延迟 (秒)</label>
                   <input
                     type="number"
                     value={formData.alert_clear_delay_seconds}
@@ -1375,7 +1377,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                     className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                   <p className="mt-1 text-xs text-gray-400">
-                    Condition must be false for this long before alert clears. Set to 0 for immediate clearing.
+                    需要告警条件保持为假多久后清除告警？设置为 0 以立即清除告警。
                   </p>
                 </div>
               </div>
@@ -1387,13 +1389,13 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
           {!['update_available', 'update_completed', 'update_failed'].includes(formData.kind) && (
           <div className="space-y-4 rounded-lg border border-gray-700 bg-gray-800/30 p-4">
             <div>
-              <h3 className="text-sm font-semibold text-white">Notification Timing</h3>
-              <p className="text-xs text-gray-400 mt-1">Controls when notifications are sent and how often they repeat</p>
+              <h3 className="text-sm font-semibold text-white">通知时间</h3>
+              <p className="text-xs text-gray-400 mt-1">控制通知何时发送以及重复次数</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Notification Active Delay (seconds)</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1">通知激活延迟 (秒)</label>
                 <input
                   type="number"
                   value={formData.notification_active_delay_seconds}
@@ -1403,12 +1405,12 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                   className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
                 <p className="mt-1 text-xs text-gray-400">
-                  Alert must be active for this long before sending notification. Filters flapping alerts.
+                  需要告警激活多久后发送通知。可用于过滤存在频繁波动下触发的告警。
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Notification Cooldown (seconds) *</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1">通知冷却时长 (秒) *</label>
                 <input
                   type="number"
                   value={formData.notification_cooldown_seconds}
@@ -1417,7 +1419,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                   min={0}
                   className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
-                <p className="mt-1 text-xs text-gray-500">Minimum time between repeated notifications for the same alert</p>
+                <p className="mt-1 text-xs text-gray-500">重复发送相同告警的通知的最短时长</p>
               </div>
             </div>
           </div>
@@ -1425,7 +1427,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
 
           {/* Auto-Resolve Options - Available for all alert types */}
           <div className="space-y-4 rounded-lg border border-gray-700 bg-gray-800/30 p-4">
-            <h3 className="text-sm font-semibold text-white">Auto-Resolve Behavior</h3>
+            <h3 className="text-sm font-semibold text-white">告警自动解决行为</h3>
 
             {/* Auto-resolve on clear (condition-based) */}
             <div className="flex items-start gap-3">
@@ -1438,11 +1440,11 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
               />
               <div className="flex-1">
                 <label htmlFor="auto_resolve_on_clear" className="block text-sm font-medium text-gray-300 cursor-pointer">
-                  Auto-resolve when condition clears
+                  当告警条件清除后自动解决
                 </label>
                 <p className="mt-1 text-xs text-gray-400">
-                  Automatically resolve alerts when the condition is no longer true (e.g., container restarts, becomes healthy).
-                  Recommended for most alert types.
+                  当告警条件不再为真时自动解决告警 (例如，容器已重启或恢复健康)。
+                  建议为大多数告警规则启用此功能。
                 </p>
               </div>
             </div>
@@ -1458,10 +1460,11 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
               />
               <div className="flex-1">
                 <label htmlFor="auto_resolve_updates" className="block text-sm font-medium text-gray-300 cursor-pointer">
-                  Resolve immediately after notification
+                  当发送通知后自动解决
                 </label>
                 <p className="mt-1 text-xs text-gray-400">
-                  Alert will be auto-resolved immediately after sending notification. Use this for notification-only mode if you don't want alerts to accumulate in the DockMon alert list.
+                  告警将在发送通知后立即自动解决。
+                  如果你不希望告警数据在 DockMon 告警列表中累积，可选择该配置用于仅发送告警通知。
                 </p>
               </div>
             </div>
@@ -1470,7 +1473,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
           {/* Suppress During Updates - Only for container-scoped rules */}
           {formData.scope === 'container' && !['update_available', 'update_completed', 'update_failed'].includes(formData.kind) && (
           <div className="space-y-4 rounded-lg border border-gray-700 bg-gray-800/30 p-4">
-            <h3 className="text-sm font-semibold text-white">Update Suppression</h3>
+            <h3 className="text-sm font-semibold text-white">在更新期间禁用</h3>
             <div className="flex items-start gap-3">
               <input
                 type="checkbox"
@@ -1481,10 +1484,10 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
               />
               <div className="flex-1">
                 <label htmlFor="suppress_during_updates" className="block text-sm font-medium text-gray-300 cursor-pointer">
-                  Suppress alert during container updates
+                  在容器更新期间禁用该告警规则
                 </label>
                 <p className="mt-1 text-xs text-gray-400">
-                  Don't trigger this alert while a container is being updated. The alert will be re-evaluated after the update completes - only firing if the issue persists (e.g., container still stopped after update).
+                  在容器更新期间不触发此告警规则。在更新完成后将重新开始监视 - 只有当问题仍然持续存在时才会触发告警 (例如，更新后容器仍然处于停止状态)。
                 </p>
               </div>
             </div>
@@ -1493,12 +1496,12 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
 
           {/* Notification Channels */}
           <div className="space-y-4 rounded-lg border border-gray-700 bg-gray-800/30 p-4">
-            <h3 className="text-sm font-semibold text-white">Notification Channels</h3>
-            <p className="text-xs text-gray-400">Select which channels to notify when this alert fires</p>
+            <h3 className="text-sm font-semibold text-white">通知频道</h3>
+            <p className="text-xs text-gray-400">选择此告警规则触发时需要通知的频道</p>
 
             {configuredChannels.length === 0 ? (
               <div className="text-sm text-gray-400 py-4 text-center">
-                No notification channels configured. Configure channels in Settings to enable notifications.
+                尚未配置任何通知频道。请在设置页面中进行配置以启用通知功能。
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-2">
@@ -1516,7 +1519,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                           ? 'text-gray-500 cursor-not-allowed'
                           : 'text-gray-300 hover:bg-gray-800/50 cursor-pointer'
                       }`}
-                      title={isDisabled ? `${channel.name} is disabled` : undefined}
+                      title={isDisabled ? `${channel.name} 已被禁用` : undefined}
                     >
                       <input
                         type="checkbox"
@@ -1546,8 +1549,8 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
           {/* Custom Template (Optional) */}
           <div className="space-y-4 rounded-lg border border-gray-700 bg-gray-800/30 p-4">
             <div>
-              <h3 className="text-sm font-semibold text-white">Custom Message Template (Optional)</h3>
-              <p className="text-xs text-gray-400">Override the default template for this specific rule</p>
+              <h3 className="text-sm font-semibold text-white">自定义消息模板 (可选)</h3>
+              <p className="text-xs text-gray-400">在此告警规则中使用自定义的消息模板</p>
             </div>
 
             <div>
@@ -1564,7 +1567,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                   }}
                   className="h-4 w-4 rounded border-gray-600 bg-gray-800 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0"
                 />
-                Use custom template for this rule
+                在此告警规则中使用自定义的消息模板
               </label>
 
               {formData.custom_template !== null && formData.custom_template !== undefined && (
@@ -1573,11 +1576,11 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                     value={formData.custom_template}
                     onChange={(e) => handleChange('custom_template', e.target.value)}
                     rows={6}
-                    placeholder="Enter custom template or leave empty to use category default..."
+                    placeholder="输入自定义的消息模板，或者留空以使用默认的消息模板..."
                     className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white font-mono text-sm placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                   <p className="mt-2 text-xs text-gray-400">
-                    Leave empty to use the category-specific template from Settings. Use variables like {'{CONTAINER_NAME}'}.
+                    留空以使用设置页面中各类别的默认消息模板。可用使用例如 {'{CONTAINER_NAME}'} 这样的变量。
                   </p>
                 </>
               )}
@@ -1594,7 +1597,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
               className="h-4 w-4 rounded border-gray-600 bg-gray-800 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0"
             />
             <label htmlFor="enabled" className="text-sm text-gray-300">
-              Enable this rule immediately
+              立即启用此告警规则
             </label>
           </div>
           </div>
@@ -1602,7 +1605,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
 
           {/* Right Column - Summary */}
           <div className="w-80 p-6 bg-gray-800/30">
-            <h3 className="text-sm font-semibold text-white mb-4">Rule Summary</h3>
+            <h3 className="text-sm font-semibold text-white mb-4">告警规则摘要</h3>
             <div className="space-y-3">
               {getSummaryText().map((line, idx) => (
                 <div key={idx} className="text-sm">
@@ -1621,7 +1624,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
             onClick={onClose}
             className="rounded-md bg-gray-800 px-4 py-2 text-sm font-medium text-gray-300 transition-colors hover:bg-gray-700"
           >
-            Cancel
+            取消
           </button>
           <button
             type="button"

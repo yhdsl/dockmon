@@ -46,7 +46,7 @@ export function EditApiKeyModal({ isOpen, onClose, keyId }: EditApiKeyModalProps
     e.preventDefault()
 
     if (!name.trim()) {
-      toast.error('API key name is required')
+      toast.error('API 密钥名称为必填项')
       return
     }
 
@@ -96,7 +96,7 @@ export function EditApiKeyModal({ isOpen, onClose, keyId }: EditApiKeyModalProps
       <div className="bg-gray-900 rounded-lg max-w-md w-full mx-4 border border-gray-800 max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-gray-900 border-b border-gray-800 px-6 py-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-white">Edit API Key</h2>
+          <h2 className="text-lg font-semibold text-white">编辑 API 密钥</h2>
           <button onClick={handleClose} disabled={updateKey.isPending} className="text-gray-400 hover:text-gray-300">
             <X className="h-5 w-5" />
           </button>
@@ -106,7 +106,7 @@ export function EditApiKeyModal({ isOpen, onClose, keyId }: EditApiKeyModalProps
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Name *</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">名称 *</label>
             <Input
               type="text"
               value={name}
@@ -118,7 +118,7 @@ export function EditApiKeyModal({ isOpen, onClose, keyId }: EditApiKeyModalProps
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">备注</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -130,19 +130,19 @@ export function EditApiKeyModal({ isOpen, onClose, keyId }: EditApiKeyModalProps
 
           {/* Group (read-only) */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Permissions Group</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">授权群组</label>
             <div className="flex items-center gap-2 p-3 bg-gray-800/50 rounded border border-gray-700">
               <Users className="h-4 w-4 text-blue-400" />
-              <span className="text-gray-300">{key.group_name}</span>
+              <span className="text-gray-300">{key.group_name}{{'Administrators': " (管理群组)", 'Operators': " (操作群组)", 'Read Only': " (访客群组)"}[key.group_name] ?? ""}</span>
             </div>
             <p className="text-xs text-gray-500 mt-1">
-              Group cannot be changed after creation. To use a different group, create a new key.
+              无法在创建后更改授权群组。如果需要使用其他的用户群组，请创建一个新的密钥。
             </p>
           </div>
 
           {/* IP Allowlist */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">IP Allowlist (Optional)</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">IP 白名单 (可选)</label>
             <textarea
               value={allowedIps}
               onChange={(e) => setAllowedIps(e.target.value)}
@@ -151,24 +151,24 @@ export function EditApiKeyModal({ isOpen, onClose, keyId }: EditApiKeyModalProps
               rows={2}
               className="w-full bg-gray-800 text-white rounded border border-gray-700 px-3 py-2 text-sm focus:border-blue-500 outline-none"
             />
-            <p className="text-xs text-gray-500 mt-1">Comma-separated IPs or CIDR ranges. Leave empty for unrestricted.</p>
+            <p className="text-xs text-gray-500 mt-1">以英文逗号分隔的 IP 地址或者 CIDR 范围。留空表示不限制访问。</p>
           </div>
 
           {/* Info */}
           <div className="rounded bg-blue-900/20 border border-blue-900/30 p-3">
             <p className="text-xs text-blue-300">
-              <strong>Note:</strong> The API key itself and expiration date cannot be changed. To use a different key or
-              extend expiration, create a new key.
+              <strong>请注意:</strong> 无法修改 API 密钥本身以及过期时间。
+              如果需要使用不同的密钥或者延长有效日期，请创建一个新的 API 密钥。
             </p>
           </div>
 
           {/* Actions */}
           <div className="flex gap-2 pt-2">
             <Button type="submit" disabled={updateKey.isPending} className="flex-1">
-              {updateKey.isPending ? 'Saving...' : 'Save Changes'}
+              {updateKey.isPending ? '保存中...' : '保存修改'}
             </Button>
             <Button type="button" onClick={handleClose} disabled={updateKey.isPending} variant="outline" className="flex-1">
-              Cancel
+              取消
             </Button>
           </div>
         </form>

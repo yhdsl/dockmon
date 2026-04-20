@@ -13,28 +13,28 @@ import { AlertDetailsDrawer } from './components/AlertDetailsDrawer'
 import { useAuth } from '@/features/auth/AuthContext'
 
 const SNOOZE_DURATIONS = [
-  { label: '15 minutes', value: 15 },
-  { label: '1 hour', value: 60 },
-  { label: '4 hours', value: 240 },
-  { label: '24 hours', value: 1440 },
+  { label: '15 分钟后', value: 15 },
+  { label: '1 小时后', value: 60 },
+  { label: '4 小时后', value: 240 },
+  { label: '24 小时后', value: 1440 },
 ]
 
 const STATE_OPTIONS: { value: AlertState; label: string; icon: LucideIcon }[] = [
-  { value: 'open', label: 'Open', icon: AlertCircle },
-  { value: 'snoozed', label: 'Snoozed', icon: Clock },
-  { value: 'resolved', label: 'Resolved', icon: CheckCircle2 },
+  { value: 'open', label: '未解决', icon: AlertCircle },
+  { value: 'snoozed', label: '稍后解决', icon: Clock },
+  { value: 'resolved', label: '已解决', icon: CheckCircle2 },
 ]
 
 const SEVERITY_OPTIONS: { value: AlertSeverity; label: string; color: string }[] = [
-  { value: 'critical', label: 'Critical', color: 'text-red-600' },
-  { value: 'error', label: 'Error', color: 'text-orange-600' },
-  { value: 'warning', label: 'Warning', color: 'text-yellow-600' },
-  { value: 'info', label: 'Info', color: 'text-blue-600' },
+  { value: 'critical', label: '严重', color: 'text-red-600' },
+  { value: 'error', label: '错误', color: 'text-orange-600' },
+  { value: 'warning', label: '警告', color: 'text-yellow-600' },
+  { value: 'info', label: '通知', color: 'text-blue-600' },
 ]
 
 const SCOPE_OPTIONS: { value: AlertScope; label: string }[] = [
-  { value: 'host', label: 'Host' },
-  { value: 'container', label: 'Container' },
+  { value: 'host', label: '主机' },
+  { value: 'container', label: '容器' },
 ]
 
 export function AlertsPage() {
@@ -140,10 +140,10 @@ export function AlertsPage() {
     const diffHours = Math.floor(diffMs / 3600000)
     const diffDays = Math.floor(diffMs / 86400000)
 
-    if (diffMins < 1) return 'Just now'
-    if (diffMins < 60) return `${diffMins}m ago`
-    if (diffHours < 24) return `${diffHours}h ago`
-    if (diffDays < 7) return `${diffDays}d ago`
+    if (diffMins < 1) return '刚刚'
+    if (diffMins < 60) return `${diffMins} 分钟之前`
+    if (diffHours < 24) return `${diffHours} 小时之前`
+    if (diffDays < 7) return `${diffDays} 天之前`
     return date.toLocaleDateString()
   }
 
@@ -155,8 +155,8 @@ export function AlertsPage() {
           {/* Title and Button */}
           <div className="flex items-start justify-between gap-3">
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-white">Alerts</h1>
-              <p className="text-sm text-gray-400 mt-1 hidden sm:block">Monitor and manage system alerts</p>
+              <h1 className="text-xl sm:text-2xl font-bold text-white">告警</h1>
+              <p className="text-sm text-gray-400 mt-1 hidden sm:block">监控系统并管理告警</p>
             </div>
             {canManage && (
               <Link
@@ -165,8 +165,8 @@ export function AlertsPage() {
                 data-testid="manage-rules-button"
               >
                 <Settings className="h-4 w-4" />
-                <span className="hidden sm:inline">Manage Rules</span>
-                <span className="sm:hidden">Rules</span>
+                <span className="hidden sm:inline">管理告警规则</span>
+                <span className="sm:hidden">告警规则</span>
               </Link>
             )}
           </div>
@@ -177,28 +177,28 @@ export function AlertsPage() {
               <div className="flex items-center gap-2">
                 <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-red-500" />
                 <div>
-                  <div className="text-xs text-gray-400">Critical</div>
+                  <div className="text-xs text-gray-400">严重</div>
                   <div className="text-base sm:text-lg font-semibold text-white">{stats.by_severity.critical}</div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-orange-500" />
                 <div>
-                  <div className="text-xs text-gray-400">Error</div>
+                  <div className="text-xs text-gray-400">错误</div>
                   <div className="text-base sm:text-lg font-semibold text-white">{stats.by_severity.error}</div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <Bell className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500" />
                 <div>
-                  <div className="text-xs text-gray-400">Warning</div>
+                  <div className="text-xs text-gray-400">警告</div>
                   <div className="text-base sm:text-lg font-semibold text-white">{stats.by_severity.warning}</div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" />
                 <div>
-                  <div className="text-xs text-gray-400">Open</div>
+                  <div className="text-xs text-gray-400">未解决</div>
                   <div className="text-base sm:text-lg font-semibold text-white">{stats.by_state.open}</div>
                 </div>
               </div>
@@ -212,7 +212,7 @@ export function AlertsPage() {
         <div className="flex flex-col sm:flex-row gap-3">
           {/* State Filter */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1">
-            <span className="text-sm text-gray-400 whitespace-nowrap">State:</span>
+            <span className="text-sm text-gray-400 whitespace-nowrap">状态:</span>
             {STATE_OPTIONS.map((option) => (
               <button
                 key={option.value}
@@ -231,7 +231,7 @@ export function AlertsPage() {
 
           {/* Severity Filter */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1">
-            <span className="text-sm text-gray-400 whitespace-nowrap">Severity:</span>
+            <span className="text-sm text-gray-400 whitespace-nowrap">严重程度:</span>
             {SEVERITY_OPTIONS.map((option) => (
               <button
                 key={option.value}
@@ -249,7 +249,7 @@ export function AlertsPage() {
 
           {/* Scope Filter */}
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-400">Scope:</span>
+            <span className="text-sm text-gray-400">范围:</span>
             {SCOPE_OPTIONS.map((option) => (
               <button
                 key={option.value}
@@ -271,13 +271,13 @@ export function AlertsPage() {
       <div className={`flex-1 overflow-auto ${selectedAlertIds.size > 0 ? 'pb-32' : ''}`}>
         {isLoading ? (
           <div className="flex items-center justify-center text-gray-400 min-h-[400px]">
-            Loading alerts...
+            加载告警数据中...
           </div>
         ) : alerts.length === 0 ? (
           <div className="flex flex-col items-center justify-center text-gray-400 min-h-[400px] py-20">
             <Info className="mb-4 h-16 w-16 opacity-50" />
-            <p className="text-xl font-medium">No alerts found</p>
-            <p className="text-sm mt-2 text-gray-500">Try adjusting your filters</p>
+            <p className="text-xl font-medium">尚未找到任何告警数据</p>
+            <p className="text-sm mt-2 text-gray-500">请尝试其他过滤条件</p>
           </div>
         ) : (
           <>
@@ -290,7 +290,7 @@ export function AlertsPage() {
                 disabled={!canManage}
                 className="h-4 w-4 rounded border-gray-600 bg-gray-800 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0"
               />
-              <div className="ml-6 flex-1 text-sm font-medium text-gray-400">Alert</div>
+              <div className="ml-6 flex-1 text-sm font-medium text-gray-400">告警数据</div>
             </div>
 
             {/* Table Body */}
@@ -336,21 +336,30 @@ export function AlertsPage() {
                     <div className="flex items-center gap-3">
                       <h3 className="font-medium text-white">{alert.title}</h3>
                       <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${getStateColor(alert.state)}`}>
-                        {alert.state}
+                        {{
+                          open: "未解决",
+                          snoozed: "稍后解决",
+                          resolved: "已解决"
+                        }[alert.state]}
                       </span>
                       <span
                         className={`rounded-full border px-2 py-0.5 text-xs font-medium ${getSeverityColor(alert.severity)}`}
                       >
-                        {alert.severity}
+                        {{
+                          critical: "严重",
+                          error: "错误",
+                          warning: "警告",
+                          info: "通知"
+                        }[alert.severity]}
                       </span>
                     </div>
                     <p className="mt-1 text-sm text-gray-400">{alert.message}</p>
                     <div className="mt-2 flex items-center gap-4 text-xs text-gray-500">
-                      <span>First seen: {formatRelativeTime(alert.first_seen)}</span>
-                      <span>Last seen: {formatRelativeTime(alert.last_seen)}</span>
+                      <span>首次告警: {formatRelativeTime(alert.first_seen)}</span>
+                      <span>上次告警: {formatRelativeTime(alert.last_seen)}</span>
                       {alert.current_value != null && alert.threshold != null && (
                         <span>
-                          Value: {alert.current_value.toFixed(1)} / Threshold: {alert.threshold.toFixed(1)}
+                          数值: {alert.current_value.toFixed(1)} / 阈值: {alert.threshold.toFixed(1)}
                         </span>
                       )}
                     </div>
@@ -367,8 +376,8 @@ export function AlertsPage() {
       {totalPages > 1 && (
         <div className="flex items-center justify-between border-t border-gray-800 bg-[#0d1117] px-6 py-3">
           <div className="text-sm text-gray-400">
-            Showing {(currentPage - 1) * (filters.page_size ?? 20) + 1} to{' '}
-            {Math.min(currentPage * (filters.page_size ?? 20), totalCount)} of {totalCount} alerts
+            显示 {(currentPage - 1) * (filters.page_size ?? 20) + 1} 到{' '}
+            {Math.min(currentPage * (filters.page_size ?? 20), totalCount)} 条告警，共计 {totalCount} 条
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -379,7 +388,7 @@ export function AlertsPage() {
               <ChevronLeft className="h-4 w-4" />
             </button>
             <span className="text-sm text-gray-400">
-              Page {currentPage} of {totalPages}
+              第 {currentPage} 页 / 共 {totalPages} 页
             </span>
             <button
               onClick={() => handlePageChange(currentPage + 1)}
@@ -397,7 +406,7 @@ export function AlertsPage() {
         <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-700 bg-[#0d1117] px-6 py-4 shadow-2xl">
           <div className="flex items-center justify-between">
             <div className="text-sm text-gray-300">
-              {selectedAlertIds.size} alert{selectedAlertIds.size !== 1 ? 's' : ''} selected
+              已选择 {selectedAlertIds.size} 条告警数据
             </div>
             <div className="flex items-center gap-3">
               <fieldset disabled={!canManage} className="flex items-center gap-3 disabled:opacity-60">
@@ -408,7 +417,7 @@ export function AlertsPage() {
                     className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
                   >
                     <Clock className="h-4 w-4" />
-                    <span>Snooze</span>
+                    <span>稍后解决</span>
                     <ChevronDown className="h-4 w-4" />
                   </button>
 
@@ -436,7 +445,7 @@ export function AlertsPage() {
                   className="flex items-center gap-2 rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700"
                 >
                   <CheckCircle2 className="h-4 w-4" />
-                  <span>Resolve</span>
+                  <span>已解决</span>
                 </button>
               </fieldset>
 
@@ -445,7 +454,7 @@ export function AlertsPage() {
                 onClick={() => setSelectedAlertIds(new Set())}
                 className="rounded-md bg-gray-800 px-4 py-2 text-sm font-medium text-gray-300 transition-colors hover:bg-gray-700"
               >
-                Cancel
+                取消
               </button>
             </div>
           </div>
@@ -461,9 +470,9 @@ export function AlertsPage() {
                 <CheckCircle2 className="h-6 w-6 text-green-500" />
               </div>
               <div className="flex-1">
-                <h3 className="text-lg font-semibold mb-2 text-white">Resolve Alerts</h3>
+                <h3 className="text-lg font-semibold mb-2 text-white">解决告警</h3>
                 <p className="text-sm text-gray-400">
-                  Are you sure you want to mark {selectedAlertIds.size} alert{selectedAlertIds.size !== 1 ? 's' : ''} as resolved?
+                  确定要将 {selectedAlertIds.size} 条告警标记为已解决吗？
                 </p>
               </div>
             </div>
@@ -472,14 +481,14 @@ export function AlertsPage() {
                 onClick={() => setShowResolveConfirm(false)}
                 className="px-4 py-2 rounded-md bg-gray-800 text-gray-300 hover:bg-gray-700 transition-colors"
               >
-                Cancel
+                取消
               </button>
               <button
                 onClick={handleBulkResolve}
                 disabled={!canManage || resolveAlert.isPending}
                 className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 transition-colors disabled:opacity-50"
               >
-                {resolveAlert.isPending ? 'Resolving...' : 'Resolve Alerts'}
+                {resolveAlert.isPending ? '标记中...' : '已解决'}
               </button>
             </div>
           </div>

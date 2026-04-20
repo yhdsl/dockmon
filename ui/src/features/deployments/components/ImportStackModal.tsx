@@ -157,18 +157,18 @@ export function ImportStackModal({
   // Generate dynamic help text based on selected host
   const getScanHelpText = (): string => {
     if (!selectedHostId) {
-      return 'Select a host to scan for compose files.'
+      return '请选择一个主机以扫描 Compose 文件。'
     }
     if (isLocalHost) {
-      return 'Scanning localhost. Mount paths like /opt or /srv into the DockMon container for scanning to work.'
+      return '正在扫描 localhost 。请将 /opt 或 /srv 等路径挂载到 DockMon 容器中，以便扫描功能正常工作。'
     }
     if (!isAgentHost) {
-      return 'Select a host to scan for compose files.'
+      return '请选择一个主机以扫描 Compose 文件。'
     }
     if (agentInfo?.is_container_mode) {
-      return 'Agent runs in a container. Mount paths into the agent container for scanning to work.'
+      return '代理正在 Docker 容器中运行。请将路径挂载到代理所在的容器中，以使扫描功能正常工作。'
     }
-    return 'Agent runs as a system service. Filesystem scanning is available.'
+    return '代理正在作为系统服务运行。文件扫描功能可用。'
   }
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -201,7 +201,7 @@ export function ImportStackModal({
 
   const handleScanHost = async () => {
     if (!selectedHostId) {
-      setError('Please select a host')
+      setError('请选择一个主机')
       return
     }
 
@@ -240,13 +240,13 @@ export function ImportStackModal({
 
         setComposeFiles(enrichedFiles)
         if (enrichedFiles.length === 0) {
-          setError('No compose files found in scanned directories')
+          setError('未能在扫描的路径中找到 Compose 文件')
         }
       } else {
-        setError(result.error || 'Scan failed')
+        setError(result.error || '扫描失败')
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Scan failed'
+      const message = err instanceof Error ? err.message : '扫描失败'
       setError(message)
     }
   }
@@ -272,10 +272,10 @@ export function ImportStackModal({
           setShowEnvField(true)
         }
       } else {
-        setError(result.error || 'Failed to read file')
+        setError(result.error || '无法读取文件')
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to read file'
+      const message = err instanceof Error ? err.message : '无法读取文件'
       setError(message)
     }
   }
@@ -305,7 +305,7 @@ export function ImportStackModal({
   // Batch import selected files
   const handleBatchImport = async () => {
     if (selectedFilePaths.size === 0) {
-      setError('Please select at least one file to import')
+      setError('请至少选择一个文件以导入')
       return
     }
 
@@ -332,7 +332,7 @@ export function ImportStackModal({
         })
 
         if (!readResult.success || !readResult.content) {
-          errors.push(`${displayName}: ${readResult.error || 'Failed to read file'}`)
+          errors.push(`${displayName}: ${readResult.error || '读取文件时失败'}`)
           continue
         }
 
@@ -358,10 +358,10 @@ export function ImportStackModal({
           allDeployments.push(...result.deployments_created)
         } else if (result.requires_name_selection) {
           // This shouldn't happen now since we pass project_name, but handle just in case
-          errors.push(`${displayName}: Could not determine stack name`)
+          errors.push(`${displayName}: 无法确定堆栈名称`)
         }
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'Import failed'
+        const message = err instanceof Error ? err.message : '导入失败'
         errors.push(`${displayName}: ${message}`)
       }
     }
@@ -371,7 +371,7 @@ export function ImportStackModal({
     if (allDeployments.length > 0) {
       setCreatedDeployments(allDeployments)
       if (errors.length > 0) {
-        setError(`Imported ${allDeployments.length} stack(s). Errors: ${errors.join('; ')}`)
+        setError(`已导入 ${allDeployments.length} 个堆栈。但存在错误: ${errors.join('; ')}`)
       }
       setStep('success')
       onSuccess?.(allDeployments)
@@ -390,7 +390,7 @@ export function ImportStackModal({
     // Use override if provided (for running mode where state update is async)
     const contentToImport = options?.composeContentOverride || composeContent
     if (!contentToImport.trim()) {
-      setError('Please provide compose file content')
+      setError('请提供 Compose 文件文本')
       return
     }
 
@@ -437,14 +437,14 @@ export function ImportStackModal({
         onSuccess?.(result.deployments_created)
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Import failed'
+      const message = err instanceof Error ? err.message : '导入失败'
       setError(message)
     }
   }
 
   const handleSelectName = async () => {
     if (!selectedProjectName) {
-      setError('Please select a stack name')
+      setError('请选择一个堆栈名称')
       return
     }
     await handleImport({ projectName: selectedProjectName })
@@ -466,7 +466,7 @@ export function ImportStackModal({
       setGeneratedCompose(result.compose_yaml)
       setGeneratedWarnings(result.warnings)
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to generate compose'
+      const message = err instanceof Error ? err.message : '无法创建 Compose 文件'
       setError(message)
     }
   }
@@ -474,7 +474,7 @@ export function ImportStackModal({
   // Handle importing the generated compose
   const handleImportFromRunning = async () => {
     if (!selectedRunningProject || !generatedCompose) {
-      setError('Please select a running project first')
+      setError('请先选择一个正在运行的项目')
       return
     }
 
@@ -529,10 +529,10 @@ export function ImportStackModal({
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Import Existing Stack</DialogTitle>
+          <DialogTitle>导入已有堆栈</DialogTitle>
           <DialogDescription>
-            Import an existing Docker Compose stack into DockMon. DockMon will
-            auto-detect which host(s) have the stack running.
+            导入现有的 Docker Compose 堆栈到 DockMon 中。
+            DockMon 将自动检测哪些主机正在运行该堆栈。
           </DialogDescription>
         </DialogHeader>
 
@@ -550,7 +550,7 @@ export function ImportStackModal({
                 )}
               >
                 <Upload className="h-4 w-4" />
-                Paste / Upload
+                粘贴 / 上传
               </button>
               <button
                 onClick={() => setMethod('browse')}
@@ -562,7 +562,7 @@ export function ImportStackModal({
                 )}
               >
                 <FolderSearch className="h-4 w-4" />
-                Browse Host
+                主机扫描
               </button>
               <button
                 onClick={() => setMethod('running')}
@@ -574,7 +574,7 @@ export function ImportStackModal({
                 )}
               >
                 <Container className="h-4 w-4" />
-                From Running
+                已有项目
               </button>
             </div>
 
@@ -583,12 +583,12 @@ export function ImportStackModal({
               <>
                 {/* Compose Content */}
                 <div>
-                  <Label htmlFor="compose-content">Compose File</Label>
+                  <Label htmlFor="compose-content">Compose 文件</Label>
                   <div className="flex gap-2 mb-2">
                     <Button variant="outline" size="sm" asChild>
                       <label className="cursor-pointer">
                         <Upload className="h-4 w-4 mr-2" />
-                        Upload File
+                        上传文件
                         <input
                           type="file"
                           accept=".yaml,.yml"
@@ -616,7 +616,7 @@ export function ImportStackModal({
                         })
                       }
                     }}
-                    placeholder="Paste your docker-compose.yml content here..."
+                    placeholder="在此处粘贴 docker-compose.yml 的文本内容..."
                     className="font-mono text-sm h-48"
                   />
                 </div>
@@ -631,12 +631,12 @@ export function ImportStackModal({
                       onClick={() => setShowEnvField(true)}
                       className="text-muted-foreground"
                     >
-                      + Add .env content (optional)
+                      + 添加 .env 文本内容 (可选)
                     </Button>
                   ) : (
                     <>
                       <Label htmlFor="env-content">
-                        .env Content (optional)
+                        .env 文本内容 (可选)
                       </Label>
                       <Textarea
                         id="env-content"
@@ -656,22 +656,22 @@ export function ImportStackModal({
               <>
                 {/* Host Selection */}
                 <div>
-                  <Label htmlFor="host-select">Select Agent Host</Label>
+                  <Label htmlFor="host-select">选择代理主机</Label>
                   <Select
                     value={selectedHostId}
                     onValueChange={setSelectedHostId}
                   >
                     <SelectTrigger id="host-select">
-                      <SelectValue placeholder="Select a host to scan...">
+                      <SelectValue placeholder="选择待扫描的主机...">
                         {selectedHostId
                           ? scannableHosts.find((h) => h.id === selectedHostId)?.name || selectedHostId
-                          : 'Select a host to scan...'}
+                          : '选择待扫描的主机...'}
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {scannableHosts.length === 0 ? (
                         <div className="p-2 text-sm text-muted-foreground">
-                          No agent hosts available
+                          没有可用的代理主机
                         </div>
                       ) : (
                         scannableHosts.map((host) => (
@@ -687,7 +687,7 @@ export function ImportStackModal({
                 {/* Additional Paths (optional) */}
                 <div>
                   <Label htmlFor="additional-paths">
-                    Additional Paths (optional)
+                    附加路径 (可选)
                   </Label>
                   <Input
                     id="additional-paths"
@@ -697,7 +697,7 @@ export function ImportStackModal({
                     className="font-mono text-sm"
                   />
                   <p className="text-xs text-muted-foreground mt-1">
-                    Comma-separated paths to scan in addition to defaults
+                    除默认路径外需要扫描的额外路径 (多个路径时以英文逗号分隔)
                   </p>
                 </div>
 
@@ -710,12 +710,12 @@ export function ImportStackModal({
                   {scanComposeDirs.isPending ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      Scanning...
+                      扫描中...
                     </>
                   ) : (
                     <>
                       <FolderSearch className="h-4 w-4" />
-                      Scan for Compose Files
+                      扫描 Compose 文件
                     </>
                   )}
                 </Button>
@@ -723,9 +723,9 @@ export function ImportStackModal({
                 {scannableHosts.length === 0 ? (
                   <Alert>
                     <AlertDescription>
-                      Directory scanning requires an agent-based host. No agent
-                      hosts are currently connected. Use the Paste/Upload tab to
-                      import manually.
+                      目录扫描需要提供包含代理的主机。
+                      目前暂无已连接的代理主机。
+                      请前往 "粘贴/上传" 选项卡手动导入。
                     </AlertDescription>
                   </Alert>
                 ) : (
@@ -738,7 +738,7 @@ export function ImportStackModal({
                 {composeFiles.length > 0 && (
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <Label>Discovered Compose Files</Label>
+                      <Label>已发现的 Compose 文件</Label>
                       <div className="flex items-center gap-2">
                         <Checkbox
                           id="select-all"
@@ -750,7 +750,7 @@ export function ImportStackModal({
                           htmlFor="select-all"
                           className="text-sm text-muted-foreground cursor-pointer"
                         >
-                          Select All ({composeFiles.length})
+                          选择全部 ({composeFiles.length})
                         </label>
                       </div>
                     </div>
@@ -805,13 +805,13 @@ export function ImportStackModal({
                 {selectedFilePath && composeContent && (
                   <div>
                     <Label htmlFor="browse-compose-content">
-                      Compose File Content
+                      Compose 文件内容
                     </Label>
                     <Textarea
                       id="browse-compose-content"
                       value={composeContent}
                       onChange={(e) => setComposeContent(e.target.value)}
-                      placeholder="Compose file content..."
+                      placeholder="Compose 文件内容..."
                       className="font-mono text-sm h-32"
                     />
                   </div>
@@ -823,8 +823,8 @@ export function ImportStackModal({
             {method === 'running' && (
               <>
                 <p className="text-sm text-muted-foreground">
-                  Select a running Docker Compose project to adopt into DockMon management.
-                  The compose configuration will be generated from the container state.
+                  选择一个正在运行的基于 Docker Compose 创建的项目以导入至 DockMon 堆栈管理。
+                  Compose 文件将根据容器当前的状态自动生成。
                 </p>
 
                 {isLoadingProjects ? (
@@ -833,7 +833,7 @@ export function ImportStackModal({
                   </div>
                 ) : runningProjects && runningProjects.length > 0 ? (
                   <div className="space-y-4">
-                    <Label>Running Projects</Label>
+                    <Label>正在运行的项目</Label>
                     <div className="border rounded-md divide-y max-h-64 overflow-y-auto">
                       {runningProjects.map((project) => {
                         const isSelected = isProjectSelected(project)
@@ -861,7 +861,7 @@ export function ImportStackModal({
                                 {project.host_name || project.host_id.slice(0, 8)}
                               </div>
                               <div className="text-xs text-muted-foreground mt-1">
-                                {project.container_count} container(s):{' '}
+                                {project.container_count} 个容器:{' '}
                                 {project.services.slice(0, 3).join(', ')}
                                 {project.services.length > 3 && '...'}
                               </div>
@@ -874,9 +874,8 @@ export function ImportStackModal({
                 ) : (
                   <Alert>
                     <AlertDescription>
-                      No running Docker Compose projects found. Make sure you have
-                      stacks running that were deployed with standard compose labels
-                      (com.docker.compose.project).
+                      未能发现正在运行的基于 Docker Compose 创建的项目。
+                      请确保存在使用标准 Compose 标签 (com.docker.compose.project) 部署的项目，并且正在运行。
                     </AlertDescription>
                   </Alert>
                 )}
@@ -884,11 +883,11 @@ export function ImportStackModal({
                 {/* Generated Compose Preview */}
                 {selectedRunningProject && generatedCompose && (
                   <div className="space-y-2">
-                    <Label>Generated compose.yaml</Label>
+                    <Label>生成的 compose.yaml</Label>
                     {generatedWarnings.length > 0 && (
                       <div className="text-xs text-amber-600 dark:text-amber-500 space-y-1">
                         {generatedWarnings.map((warning, i) => (
-                          <p key={i}>Note: {warning}</p>
+                          <p key={i}>注意: {warning}</p>
                         ))}
                       </div>
                     )}
@@ -915,7 +914,7 @@ export function ImportStackModal({
                 onClick={handleClose}
                 disabled={importDeployment.isPending || isBatchImporting}
               >
-                Cancel
+                取消
               </Button>
               {/* Batch import button - shown when files are selected in browse mode */}
               {method === 'browse' && selectedFilePaths.size > 0 && (
@@ -924,8 +923,8 @@ export function ImportStackModal({
                   disabled={isBatchImporting}
                 >
                   {isBatchImporting
-                    ? `Importing ${batchImportProgress.current}/${batchImportProgress.total}...`
-                    : `Import Selected (${selectedFilePaths.size})`}
+                    ? `导入中 (${batchImportProgress.current}/${batchImportProgress.total})...`
+                    : `已导入选择项 (${selectedFilePaths.size})`}
                 </Button>
               )}
               {/* Single import button - shown in paste mode or when no files selected in browse mode */}
@@ -934,7 +933,7 @@ export function ImportStackModal({
                   onClick={() => handleImport()}
                   disabled={importDeployment.isPending || !composeContent.trim()}
                 >
-                  {importDeployment.isPending ? 'Importing...' : 'Import Stack'}
+                  {importDeployment.isPending ? '导入中...' : '导入堆栈'}
                 </Button>
               )}
               {/* Import from running button */}
@@ -943,7 +942,7 @@ export function ImportStackModal({
                   onClick={handleImportFromRunning}
                   disabled={importDeployment.isPending || !selectedRunningProject || !generatedCompose || !canEdit}
                 >
-                  {importDeployment.isPending ? 'Importing...' : 'Import Stack'}
+                  {importDeployment.isPending ? '导入中...' : '导入堆栈'}
                 </Button>
               )}
             </DialogFooter>
@@ -954,20 +953,20 @@ export function ImportStackModal({
           <fieldset disabled={!canDeploy} className="space-y-4 disabled:opacity-60">
             <Alert>
               <AlertDescription>
-                The compose file doesn&apos;t have a{' '}
-                <code className="bg-muted px-1 rounded">name:</code> field.
-                Please select which stack this compose file belongs to:
+                该 Compose 文件缺失{' '}
+                <code className="bg-muted px-1 rounded">name:</code> 字段。
+                请选择该 Compose 文件所属的堆栈:
               </AlertDescription>
             </Alert>
 
             <div>
-              <Label htmlFor="stack-select">Select Stack</Label>
+              <Label htmlFor="stack-select">选择堆栈</Label>
               <Select
                 value={selectedProjectName}
                 onValueChange={setSelectedProjectName}
               >
                 <SelectTrigger id="stack-select">
-                  <SelectValue placeholder="Select a stack..." />
+                  <SelectValue placeholder="请选择一个堆栈..." />
                 </SelectTrigger>
                 <SelectContent>
                   {knownStacks.map((stack) => (
@@ -975,8 +974,7 @@ export function ImportStackModal({
                       <div className="flex flex-col items-start">
                         <span className="font-medium">{stack.name}</span>
                         <span className="text-xs text-muted-foreground">
-                          {stack.container_count} container(s) on{' '}
-                          {stack.host_names.join(', ')}
+                          主机 {stack.host_names.join(', ')} 中包含 {stack.container_count} 个容器
                         </span>
                       </div>
                     </SelectItem>
@@ -988,8 +986,7 @@ export function ImportStackModal({
             {knownStacks.length === 0 && (
               <Alert>
                 <AlertDescription>
-                  No stacks found. Make sure you have Docker Compose stacks
-                  running that were deployed with the standard compose labels.
+                  未找到可用的堆栈。请确保存在使用标准的 Compose 标签部署并正在运行的 Docker Compose 堆栈。
                 </AlertDescription>
               </Alert>
             )}
@@ -1007,13 +1004,13 @@ export function ImportStackModal({
                 onClick={() => setStep('input')}
                 disabled={importDeployment.isPending}
               >
-                Back
+                返回
               </Button>
               <Button
                 onClick={handleSelectName}
                 disabled={importDeployment.isPending || !selectedProjectName}
               >
-                {importDeployment.isPending ? 'Importing...' : 'Import Stack'}
+                {importDeployment.isPending ? '导入中...' : '导入堆栈'}
               </Button>
             </DialogFooter>
           </fieldset>
@@ -1023,8 +1020,8 @@ export function ImportStackModal({
           <fieldset disabled={!canDeploy} className="space-y-4 disabled:opacity-60">
             <Alert>
               <AlertDescription>
-                A stack named <strong>"{existingStackName}"</strong> already exists on the filesystem.
-                What would you like to do?
+                一个名为 <strong>"{existingStackName}"</strong> 的堆栈已存在于文件系统中。
+                你希望如何处理?
               </AlertDescription>
             </Alert>
 
@@ -1046,9 +1043,9 @@ export function ImportStackModal({
                   <Loader2 className="h-4 w-4 animate-spin shrink-0" />
                 )}
                 <div className="text-left">
-                  <div className="font-medium">Use existing stack content</div>
+                  <div className="font-medium">使用现有的堆栈内容</div>
                   <div className="text-sm text-muted-foreground">
-                    Create deployment using the existing compose.yaml on disk
+                    使用文件系统中的 compose.yaml 文件
                   </div>
                 </div>
               </Button>
@@ -1072,9 +1069,9 @@ export function ImportStackModal({
                   <Loader2 className="h-4 w-4 animate-spin shrink-0" />
                 )}
                 <div className="text-left">
-                  <div className="font-medium">Overwrite with new content</div>
+                  <div className="font-medium">使用新内容覆盖</div>
                   <div className="text-sm text-muted-foreground">
-                    Replace the existing stack files with your imported content
+                    使用导入的内容替换现有的堆栈文件内容
                   </div>
                 </div>
               </Button>
@@ -1093,7 +1090,7 @@ export function ImportStackModal({
                 onClick={() => setStep('input')}
                 disabled={importDeployment.isPending}
               >
-                Back
+                返回
               </Button>
             </DialogFooter>
           </fieldset>
@@ -1104,21 +1101,21 @@ export function ImportStackModal({
             <Alert className="border-green-500 bg-green-50 dark:bg-green-950">
               <CheckCircle2 className="h-4 w-4 text-green-600" />
               <AlertDescription className="text-green-800 dark:text-green-200">
-                Successfully imported {createdDeployments.length} stack(s)
+                已成功导入 {createdDeployments.length} 个堆栈
               </AlertDescription>
             </Alert>
 
             <ul className="list-disc list-inside space-y-1">
               {createdDeployments.map((d) => (
                 <li key={d.id}>
-                  <span className="font-medium">{d.stack_name}</span> on{' '}
-                  {d.host_name || d.host_id}
+                  <span className="font-medium">{d.stack_name}</span> (位于主机{' '}
+                  {d.host_name || d.host_id})
                 </li>
               ))}
             </ul>
 
             <DialogFooter>
-              <Button onClick={handleClose}>Done</Button>
+              <Button onClick={handleClose}>完成</Button>
             </DialogFooter>
           </div>
         )}

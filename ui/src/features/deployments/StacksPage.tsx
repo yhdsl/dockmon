@@ -39,7 +39,7 @@ export function StacksPage() {
       <div className="p-3 sm:p-4 md:p-6 pt-16 md:pt-6">
         <div className="flex items-center gap-2 p-4 bg-destructive/10 text-destructive rounded-lg">
           <AlertCircle className="h-5 w-5" />
-          <p>Failed to load stacks: {error.message}</p>
+          <p>加载堆栈时出错: {error.message}</p>
         </div>
       </div>
     )

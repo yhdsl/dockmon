@@ -24,7 +24,7 @@ export function AlertSummaryWidget() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <Bell className="h-5 w-5" />
-            Active Alerts
+            活动告警
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -43,11 +43,11 @@ export function AlertSummaryWidget() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <Bell className="h-5 w-5" />
-            Active Alerts
+            活动告警
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-danger">Failed to load alerts</p>
+          <p className="text-sm text-danger">加载告警数据时失败</p>
         </CardContent>
       </Card>
     )
@@ -58,14 +58,14 @@ export function AlertSummaryWidget() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base">
           <Bell className="h-5 w-5" />
-          Active Alerts
+          活动告警
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Total Count */}
         <div>
           <div className="text-3xl font-semibold">{activeCount}</div>
-          <p className="text-sm text-muted-foreground">Active alerts</p>
+          <p className="text-sm text-muted-foreground">活动告警</p>
         </div>
 
         {/* Severity Breakdown */}
@@ -75,7 +75,7 @@ export function AlertSummaryWidget() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <AlertCircle className="h-4 w-4 text-danger" />
-                  <span className="text-sm">Critical</span>
+                  <span className="text-sm">严重</span>
                 </div>
                 <span className="text-sm font-medium">{criticalCount}</span>
               </div>
@@ -85,7 +85,7 @@ export function AlertSummaryWidget() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <AlertCircle className="h-4 w-4 text-red-400" />
-                  <span className="text-sm">Error</span>
+                  <span className="text-sm">错误</span>
                 </div>
                 <span className="text-sm font-medium">{errorCount}</span>
               </div>
@@ -95,7 +95,7 @@ export function AlertSummaryWidget() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <AlertTriangle className="h-4 w-4 text-warning" />
-                  <span className="text-sm">Warning</span>
+                  <span className="text-sm">警告</span>
                 </div>
                 <span className="text-sm font-medium">{warningCount}</span>
               </div>
@@ -104,7 +104,7 @@ export function AlertSummaryWidget() {
         )}
 
         {activeCount === 0 && (
-          <p className="text-sm text-success">No active alerts</p>
+          <p className="text-sm text-success">暂无活动告警</p>
         )}
       </CardContent>
     </Card>

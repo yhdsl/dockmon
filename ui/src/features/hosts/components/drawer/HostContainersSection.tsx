@@ -110,17 +110,17 @@ export function HostContainersSection({ hostId }: HostContainersSectionProps) {
   const getSortLabel = (key: SortKey): string => {
     switch (key) {
       case 'name':
-        return 'Name (A–Z)'
+        return '名称 (A–Z)'
       case 'state':
-        return 'State (Running first)'
+        return '状态 (运行优先)'
       case 'cpu':
-        return 'CPU (High to Low)'
+        return 'CPU (从高到低)'
       case 'memory':
-        return 'Memory (High to Low)'
+        return '内存 (从高到低)'
       case 'start_time':
-        return 'Start Time (Newest first)'
+        return '启动时间 (最新优先)'
       default:
-        return 'Sort'
+        return '排序依据'
     }
   }
 
@@ -136,18 +136,18 @@ export function HostContainersSection({ hostId }: HostContainersSectionProps) {
   }
 
   return (
-    <DrawerSection title="Containers">
+    <DrawerSection title="容器">
       {allContainers.length === 0 ? (
         <div className="text-center py-8 text-muted-foreground">
           <Box className="h-12 w-12 mx-auto mb-3 opacity-50" />
-          <p className="text-sm">No containers on this host</p>
+          <p className="text-sm">暂未在此主机上找到容器</p>
         </div>
       ) : (
         <div className="space-y-3">
           {/* Sort Dropdown */}
           <div className="flex items-center justify-between">
             <span className="text-xs text-muted-foreground">
-              Showing {displayContainers.length} of {allContainers.length}
+              正在展示 {displayContainers.length} / {allContainers.length}
             </span>
             <DropdownMenu
               trigger={
@@ -159,19 +159,19 @@ export function HostContainersSection({ hostId }: HostContainersSectionProps) {
               align="end"
             >
               <DropdownMenuItem onClick={() => handleSortChange('state')}>
-                State (Running first)
+                状态 (运行优先)
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleSortChange('name')}>
-                Name (A–Z)
+                名称 (A–Z)
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleSortChange('cpu')}>
-                CPU (High to Low)
+                CPU (从高到低)
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleSortChange('memory')}>
-                Memory (High to Low)
+                内存 (从高到低)
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleSortChange('start_time')}>
-                Start Time (Newest first)
+                启动时间 (最新优先)
               </DropdownMenuItem>
             </DropdownMenu>
           </div>
@@ -192,7 +192,16 @@ export function HostContainersSection({ hostId }: HostContainersSectionProps) {
 
               {/* State */}
               <div className={`text-sm capitalize font-medium ${getStatusTextColor(container.state)}`}>
-                {container.state}
+                {{
+                  running: "运行中",
+                  stopped: "已停止",
+                  exited: "已暂停",
+                  created: "已创建",
+                  paused: "已暂停",
+                  restarting: "重启中",
+                  removing: "删除中",
+                  dead: "已死亡",
+                }[container.state.toLowerCase()]}
               </div>
             </div>
           ))}
@@ -202,7 +211,7 @@ export function HostContainersSection({ hostId }: HostContainersSectionProps) {
             to={`/containers?hostId=${hostId}`}
             className="flex items-center justify-center gap-2 p-3 rounded-lg border border-border hover:bg-muted transition-colors text-sm text-muted-foreground hover:text-foreground"
           >
-            <span>View all {allContainers.length} containers on this host</span>
+            <span>查看此主机上的全部 {allContainers.length} 个容器</span>
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>

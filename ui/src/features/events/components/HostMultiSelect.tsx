@@ -21,7 +21,7 @@ export function HostMultiSelect({
   hosts,
   selectedHostIds,
   onChange,
-  placeholder = 'Select hosts...',
+  placeholder = '选择主机...',
   disabled = false,
 }: HostMultiSelectProps) {
   const [inputValue, setInputValue] = useState('')
@@ -194,7 +194,7 @@ export function HostMultiSelect({
       {/* No Results Message */}
       {showDropdown && !disabled && inputValue && filteredHosts.length === 0 && (
         <div className="absolute z-50 w-full mt-1 py-2 px-3 rounded-lg border border-border bg-surface shadow-lg text-sm text-muted-foreground">
-          No matching hosts found
+          未找到匹配的主机
         </div>
       )}
     </div>

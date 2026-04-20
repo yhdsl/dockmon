@@ -139,19 +139,19 @@ function AuditEntryRow({
               <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
                 {entry.entity_id && (
                   <div>
-                    <span className="text-gray-400">Entity ID:</span>{' '}
+                    <span className="text-gray-400">条目 ID:</span>{' '}
                     <span className="font-mono text-white">{entry.entity_id}</span>
                   </div>
                 )}
                 {entry.host_id && (
                   <div>
-                    <span className="text-gray-400">Host:</span>{' '}
+                    <span className="text-gray-400">主机:</span>{' '}
                     <span className="text-white">{entry.host_name || entry.host_id}</span>
                   </div>
                 )}
                 {entry.user_agent && (
                   <div className="col-span-2">
-                    <span className="text-gray-400">User Agent:</span>{' '}
+                    <span className="text-gray-400">用户代理:</span>{' '}
                     <span className="text-gray-300">{entry.user_agent}</span>
                   </div>
                 )}
@@ -159,7 +159,7 @@ function AuditEntryRow({
 
               {entry.details && Object.keys(entry.details).length > 0 && (
                 <div>
-                  <span className="text-gray-400">Details:</span>
+                  <span className="text-gray-400">详细信息:</span>
                   <pre className="mt-1 overflow-x-auto rounded bg-gray-900 p-2 text-xs text-gray-300">
                     {JSON.stringify(entry.details, null, 2)}
                   </pre>
@@ -192,17 +192,17 @@ function RetentionDialog({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Audit Log Retention</DialogTitle>
+          <DialogTitle>保留审计日志</DialogTitle>
           <DialogDescription>
-            Configure how long audit entries are retained before automatic cleanup.
+            设置自动清理审计日志前的保留时长。
           </DialogDescription>
         </DialogHeader>
 
         <div className="my-4 space-y-4">
           <div className="text-sm text-gray-400">
-            Current setting:{' '}
+            当前日期设置:{' '}
             <span className="font-medium text-white">
-              {retention?.retention_days === 0 ? 'Unlimited' : `${retention?.retention_days} days`}
+              {retention?.retention_days === 0 ? '永久' : `${retention?.retention_days} 天`}
             </span>
           </div>
 
@@ -219,11 +219,11 @@ function RetentionDialog({
                 }`}
               >
                 <div className="font-medium text-white">
-                  {RETENTION_LABELS[days] || `${days} days`}
+                  {RETENTION_LABELS[days] || `${days} 天`}
                 </div>
                 {days === 0 && (
                   <div className="mt-1 text-xs text-gray-400">
-                    Entries will never be automatically deleted
+                    将永久不会删除审计日志条目
                   </div>
                 )}
               </button>
@@ -233,11 +233,11 @@ function RetentionDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
-            Close
+            关闭
           </Button>
           <Button variant="destructive" onClick={onCleanup}>
             <Trash2 className="mr-2 h-4 w-4" />
-            Manual Cleanup
+            手动清理
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -267,9 +267,9 @@ function CleanupDialog({
               <AlertTriangle className="h-5 w-5 text-red-400" />
             </div>
             <div>
-              <DialogTitle>Manual Cleanup</DialogTitle>
+              <DialogTitle>手动清理</DialogTitle>
               <DialogDescription>
-                Delete audit entries older than the retention period.
+                删除超过保留时长的审计日志条目。
               </DialogDescription>
             </div>
           </div>
@@ -277,29 +277,29 @@ function CleanupDialog({
 
         <div className="my-4">
           <p className="text-sm text-gray-400">
-            This will permanently delete all audit entries older than{' '}
+            这将永久删除所有早于以下保留时长的审计日志{' '}
             <span className="font-medium text-white">
               {retentionDays === 0
-                ? '(retention is unlimited, no entries will be deleted)'
-                : `${retentionDays} days`}
+                ? '(保留时长被设置为永久，将不会删除任何条目)'
+                : `${retentionDays} 天`}
             </span>
-            .
+            。
           </p>
           {retentionDays !== 0 && (
-            <p className="mt-2 text-sm text-yellow-400">This action cannot be undone.</p>
+            <p className="mt-2 text-sm text-yellow-400">此操作将无法撤销。</p>
           )}
         </div>
 
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
-            Cancel
+            取消
           </Button>
           <Button
             variant="destructive"
             onClick={onConfirm}
             disabled={isPending || retentionDays === 0}
           >
-            {isPending ? 'Cleaning up...' : 'Delete Old Entries'}
+            {isPending ? '清理中...' : '删除过期条目'}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -393,8 +393,8 @@ export function AuditLogSettings() {
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-semibold text-white">Audit Log</h2>
-          <p className="mt-1 text-sm text-gray-400">View and export security audit events</p>
+          <h2 className="text-lg font-semibold text-white">审计日志</h2>
+          <p className="mt-1 text-sm text-gray-400">查看并导出安全审计事件</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button
@@ -404,7 +404,7 @@ export function AuditLogSettings() {
             className="flex items-center gap-1"
           >
             <Settings className="h-4 w-4" />
-            Retention
+            保留时长
           </Button>
           <Button
             variant="outline"
@@ -414,7 +414,7 @@ export function AuditLogSettings() {
             className="flex items-center gap-1"
           >
             <Download className="h-4 w-4" />
-            {exportAuditLog.isPending ? 'Exporting...' : 'Export CSV'}
+            {exportAuditLog.isPending ? '导出中...' : '导出为 CSV'}
           </Button>
           <Button
             variant="outline"
@@ -423,7 +423,7 @@ export function AuditLogSettings() {
             className="flex items-center gap-1"
           >
             <RefreshCw className="h-4 w-4" />
-            Refresh
+            刷新
           </Button>
         </div>
       </div>
@@ -431,20 +431,20 @@ export function AuditLogSettings() {
       {/* Stats Summary */}
       {retention && (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <StatCard label="Total Entries" value={retention.total_entries.toLocaleString()} />
+          <StatCard label="条目总数" value={retention.total_entries.toLocaleString()} />
           <StatCard
-            label="Retention"
-            value={retention.retention_days === 0 ? 'Unlimited' : `${retention.retention_days} days`}
+            label="保留时长"
+            value={retention.retention_days === 0 ? '永久' : `${retention.retention_days} 天`}
           />
           <StatCard
-            label="Oldest Entry"
+            label="最早日志"
             value={
               <span className="text-sm">
                 {retention.oldest_entry_date ? formatDateTime(retention.oldest_entry_date) : 'N/A'}
               </span>
             }
           />
-          <StatCard label="Filtered Results" value={auditLog?.total.toLocaleString() ?? '-'} />
+          <StatCard label="筛选结果" value={auditLog?.total.toLocaleString() ?? '-'} />
         </div>
       )}
 
@@ -458,12 +458,12 @@ export function AuditLogSettings() {
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-              placeholder="Search username, entity name, entity ID, or host name..."
+              placeholder="搜索用户名、条目名称、条目 ID 或者主机名称..."
               className={`${INPUT_CLASS} pl-10`}
             />
           </div>
           <Button onClick={handleSearch} variant="default" size="sm">
-            Search
+            搜索
           </Button>
           <Button
             variant="outline"
@@ -472,7 +472,7 @@ export function AuditLogSettings() {
             className={`flex items-center gap-1 ${activeFilterCount > 0 ? 'border-blue-500 text-blue-400' : ''}`}
           >
             <Filter className="h-4 w-4" />
-            Filters
+            过滤器
             {activeFilterCount > 0 && (
               <span className="ml-1 rounded-full bg-blue-500 px-1.5 py-0.5 text-xs text-white">
                 {activeFilterCount}
@@ -488,7 +488,7 @@ export function AuditLogSettings() {
               <div>
                 <label className="mb-1 block text-xs font-medium text-gray-400">
                   <UserIcon className="mr-1 inline-block h-3 w-3" />
-                  User
+                  用户
                 </label>
                 <Select
                   value={String(filters.user_id ?? '')}
@@ -497,12 +497,12 @@ export function AuditLogSettings() {
                   <SelectTrigger>
                     <SelectValue>
                       {filters.user_id
-                        ? users?.find((u) => u.user_id === filters.user_id)?.username ?? `User ${filters.user_id}`
-                        : 'All users'}
+                        ? users?.find((u) => u.user_id === filters.user_id)?.username ?? `用户 ${filters.user_id}`
+                        : '全部用户'}
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All users</SelectItem>
+                    <SelectItem value="">全部用户</SelectItem>
                     {users?.map((user) => (
                       <SelectItem key={user.user_id} value={String(user.user_id)}>
                         {user.username}
@@ -515,7 +515,7 @@ export function AuditLogSettings() {
               <div>
                 <label className="mb-1 block text-xs font-medium text-gray-400">
                   <Activity className="mr-1 inline-block h-3 w-3" />
-                  Action
+                  操作
                 </label>
                 <Select
                   value={filters.action ?? ''}
@@ -525,11 +525,11 @@ export function AuditLogSettings() {
                     <SelectValue>
                       {filters.action
                         ? getActionLabel(filters.action)
-                        : 'All actions'}
+                        : '全部操作'}
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All actions</SelectItem>
+                    <SelectItem value="">全部操作</SelectItem>
                     {actions?.map((action) => (
                       <SelectItem key={action} value={action}>
                         {getActionLabel(action)}
@@ -542,7 +542,7 @@ export function AuditLogSettings() {
               <div>
                 <label className="mb-1 block text-xs font-medium text-gray-400">
                   <FileText className="mr-1 inline-block h-3 w-3" />
-                  Entity Type
+                  条目类别
                 </label>
                 <Select
                   value={filters.entity_type ?? ''}
@@ -552,11 +552,11 @@ export function AuditLogSettings() {
                     <SelectValue>
                       {filters.entity_type
                         ? getEntityTypeLabel(filters.entity_type)
-                        : 'All types'}
+                        : '全部类别'}
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All types</SelectItem>
+                    <SelectItem value="">全部类别</SelectItem>
                     {entityTypes?.map((type) => (
                       <SelectItem key={type} value={type}>
                         {getEntityTypeLabel(type)}
@@ -569,7 +569,7 @@ export function AuditLogSettings() {
               <div>
                 <label className="mb-1 block text-xs font-medium text-gray-400">
                   <Calendar className="mr-1 inline-block h-3 w-3" />
-                  Start Date
+                  开始时间
                 </label>
                 <input
                   type="date"
@@ -587,7 +587,7 @@ export function AuditLogSettings() {
               <div>
                 <label className="mb-1 block text-xs font-medium text-gray-400">
                   <Calendar className="mr-1 inline-block h-3 w-3" />
-                  End Date
+                  结束时间
                 </label>
                 <input
                   type="date"
@@ -607,7 +607,7 @@ export function AuditLogSettings() {
               <div className="mt-4 flex justify-end">
                 <Button variant="ghost" size="sm" onClick={clearFilters}>
                   <X className="mr-1 h-4 w-4" />
-                  Clear Filters
+                  清除过滤器
                 </Button>
               </div>
             )}
@@ -617,15 +617,15 @@ export function AuditLogSettings() {
 
       {/* Audit Log Table */}
       {isLoading ? (
-        <div className="py-8 text-center text-gray-400">Loading audit log...</div>
+        <div className="py-8 text-center text-gray-400">加载审计日志数据中...</div>
       ) : !auditLog?.entries.length ? (
         <div className="rounded-lg border border-gray-800 bg-gray-900/30 p-8 text-center">
           <FileText className="mx-auto mb-3 h-12 w-12 text-gray-600" />
-          <h3 className="font-medium text-gray-400">No audit entries found</h3>
+          <h3 className="font-medium text-gray-400">尚未找到审计日志</h3>
           <p className="mt-1 text-sm text-gray-500">
             {activeFilterCount > 0
-              ? 'Try adjusting your filters'
-              : 'Audit entries will appear here as actions occur'}
+              ? '请尝试其他的过滤参数'
+              : '审计日志会在执行操作时显示在这里'}
           </p>
         </div>
       ) : (
@@ -635,22 +635,22 @@ export function AuditLogSettings() {
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-400">
                   <Clock className="mr-1 inline-block h-3 w-3" />
-                  Time
+                  时间戳
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-400">
                   <UserIcon className="mr-1 inline-block h-3 w-3" />
-                  User
+                  用户
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-400">
                   <Activity className="mr-1 inline-block h-3 w-3" />
-                  Action
+                  操作
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-400">
                   <FileText className="mr-1 inline-block h-3 w-3" />
-                  Entity
+                  条目
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-400">
-                  IP Address
+                  IP 地址
                 </th>
               </tr>
             </thead>
@@ -672,7 +672,7 @@ export function AuditLogSettings() {
       {auditLog && auditLog.total_pages > 1 && (
         <div className="flex items-center justify-between">
           <div className="text-sm text-gray-400">
-            Page {auditLog.page} of {auditLog.total_pages} ({auditLog.total.toLocaleString()} entries)
+            第 {auditLog.page} 页 / 共 {auditLog.total_pages} 页 (总共 {auditLog.total.toLocaleString()} 个条目)
           </div>
           <div className="flex gap-2">
             <Button
@@ -682,7 +682,7 @@ export function AuditLogSettings() {
               disabled={page === 1}
             >
               <ChevronLeft className="h-4 w-4" />
-              Previous
+              上一页
             </Button>
             <Button
               variant="outline"
@@ -690,7 +690,7 @@ export function AuditLogSettings() {
               onClick={() => setPage((p) => Math.min(auditLog.total_pages, p + 1))}
               disabled={page === auditLog.total_pages}
             >
-              Next
+              下一页
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>

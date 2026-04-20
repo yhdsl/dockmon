@@ -32,18 +32,18 @@ export function EventsSettings() {
 
     // Validation
     if (!trimmedPattern) {
-      toast.error('Pattern cannot be empty')
+      toast.error('模式名不能为空')
       return
     }
 
     if (patterns.includes(trimmedPattern)) {
-      toast.error('Pattern already exists')
+      toast.error('模式已存在')
       return
     }
 
     // Must contain at least one wildcard or be a valid container name
     if (trimmedPattern.length < 2) {
-      toast.error('Pattern must be at least 2 characters')
+      toast.error('模式名必须至少为 2 个字符')
       return
     }
 
@@ -53,9 +53,9 @@ export function EventsSettings() {
       await updateSettings.mutateAsync({ event_suppression_patterns: updatedPatterns })
       setPatterns(updatedPatterns)
       setNewPattern('')
-      toast.success(`Pattern "${trimmedPattern}" added`)
+      toast.success(`已添加模式 "${trimmedPattern}"`)
     } catch (error) {
-      toast.error('Failed to add pattern')
+      toast.error('无法添加模式')
     } finally {
       setIsUpdating(false)
     }
@@ -67,9 +67,9 @@ export function EventsSettings() {
       const updatedPatterns = patterns.filter(p => p !== patternToRemove)
       await updateSettings.mutateAsync({ event_suppression_patterns: updatedPatterns })
       setPatterns(updatedPatterns)
-      toast.success(`Pattern "${patternToRemove}" removed`)
+      toast.success(`已删除模式 "${patternToRemove}"`)
     } catch (error) {
-      toast.error('Failed to remove pattern')
+      toast.error('无法删除模式')
     } finally {
       setIsUpdating(false)
     }
@@ -87,10 +87,10 @@ export function EventsSettings() {
       {/* Event Suppression */}
       <div>
         <div className="mb-4">
-          <h3 className="text-lg font-semibold text-white">Event Suppression</h3>
+          <h3 className="text-lg font-semibold text-white">事件抑制</h3>
           <p className="text-xs text-gray-400 mt-1">
-            Suppress events from containers matching these patterns. Events from matching containers
-            will not be logged to the database, reducing noise from temporary or cronjob containers.
+            抑制匹配这些模式的容器事件。
+            符合匹配规则的容器的事件将不会被记录，从而减少临时容器或者定时任务容器发送的重复事件条目。
           </p>
         </div>
 
@@ -98,23 +98,23 @@ export function EventsSettings() {
           {/* Pattern explanation */}
           <div className="rounded-md border border-gray-700 bg-gray-800/50 p-3">
             <p className="text-sm text-gray-300 mb-2">
-              Use glob patterns with wildcards:
+              允许使用带通配符的 glob 模式:
             </p>
             <ul className="text-xs text-gray-400 space-y-1 ml-4 list-disc">
-              <li><code className="text-blue-400">runner-*</code> - matches containers starting with "runner-"</li>
-              <li><code className="text-blue-400">*-tmp</code> - matches containers ending with "-tmp"</li>
-              <li><code className="text-blue-400">*cronjob*</code> - matches containers containing "cronjob"</li>
+              <li><code className="text-blue-400">runner-*</code> - 可以匹配以 "runner-" 开头的容器名称</li>
+              <li><code className="text-blue-400">*-tmp</code> - 可以匹配以 "-tmp" 结尾的容器名称</li>
+              <li><code className="text-blue-400">*cronjob*</code> - 可以匹配包含 "cronjob" 的容器名称</li>
             </ul>
           </div>
 
           {/* Current patterns */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
-              Suppression Patterns ({patterns.length})
+              抑制模式 ({patterns.length})
             </label>
 
             {patterns.length === 0 ? (
-              <p className="text-sm text-gray-500 italic">No suppression patterns configured</p>
+              <p className="text-sm text-gray-500 italic">尚未配置任何抑制模式</p>
             ) : (
               <div className="flex flex-wrap gap-2 mb-3">
                 {patterns.map((pattern) => (
@@ -127,7 +127,7 @@ export function EventsSettings() {
                       onClick={() => handleRemovePattern(pattern)}
                       disabled={isUpdating}
                       className="ml-1 text-gray-400 hover:text-red-400 disabled:opacity-50"
-                      title="Remove pattern"
+                      title="删除模式"
                     >
                       <X className="h-3.5 w-3.5" />
                     </button>
@@ -140,7 +140,7 @@ export function EventsSettings() {
           {/* Add new pattern */}
           <div>
             <label htmlFor="new-pattern" className="block text-sm font-medium text-gray-300 mb-2">
-              Add Pattern
+              添加模式
             </label>
             <div className="flex gap-2">
               <input
@@ -149,7 +149,7 @@ export function EventsSettings() {
                 value={newPattern}
                 onChange={(e) => setNewPattern(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="e.g., runner-* or *-cronjob-*"
+                placeholder="例如 runner-* 或 *-cronjob-*"
                 disabled={isUpdating}
                 className="flex-1 rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
               />
@@ -160,11 +160,11 @@ export function EventsSettings() {
                 className="flex items-center gap-1"
               >
                 <Plus className="h-4 w-4" />
-                Add
+                添加
               </Button>
             </div>
             <p className="mt-1 text-xs text-gray-400">
-              Press Enter or click Add to save the pattern
+              请输入回车或者点击 "添加" 按钮以添加模式
             </p>
           </div>
         </div>

@@ -86,7 +86,7 @@ export function HostAgentTab({ hostId }: HostAgentTabProps) {
   if (!canViewAgents) {
     return (
       <div className="flex items-center justify-center h-48 text-muted-foreground">
-        You do not have permission to view agent information.
+        你无权查看代理信息。
       </div>
     )
   }
@@ -95,7 +95,7 @@ export function HostAgentTab({ hostId }: HostAgentTabProps) {
     return (
       <div className="flex items-center justify-center h-48 text-muted-foreground">
         <RefreshCw className="h-5 w-5 animate-spin mr-2" />
-        Loading agent information...
+        加载代理信息中...
       </div>
     )
   }
@@ -104,14 +104,14 @@ export function HostAgentTab({ hostId }: HostAgentTabProps) {
     return (
       <div className="flex items-center justify-center h-48 text-muted-foreground">
         <AlertCircle className="h-5 w-5 mr-2" />
-        Failed to load agent information
+        无法加载代理信息
       </div>
     )
   }
 
   const lastSeenDate = agent.last_seen_at
     ? formatDateTime(agent.last_seen_at, timeFormat)
-    : 'Never'
+    : '从未'
 
   return (
     <div className="flex-1 overflow-y-auto">
@@ -121,28 +121,28 @@ export function HostAgentTab({ hostId }: HostAgentTabProps) {
           <div className="space-y-6">
             {/* Agent Information */}
             <div>
-              <h4 className="text-lg font-medium text-foreground mb-3">Agent Information</h4>
+              <h4 className="text-lg font-medium text-foreground mb-3">代理信息</h4>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Status</span>
+                  <span className="text-muted-foreground">状态</span>
                   <span className={agent.status === 'online' ? 'text-green-500' : 'text-red-500'}>
-                    {agent.status === 'online' ? 'Online' : 'Offline'}
+                    {agent.status === 'online' ? '在线' : '离线'}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Version</span>
+                  <span className="text-muted-foreground">版本</span>
                   <span>v{agent.version}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Platform</span>
+                  <span className="text-muted-foreground">平台</span>
                   <span>{agent.os || 'linux'}/{agent.arch || 'amd64'}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Deployment</span>
-                  <span>{agent.is_container_mode ? 'Container' : 'Systemd'}</span>
+                  <span className="text-muted-foreground">部署类型</span>
+                  <span>{agent.is_container_mode ? '基于容器' : '系统服务'}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Last Seen</span>
+                  <span className="text-muted-foreground">上次汇报</span>
                   <span>{lastSeenDate}</span>
                 </div>
               </div>
@@ -150,7 +150,7 @@ export function HostAgentTab({ hostId }: HostAgentTabProps) {
 
             {/* Links */}
             <div>
-              <h4 className="text-lg font-medium text-foreground mb-3">Resources</h4>
+              <h4 className="text-lg font-medium text-foreground mb-3">资源</h4>
               <Button
                 variant="outline"
                 size="sm"
@@ -160,7 +160,7 @@ export function HostAgentTab({ hostId }: HostAgentTabProps) {
                 )}
               >
                 <ExternalLink className="h-4 w-4 mr-2" />
-                Release Notes
+                更新日志
               </Button>
             </div>
           </div>
@@ -183,7 +183,7 @@ export function HostAgentTab({ hostId }: HostAgentTabProps) {
                   <AlertCircle className="h-4 w-4 text-red-500" />
                 )}
                 <span className="text-sm font-medium">
-                  Agent is {agent.status}
+                  代理{{online: "在线", "offline": "离线"}[agent.status]}
                 </span>
               </div>
             </div>
@@ -195,9 +195,9 @@ export function HostAgentTab({ hostId }: HostAgentTabProps) {
                   <div className="flex items-center gap-2">
                     <ArrowUpCircle className="h-4 w-4 text-amber-500" />
                     <div>
-                      <div className="text-sm font-medium">Update available</div>
+                      <div className="text-sm font-medium">更新可用</div>
                       <div className="text-xs text-muted-foreground">
-                        v{agent.latest_version} (current: v{agent.version})
+                        新版本 v{agent.latest_version} (当前版本: v{agent.version})
                       </div>
                     </div>
                   </div>
@@ -210,17 +210,17 @@ export function HostAgentTab({ hostId }: HostAgentTabProps) {
                       {triggerUpdate.isPending ? (
                         <>
                           <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                          Updating...
+                          更新中...
                         </>
                       ) : (
-                        'Update'
+                        '更新'
                       )}
                     </Button>
                   )}
                 </div>
                 {agent.is_container_mode && (
                   <div className="mt-2 text-xs text-muted-foreground">
-                    This agent runs in a container. Update DockMon to update the agent.
+                    该代理正在容器中运行。请更新 DockMon 以同时更新此代理。
                   </div>
                 )}
               </div>
@@ -232,9 +232,9 @@ export function HostAgentTab({ hostId }: HostAgentTabProps) {
                 <div className="flex items-center gap-2">
                   <RefreshCw className="h-4 w-4 text-blue-500 animate-spin" />
                   <div>
-                    <div className="text-sm font-medium">Update in progress</div>
+                    <div className="text-sm font-medium">正在更新</div>
                     <div className="text-xs text-muted-foreground">
-                      Agent will reconnect shortly...
+                      代理将很快重新连接...
                     </div>
                   </div>
                 </div>

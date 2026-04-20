@@ -60,30 +60,30 @@ export function UsersSettings() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-white">User Management</h2>
+          <h2 className="text-lg font-semibold text-white">用户管理</h2>
           <p className="mt-1 text-sm text-gray-400">
-            Create and manage user accounts with group-based access control
+            创建并管理基于用户群组管理权限的用户账户
           </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={() => refetch()}>
             <RefreshCw className="mr-2 h-4 w-4" />
-            Refresh
+            刷新
           </Button>
           <Button onClick={() => setShowCreateModal(true)} variant="default" size="sm">
             <Plus className="mr-2 h-4 w-4" />
-            Create User
+            创建新用户
           </Button>
         </div>
       </div>
 
       {isLoading ? (
-        <div className="py-8 text-center text-gray-400">Loading users...</div>
+        <div className="py-8 text-center text-gray-400">加载用户数据中...</div>
       ) : users.length === 0 ? (
         <div className="rounded-lg border border-gray-800 bg-gray-900/30 p-8 text-center">
           <UserIcon className="mx-auto mb-3 h-12 w-12 text-gray-600" />
-          <h3 className="font-medium text-gray-400">No users found</h3>
-          <p className="mt-1 text-sm text-gray-500">Create your first user to get started</p>
+          <h3 className="font-medium text-gray-400">尚未找到任何用户</h3>
+          <p className="mt-1 text-sm text-gray-500">请创建一个用户以开始使用</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -110,27 +110,27 @@ export function UsersSettings() {
                           className="rounded bg-blue-900/50 px-2 py-0.5 text-xs text-blue-300"
                         >
                           <Users className="mr-1 inline-block h-3 w-3" />
-                          {group.name}
+                          {{'Administrators': "管理群组", 'Operators': "操作群组", 'Read Only': "访客群组"}[group.name] ?? group.name}
                         </span>
                       ))}
                       {(!user.groups || user.groups.length === 0) && (
                         <span className="rounded bg-gray-700/50 px-2 py-0.5 text-xs text-gray-400">
-                          No groups
+                          无群组
                         </span>
                       )}
                       {isOidc && (
                         <span className="rounded bg-cyan-900/50 px-2 py-0.5 text-xs text-cyan-300">
-                          SSO
+                          单点登录 (SSO)
                         </span>
                       )}
                       {user.must_change_password && (
                         <span className="rounded bg-yellow-900/50 px-2 py-0.5 text-xs text-yellow-300">
-                          Password Reset Required
+                          需要重置密码
                         </span>
                       )}
                       {!user.approved && (
                         <span className="rounded-full bg-amber-500/20 px-2 py-0.5 text-xs font-medium text-amber-400">
-                          Pending
+                          等待批准
                         </span>
                       )}
                     </div>
@@ -141,12 +141,12 @@ export function UsersSettings() {
 
                     <div className="mt-3 flex flex-wrap gap-4 text-xs text-gray-500">
                       <div>
-                        <span className="text-gray-400">Created:</span>{' '}
+                        <span className="text-gray-400">创建日期:</span>{' '}
                         {formatDateTime(user.created_at)}
                       </div>
                       {user.last_login && (
                         <div>
-                          <span className="text-gray-400">Last login:</span>{' '}
+                          <span className="text-gray-400">上次登录:</span>{' '}
                           {formatDateTime(user.last_login)}
                         </div>
                       )}
@@ -161,13 +161,13 @@ export function UsersSettings() {
                         size="sm"
                         className="bg-green-600 text-xs hover:bg-green-500"
                       >
-                        Approve
+                        批准登录
                       </Button>
                     )}
                     <button
                       onClick={() => setEditingUserId(user.id)}
                       className="rounded p-2 text-gray-400 transition-colors hover:bg-gray-700 hover:text-gray-300"
-                      title="Edit user"
+                      title="编辑用户"
                     >
                       <Edit2 className="h-4 w-4" />
                     </button>
@@ -175,7 +175,7 @@ export function UsersSettings() {
                       <button
                         onClick={() => setResetPasswordUserId(user.id)}
                         className="rounded p-2 text-yellow-400 transition-colors hover:bg-yellow-900/30 hover:text-yellow-300"
-                        title="Reset password"
+                        title="重置密码"
                       >
                         <Key className="h-4 w-4" />
                       </button>
@@ -184,7 +184,7 @@ export function UsersSettings() {
                       onClick={() => setDeletingUser(user)}
                       disabled={deleteUser.isPending || user.id === currentUser?.id}
                       className="rounded p-2 text-red-400 transition-colors hover:bg-red-900/30 hover:text-red-300 disabled:opacity-50"
-                      title={user.id === currentUser?.id ? 'You cannot delete your own account' : 'Delete user'}
+                      title={user.id === currentUser?.id ? '你无法删除自己的账户' : '删除用户'}
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -221,9 +221,9 @@ export function UsersSettings() {
                 <AlertTriangle className="h-5 w-5 text-red-400" />
               </div>
               <div>
-                <DialogTitle>Delete User</DialogTitle>
+                <DialogTitle>删除用户</DialogTitle>
                 <DialogDescription className="mt-1">
-                  This action cannot be undone. The user will be permanently deleted.
+                  此操作将无法撤销。该用户将会被永久删除。
                 </DialogDescription>
               </div>
             </div>
@@ -240,22 +240,22 @@ export function UsersSettings() {
                 )}
               </div>
               <p className="mt-3 text-sm text-gray-400">
-                The user account and all associated data will be permanently removed.
-                Audit log entries will be preserved.
+                用户账户及其所有的相关数据将会被永久删除。
+                但相关的审计日志条目会被保留。
               </p>
             </div>
           )}
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeletingUser(null)}>
-              Cancel
+              取消
             </Button>
             <Button
               variant="destructive"
               onClick={handleDeleteConfirm}
               disabled={deleteUser.isPending}
             >
-              {deleteUser.isPending ? 'Deleting...' : 'Delete User'}
+              {deleteUser.isPending ? '删除中...' : '删除用户'}
             </Button>
           </DialogFooter>
         </DialogContent>

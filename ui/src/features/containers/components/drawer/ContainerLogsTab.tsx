@@ -17,7 +17,7 @@ export function ContainerLogsTab({ containerId }: ContainerLogsTabProps) {
   if (!container) {
     return (
       <div className="p-4 text-muted-foreground text-sm">
-        Loading container details...
+        加载容器详细信息中...
       </div>
     )
   }

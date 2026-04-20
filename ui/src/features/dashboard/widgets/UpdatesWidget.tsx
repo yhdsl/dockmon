@@ -33,7 +33,7 @@ export function UpdatesWidget() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base">
           <RefreshCw className="h-5 w-5" />
-          Updates
+          更新
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -44,14 +44,14 @@ export function UpdatesWidget() {
           ) : (
             <div className="text-3xl font-semibold text-info">{updatesAvailable}</div>
           )}
-          <p className="text-sm text-muted-foreground">Available</p>
+          <p className="text-sm text-muted-foreground">可用</p>
         </div>
 
         {/* Status message */}
         <div className="text-xs text-muted-foreground">
           {updatesAvailable > 0
-            ? `${updatesAvailable} container${updatesAvailable > 1 ? 's' : ''} ready to update`
-            : 'All containers up to date'}
+            ? `${updatesAvailable} 个容器可更新`
+            : '全部容器已是最新'}
         </div>
       </CardContent>
     </Card>

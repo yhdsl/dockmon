@@ -53,8 +53,8 @@ export function MigrationChoiceModal() {
     },
     onSuccess: (data: Record<string, unknown>) => {
       const migratedFrom = data.migrated_from as { host_name: string } | undefined
-      toast.success('Migration completed', {
-        description: `Settings transferred from ${migratedFrom?.host_name || 'previous host'}`,
+      toast.success('已成功完成迁移', {
+        description: `已完成 ${migratedFrom?.host_name || '之前的主机'} 的设置迁移`,
       })
       // Invalidate queries to refresh data
       queryClient.invalidateQueries({ queryKey: ['hosts'] })
@@ -64,8 +64,8 @@ export function MigrationChoiceModal() {
       setSelectedHostId(null)
     },
     onError: (error: Error) => {
-      toast.error('Migration failed', {
-        description: error.message || 'Failed to migrate settings',
+      toast.error('迁移失败', {
+        description: error.message || '无法完成设置迁移',
       })
     },
   })
@@ -98,10 +98,10 @@ export function MigrationChoiceModal() {
             </div>
             <div>
               <h2 className="text-lg font-semibold text-foreground">
-                Migration Choice Required
+                需要选择迁移方案
               </h2>
               <p className="text-sm text-muted-foreground mt-1">
-                Multiple hosts share the same Docker engine ID
+                多个主机共享同一个 Docker engine ID
               </p>
             </div>
           </div>
@@ -111,12 +111,11 @@ export function MigrationChoiceModal() {
         <div className="px-6 py-4 space-y-4">
           <div className="text-sm text-foreground">
             <p>
-              The agent <span className="font-medium text-foreground">{choiceData.host_name}</span> connected
-              but found multiple existing hosts with the same Docker engine ID.
+              已连接至 <span className="font-medium text-foreground">{choiceData.host_name}</span> 代理，
+              但发现有多个现有主机使用了相同的 Docker engine ID。
             </p>
             <p className="mt-2 text-muted-foreground">
-              This typically happens with cloned VMs or LXC containers. Select which host&apos;s
-              settings (tags, auto-restart configs, etc.) should be migrated to the new agent.
+              这通常发生在被克隆的虚拟机或 LXC 容器中。请选择应该将哪个主机的设置 (标签、自动重启配置等) 迁移到新的代理。
             </p>
           </div>
 
@@ -128,7 +127,7 @@ export function MigrationChoiceModal() {
                 {choiceData.host_name}
               </div>
               <div className="text-xs text-muted-foreground">
-                New agent connection
+                已连接至新的代理
               </div>
             </div>
           </div>
@@ -136,7 +135,7 @@ export function MigrationChoiceModal() {
           {/* Candidates list */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">
-              Migrate settings from:
+              迁移设置来源:
             </label>
             <div className="space-y-2">
               {choiceData.candidates.map((candidate) => (
@@ -175,23 +174,22 @@ export function MigrationChoiceModal() {
           {/* Info note */}
           <div className="text-xs text-muted-foreground bg-surface-2 rounded p-3 space-y-2">
             <p>
-              <strong>Migration:</strong> The selected host will be marked as migrated and its settings
-              (tags, auto-restart configs, desired states, etc.) will be transferred to the new agent.
-              The old host will remain in the system for reference but will be inactive.
+              <strong>迁移通知:</strong> 所选主机将会被标记为已迁移，相关设置 (标签、自动重启配置、期望状态等) 将被转移到新的代理中。
+              原有的旧主机不会被删除，但将处于非活动状态。
             </p>
             <p className="text-warning">
-              <strong>Important:</strong> You can only migrate ONE host per duplicate engine ID.
-              Other cloned hosts will fail to register as agents until you regenerate their Docker engine ID.
+              <strong>重要提示:</strong> 每个 Docker engine ID 只能迁移一个主机。
+              其他克隆的主机在你重新生成新的 Docker engine ID 之前，将无法被注册。
             </p>
             <p>
-              To fix other cloned hosts: <code className="px-1 py-0.5 bg-surface-1 rounded text-foreground">rm /var/lib/docker/engine-id</code> (or <code className="px-1 py-0.5 bg-surface-1 rounded text-foreground">/etc/docker/key.json</code> on older systems) and restart Docker.{' '}
+              要修复其他克隆的主机: <code className="px-1 py-0.5 bg-surface-1 rounded text-foreground">rm /var/lib/docker/engine-id</code> (或者在旧系统中编辑 <code className="px-1 py-0.5 bg-surface-1 rounded text-foreground">/etc/docker/key.json</code>)，然后重启 Docker。查看{' '}
               <a
                 href="https://github.com/darthnorse/dockmon/wiki/Cloned-VMs-and-Duplicate-Engine-IDs"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary hover:underline"
               >
-                Learn more
+                了解更多
               </a>
             </p>
           </div>
@@ -207,10 +205,10 @@ export function MigrationChoiceModal() {
             {migrateMutation.isPending ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Migrating...
+                迁移中...
               </>
             ) : (
-              'Migrate Settings'
+              '迁移设置'
             )}
           </button>
         </div>

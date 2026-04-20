@@ -65,7 +65,7 @@ export function ContainerLogsPage() {
     if (checked) {
       // Check if we're at the 15 container limit
       if (selectedContainers.length >= 15) {
-        toast.error('Maximum 15 containers can be selected at once')
+        toast.error('一次最多仅能选择 15 个容器')
         return
       }
 
@@ -83,11 +83,11 @@ export function ContainerLogsPage() {
 
   const getSelectionLabel = (): string => {
     if (selectedContainers.length === 0) {
-      return 'Select containers to view logs...'
+      return '选择若干个容器以查看日志...'
     } else if (selectedContainers.length === 1) {
-      return selectedContainers[0]?.name || 'Unknown'
+      return selectedContainers[0]?.name || '未知'
     } else {
-      return `${selectedContainers.length} containers selected`
+      return `${selectedContainers.length} 个容器已选择`
     }
   }
 
@@ -135,10 +135,10 @@ export function ContainerLogsPage() {
         <div className="flex items-center justify-between p-3 sm:p-4 md:p-6 pt-20 md:pt-6">
           <div>
             <h1 className="text-xl sm:text-2xl font-bold text-foreground">
-              Container Logs
+              容器日志
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
-              View and stream logs from up to 15 containers simultaneously
+              同时流式传输与审阅查看最多 15 个容器的实时日志
             </p>
           </div>
         </div>
@@ -161,11 +161,11 @@ export function ContainerLogsPage() {
               <div className="absolute z-50 w-full mt-2 bg-card border border-border rounded-lg shadow-lg max-h-[400px] overflow-y-auto">
                 {hosts.length === 0 ? (
                   <div className="p-4 text-sm text-muted-foreground text-center">
-                    No hosts available. Add hosts to see containers.
+                    暂无可用的主机，请先添加一个主机以查看对应的容器日志。
                   </div>
                 ) : allContainers.length === 0 ? (
                   <div className="p-4 text-sm text-muted-foreground text-center">
-                    No containers available. Make sure your hosts have running containers.
+                    暂无可用的容器，请确保当前主机中存在任何正在运行的容器。
                   </div>
                 ) : (
                   sortedHosts.map((host) => {
@@ -217,9 +217,9 @@ export function ContainerLogsPage() {
           {/* Selection Info */}
           {selectedContainers.length > 0 && (
             <div className="mt-2 text-xs text-muted-foreground">
-              {selectedContainers.length} of 15 containers selected
+              {selectedContainers.length} / 15 个容器已选择
               {selectedContainers.length >= 15 && (
-                <span className="ml-2 text-warning">• Maximum limit reached</span>
+                <span className="ml-2 text-warning">• 已达到容器数目限制</span>
               )}
             </div>
           )}
@@ -231,8 +231,8 @@ export function ContainerLogsPage() {
         {selectedContainers.length === 0 ? (
           <div className="flex flex-col items-center justify-center text-muted-foreground min-h-[400px] py-20">
             <FileText className="w-16 h-16 mb-4 opacity-50" />
-            <p className="text-xl font-medium">No containers selected</p>
-            <p className="text-sm mt-2">Select one or more containers above to view their logs</p>
+            <p className="text-xl font-medium">暂无选择容器</p>
+            <p className="text-sm mt-2">请选择至少一个容器以查看对应的容器日志</p>
           </div>
         ) : (
           <LogViewer

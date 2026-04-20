@@ -23,9 +23,9 @@ export function HostEventsSection({ hostId }: HostEventsSectionProps) {
 
   if (isLoading) {
     return (
-      <DrawerSection title="Recent Events">
+      <DrawerSection title="事件">
         <div className="text-center py-8 text-muted-foreground">
-          <p className="text-sm">Loading events...</p>
+          <p className="text-sm">加载事件数据中...</p>
         </div>
       </DrawerSection>
     )
@@ -33,21 +33,21 @@ export function HostEventsSection({ hostId }: HostEventsSectionProps) {
 
   if (error) {
     return (
-      <DrawerSection title="Recent Events">
+      <DrawerSection title="事件">
         <div className="text-center py-8">
           <AlertCircle className="h-12 w-12 mx-auto mb-3 text-red-500 opacity-50" />
-          <p className="text-sm text-red-500">Failed to load events</p>
+          <p className="text-sm text-red-500">无法加载事件数据</p>
         </div>
       </DrawerSection>
     )
   }
 
   return (
-    <DrawerSection title="Recent Events">
+    <DrawerSection title="事件">
       {events.length === 0 ? (
         <div className="text-center py-8 text-muted-foreground">
           <Calendar className="h-12 w-12 mx-auto mb-3 opacity-50" />
-          <p className="text-sm">No recent events</p>
+          <p className="text-sm">最近暂无事件</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -79,7 +79,7 @@ export function HostEventsSection({ hostId }: HostEventsSectionProps) {
                 )}
                 {event.container_name && (
                   <p className="text-xs text-muted-foreground mt-1">
-                    Container: {event.container_name}
+                    容器: {event.container_name}
                   </p>
                 )}
               </div>
@@ -91,7 +91,7 @@ export function HostEventsSection({ hostId }: HostEventsSectionProps) {
             to={`/events?host_id=${hostId}`}
             className="flex items-center justify-center gap-2 p-3 rounded-lg border border-border hover:bg-muted transition-colors text-sm text-muted-foreground hover:text-foreground"
           >
-            <span>View all events for this host</span>
+            <span>查看此主机上的全部事件</span>
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>

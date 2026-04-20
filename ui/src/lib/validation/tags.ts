@@ -25,24 +25,24 @@ export function validateTag(
   const trimmed = tag.trim()
 
   if (!trimmed) {
-    return { valid: false, error: 'Tag cannot be empty' }
+    return { valid: false, error: '标签不能为空' }
   }
 
   if (trimmed.length < 1 || trimmed.length > 24) {
-    return { valid: false, error: 'Tag must be 1-24 characters' }
+    return { valid: false, error: '标签不能超过 24 个字符' }
   }
 
   // Allow alphanumeric + dash, underscore, colon, dot
   const validPattern = /^[a-zA-Z0-9\p{L}\p{N}\-_:.]+$/u
   if (!validPattern.test(trimmed)) {
-    return { valid: false, error: 'Invalid characters (alphanumeric, -, _, :, . only)' }
+    return { valid: false, error: '标签只能包含数字和字母、连字符、下划线、冒号以及点' }
   }
 
   // Check for duplicates if existing tags provided
   if (existingTags) {
     const normalizedTag = trimmed.toLowerCase()
     if (existingTags.map(t => t.toLowerCase()).includes(normalizedTag)) {
-      return { valid: false, error: 'Duplicate tag' }
+      return { valid: false, error: '标签重复' }
     }
   }
 

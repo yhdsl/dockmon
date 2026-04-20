@@ -250,7 +250,7 @@ export function BulkActionBar({
               <Check className="h-3.5 w-3.5" />
             </div>
             <span className="text-sm font-medium text-foreground">
-              {selectedCount} container{selectedCount !== 1 ? 's' : ''} selected
+              已选择 {selectedCount} 个容器
             </span>
           </div>
 
@@ -259,7 +259,7 @@ export function BulkActionBar({
             {/* Actions */}
             <div className="border border-border rounded-lg bg-background">
               <div className="px-3 py-2 text-sm font-medium border-b border-border">
-                Actions
+                容器操作
               </div>
 
               <div className="p-3 space-y-3">
@@ -273,7 +273,7 @@ export function BulkActionBar({
                     disabled={isLoading}
                     className="text-success hover:text-success hover:bg-success/10"
                   >
-                    Start
+                    启动
                   </Button>
                   <Button
                     variant="outline"
@@ -282,7 +282,7 @@ export function BulkActionBar({
                     disabled={isLoading}
                     className="text-danger hover:text-danger hover:bg-danger/10"
                   >
-                    Stop
+                    停止
                   </Button>
                   <Button
                     variant="outline"
@@ -291,7 +291,7 @@ export function BulkActionBar({
                     disabled={isLoading}
                     className="text-info hover:text-info hover:bg-info/10"
                   >
-                    Restart
+                    重启
                   </Button>
                   <Button
                     variant="outline"
@@ -300,7 +300,7 @@ export function BulkActionBar({
                     disabled={isLoading}
                     className="text-danger-foreground bg-danger hover:bg-danger/90"
                   >
-                    Delete
+                    删除
                   </Button>
                 </div>
                 </fieldset>
@@ -318,7 +318,7 @@ export function BulkActionBar({
                     disabled={isLoading}
                     className="text-warning hover:text-warning hover:bg-warning/10"
                   >
-                    Check Updates
+                    检查更新
                   </Button>
                   <Button
                     variant="outline"
@@ -327,7 +327,7 @@ export function BulkActionBar({
                     disabled={isLoading}
                     className="text-info hover:text-info hover:bg-info/10"
                   >
-                    Update Containers
+                    更新容器
                   </Button>
                 </div>
                 </fieldset>
@@ -337,7 +337,7 @@ export function BulkActionBar({
             {/* Manage Policy */}
             <div className="border border-border rounded-lg bg-background">
               <div className="px-3 py-2 text-sm font-medium border-b border-border">
-                Manage Policy
+                管理策略
               </div>
 
               <div className="p-3 space-y-3 min-w-[400px]">
@@ -345,11 +345,11 @@ export function BulkActionBar({
                   <fieldset disabled={!canOperate || !canBatch} className="disabled:opacity-60">
                   <div className="space-y-2">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs font-medium text-muted-foreground">Set Auto-Restart</span>
+                      <span className="text-xs font-medium text-muted-foreground">设置自动重启</span>
                       <div className="group relative">
                         <Info className="h-3 w-3 text-muted-foreground cursor-help" />
                         <div className="invisible group-hover:visible absolute left-0 bottom-full mb-2 z-10 w-64 p-2 text-xs bg-surface-1 border border-border rounded shadow-lg">
-                          DockMon will automatically restart these containers if they stop unexpectedly
+                          DockMon 会在这些容器意外停止时自动重启它们
                         </div>
                       </div>
                     </div>
@@ -363,7 +363,7 @@ export function BulkActionBar({
                           className="h-3.5 w-3.5"
                           disabled={isLoading}
                         />
-                        <span className="text-sm">Enable</span>
+                        <span className="text-sm">启用</span>
                       </label>
                       <label className="flex items-center gap-1.5 cursor-pointer">
                         <input
@@ -374,7 +374,7 @@ export function BulkActionBar({
                           className="h-3.5 w-3.5"
                           disabled={isLoading}
                         />
-                        <span className="text-sm">Disable</span>
+                        <span className="text-sm">禁用</span>
                       </label>
                       <Button
                         variant="default"
@@ -383,7 +383,7 @@ export function BulkActionBar({
                         disabled={isLoading || !onAutoRestartUpdate}
                         className="ml-auto"
                       >
-                        {isLoading ? 'Applying...' : 'Apply'}
+                        {isLoading ? '应用中...' : '应用'}
                       </Button>
                     </div>
                   </div>
@@ -393,11 +393,11 @@ export function BulkActionBar({
                   <fieldset disabled={!canUpdate || !canBatch} className="disabled:opacity-60">
                   <div className="space-y-2">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs font-medium text-muted-foreground">Set Auto-Update</span>
+                      <span className="text-xs font-medium text-muted-foreground">设置自动更新</span>
                       <div className="group relative">
                         <Info className="h-3 w-3 text-muted-foreground cursor-help" />
                         <div className="invisible group-hover:visible absolute left-0 bottom-full mb-2 z-10 w-64 p-2 text-xs bg-surface-1 border border-border rounded shadow-lg">
-                          DockMon will automatically check for and apply container updates when new images are available
+                          DockMon 会自动检查更新并在新镜像可用时自动更新这些容器
                         </div>
                       </div>
                     </div>
@@ -411,7 +411,7 @@ export function BulkActionBar({
                           className="h-3.5 w-3.5"
                           disabled={isLoading}
                         />
-                        <span className="text-sm">Enable</span>
+                        <span className="text-sm">启用</span>
                       </label>
                       <label className="flex items-center gap-1.5 cursor-pointer">
                         <input
@@ -422,7 +422,7 @@ export function BulkActionBar({
                           className="h-3.5 w-3.5"
                           disabled={isLoading}
                         />
-                        <span className="text-sm">Disable</span>
+                        <span className="text-sm">禁用</span>
                       </label>
                       <select
                         value={floatingTagMode}
@@ -430,10 +430,10 @@ export function BulkActionBar({
                         disabled={isLoading || autoUpdateMode === 'disable'}
                         className="px-2 py-1 text-sm rounded border border-border bg-background disabled:opacity-50"
                       >
-                        <option value="exact">Respect Tag</option>
-                        <option value="patch">Patch Updates</option>
-                        <option value="minor">Minor Updates</option>
-                        <option value="latest">Always Latest</option>
+                        <option value="exact">遵循标签</option>
+                        <option value="patch">补丁更新</option>
+                        <option value="minor">小型更新</option>
+                        <option value="latest">保持最新</option>
                       </select>
                       <Button
                         variant="default"
@@ -442,7 +442,7 @@ export function BulkActionBar({
                         disabled={isLoading || !onAutoUpdateUpdate}
                         className="ml-auto"
                       >
-                        {isLoading ? 'Applying...' : 'Apply'}
+                        {isLoading ? '应用中...' : '应用'}
                       </Button>
                     </div>
                   </div>
@@ -452,11 +452,11 @@ export function BulkActionBar({
                   <fieldset disabled={!canOperate || !canBatch} className="disabled:opacity-60">
                   <div className="space-y-2">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs font-medium text-muted-foreground">Desired State</span>
+                      <span className="text-xs font-medium text-muted-foreground">期望状态</span>
                       <div className="group relative">
                         <Info className="h-3 w-3 text-muted-foreground cursor-help" />
                         <div className="invisible group-hover:visible absolute left-0 bottom-full mb-2 z-10 w-64 p-2 text-xs bg-surface-1 border border-border rounded shadow-lg">
-                          Should Run: Stopped state is treated as a warning. On-Demand: Stopped state is informational only
+                          始终运行: 停止状态将被视为警告。按需运行: 停止状态仅作为信息显示
                         </div>
                       </div>
                     </div>
@@ -470,7 +470,7 @@ export function BulkActionBar({
                           className="h-3.5 w-3.5"
                           disabled={isLoading}
                         />
-                        <span className="text-sm">Should Run</span>
+                        <span className="text-sm">始终运行</span>
                       </label>
                       <label className="flex items-center gap-1.5 cursor-pointer">
                         <input
@@ -481,7 +481,7 @@ export function BulkActionBar({
                           className="h-3.5 w-3.5"
                           disabled={isLoading}
                         />
-                        <span className="text-sm">On-Demand</span>
+                        <span className="text-sm">按需运行</span>
                       </label>
                       <Button
                         variant="default"
@@ -490,7 +490,7 @@ export function BulkActionBar({
                         disabled={isLoading || !onDesiredStateUpdate}
                         className="ml-auto"
                       >
-                        {isLoading ? 'Applying...' : 'Apply'}
+                        {isLoading ? '应用中...' : '应用'}
                       </Button>
                     </div>
                   </div>
@@ -501,13 +501,13 @@ export function BulkActionBar({
             {/* Tags */}
             <div className="border border-border rounded-lg bg-background">
               <div className="px-3 py-2 text-sm font-medium border-b border-border">
-                Tags
+                标签
               </div>
 
               <fieldset disabled={!canManageTags || !canBatch} className="p-3 space-y-3 min-w-[500px] disabled:opacity-60">
                   {/* Tag mode selector */}
                   <div className="flex items-center gap-3">
-                    <span className="text-xs font-medium text-muted-foreground">Action:</span>
+                    <span className="text-xs font-medium text-muted-foreground">操作:</span>
                     <label className="flex items-center gap-1.5 cursor-pointer">
                       <input
                         type="radio"
@@ -520,7 +520,7 @@ export function BulkActionBar({
                         className="h-3.5 w-3.5"
                         disabled={isLoading}
                       />
-                      <span className="text-sm">Add</span>
+                      <span className="text-sm">添加</span>
                     </label>
                     <label className="flex items-center gap-1.5 cursor-pointer">
                       <input
@@ -534,7 +534,7 @@ export function BulkActionBar({
                         className="h-3.5 w-3.5"
                         disabled={isLoading}
                       />
-                      <span className="text-sm">Remove</span>
+                      <span className="text-sm">删除</span>
                     </label>
                   </div>
 
@@ -570,7 +570,7 @@ export function BulkActionBar({
                         onChange={(e) => setInputValue(e.target.value)}
                         onKeyDown={handleKeyDown}
                         onFocus={() => setShowSuggestions(true)}
-                        placeholder={selectedTags.length === 0 ? "Type to add tags..." : ""}
+                        placeholder={selectedTags.length === 0 ? "输入以添加标签..." : ""}
                         disabled={isLoading}
                         className="flex-1 px-2 py-1 text-sm border border-border rounded bg-background focus:outline-none focus:ring-2 focus:ring-primary min-w-[150px]"
                       />
@@ -581,7 +581,7 @@ export function BulkActionBar({
                         onClick={handleApplyTags}
                         disabled={selectedTags.length === 0 || isLoading}
                       >
-                        {isLoading ? 'Applying...' : 'Apply'}
+                        {isLoading ? '应用中...' : '应用'}
                       </Button>
 
                       {/* Suggestions dropdown */}
@@ -594,7 +594,7 @@ export function BulkActionBar({
                             <>
                               {tagSuggestions.intersection.length > 0 && (
                                 <div className="p-2">
-                                  <div className="text-xs text-muted-foreground px-2 py-1">On all selected:</div>
+                                  <div className="text-xs text-muted-foreground px-2 py-1">将应用于全部选择项:</div>
                                   {tagSuggestions.intersection.map(tag => (
                                     <button
                                       key={tag}
@@ -608,7 +608,7 @@ export function BulkActionBar({
                               )}
                               {tagSuggestions.union.length > 0 && (
                                 <div className="p-2 border-t border-border">
-                                  <div className="text-xs text-muted-foreground px-2 py-1">On some selected:</div>
+                                  <div className="text-xs text-muted-foreground px-2 py-1">将应用于部分选择项:</div>
                                   {tagSuggestions.union.map(tag => (
                                     <button
                                       key={tag}
@@ -616,14 +616,14 @@ export function BulkActionBar({
                                       className="w-full text-left px-3 py-2 text-sm hover:bg-muted rounded transition-colors flex items-center justify-between"
                                     >
                                       <span>{tag}</span>
-                                      <span className="text-xs text-muted-foreground">some</span>
+                                      <span className="text-xs text-muted-foreground">部分</span>
                                     </button>
                                   ))}
                                 </div>
                               )}
                               {tagSuggestions.intersection.length === 0 && tagSuggestions.union.length === 0 && (
                                 <div className="p-4 text-sm text-muted-foreground text-center">
-                                  No tags to remove
+                                  没有可以删除的标签
                                 </div>
                               )}
                             </>
@@ -643,11 +643,11 @@ export function BulkActionBar({
                                 </div>
                               ) : inputValue.trim() ? (
                                 <div className="p-3 text-sm text-muted-foreground">
-                                  Press Enter to create "{inputValue.trim()}"
+                                  输入回车以创建 "{inputValue.trim()}"
                                 </div>
                               ) : (
                                 <div className="p-3 text-sm text-muted-foreground">
-                                  Type to search or create tags
+                                  输入以搜索或创建标签
                                 </div>
                               )}
                             </>
@@ -664,8 +664,8 @@ export function BulkActionBar({
               variant="ghost"
               size="icon"
               onClick={onClearSelection}
-              title="Clear selection"
-              aria-label="Clear selection"
+              title="清除选择项"
+              aria-label="清除选择项"
             >
               <X className="h-4 w-4" />
             </Button>

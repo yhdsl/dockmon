@@ -101,5 +101,5 @@ export function getRegistryName(imageName: string): string {
   }
 
   // Extract registry hostname
-  return firstPart || 'Unknown Registry'
+  return firstPart || '未知注册表'
 }

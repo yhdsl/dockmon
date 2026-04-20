@@ -60,7 +60,7 @@ function LocalLoginForm({
     <form onSubmit={onSubmit} className="space-y-4">
       <div className="space-y-2">
         <label htmlFor="username" className="text-xs font-medium text-muted-foreground">
-          Username
+          用户名
         </label>
         <Input
           id="username"
@@ -74,12 +74,12 @@ function LocalLoginForm({
           disabled={isLoading}
           autoComplete="username"
           autoFocus
-          placeholder="Enter your username"
+          placeholder="请输入用户名"
         />
       </div>
       <div className="space-y-2">
         <label htmlFor="password" className="text-xs font-medium text-muted-foreground">
-          Password
+          密码
         </label>
         <Input
           id="password"
@@ -92,7 +92,7 @@ function LocalLoginForm({
           }}
           disabled={isLoading}
           autoComplete="current-password"
-          placeholder="Enter your password"
+          placeholder="请输入密码"
         />
       </div>
       <Button
@@ -106,12 +106,12 @@ function LocalLoginForm({
         {isLoading ? (
           <>
             <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
-            Logging in...
+            登录中...
           </>
         ) : (
           <>
             <LogIn className="h-4 w-4" />
-            Log In
+            登录
           </>
         )}
       </Button>
@@ -134,16 +134,16 @@ function getSafeRedirect(url: string | null): string {
 
 /** Safe OIDC error messages - prevents phishing via arbitrary URL text */
 const OIDC_ERROR_MESSAGES: Record<string, string> = {
-  access_denied: 'Access was denied by the identity provider.',
-  login_failed: 'SSO login failed. Please try again.',
-  invalid_state: 'SSO session expired. Please try again.',
-  provider_error: 'The identity provider returned an error.',
-  no_email: 'No email address was provided by the identity provider.',
-  account_disabled: 'Your account has been disabled.',
-  pending_approval: 'Your account is pending admin approval. Please contact your administrator.',
+  access_denied: '身份提供商拒绝了访问请求。',
+  login_failed: 'SSO 登录失败，请稍后重试。',
+  invalid_state: 'SSO 会话已过期，请稍后重试。',
+  provider_error: '身份提供商返回了错误回复。',
+  no_email: '身份提供商未提供电子邮件地址。',
+  account_disabled: '你的账户已被禁用。',
+  pending_approval: '你的账户正在等待管理员批准，请联系网站管理员。',
 }
 
-const DEFAULT_OIDC_ERROR = 'SSO authentication failed. Please try again or contact your administrator.'
+const DEFAULT_OIDC_ERROR = 'SSO 认证失败，请稍后重试或联系网站管理员。'
 
 export function LoginPage() {
   const { login, isLoading } = useAuth()
@@ -182,7 +182,7 @@ export function LoginPage() {
     setError(null)
 
     if (!username.trim() || !password) {
-      setError('Please enter both username and password')
+      setError('请输入用户名和密码')
       return
     }
 
@@ -199,14 +199,14 @@ export function LoginPage() {
     } catch (err) {
       if (err instanceof ApiError) {
         if (err.status === 401) {
-          setError('Invalid username or password')
+          setError('用户名或密码错误')
         } else if (err.status === 429) {
-          setError('Too many login attempts. Please try again later.')
+          setError('尝试登录次数过多，请稍后再试。')
         } else {
-          setError('Login failed. Please try again.')
+          setError('登录时失败，请再试一次')
         }
       } else {
-        setError('Connection error. Please check if the backend is running.')
+        setError('连接错误。请检查后端服务是否正常运行。')
       }
     }
   }
@@ -224,7 +224,7 @@ export function LoginPage() {
             <img src={`${getBasePath()}/logo-192.png`} alt="DockMon" className="h-16 w-16 rounded-xl" />
           </div>
           <CardTitle className="text-2xl">DockMon</CardTitle>
-          <CardDescription>Docker Container Monitor</CardDescription>
+          <CardDescription>Docker 容器监控服务</CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -247,7 +247,7 @@ export function LoginPage() {
                 onClick={handleOIDCLogin}
               >
                 <KeyRound className="h-4 w-4" />
-                Sign in with SSO
+                使用 SSO 登录
               </Button>
 
               {!showLocalLogin ? (
@@ -256,11 +256,11 @@ export function LoginPage() {
                   className="mt-4 w-full text-center text-sm text-muted-foreground hover:text-foreground transition-colors"
                   onClick={() => setShowLocalLogin(true)}
                 >
-                  Sign in with local account
+                  使用本地账户登录
                 </button>
               ) : (
                 <>
-                  <Divider label="local account" />
+                  <Divider label="本地账户" />
                   <LocalLoginForm {...formProps} submitVariant="outline" />
                 </>
               )}
@@ -273,7 +273,7 @@ export function LoginPage() {
               {/* OIDC SSO Button (secondary) */}
               {oidcStatus?.enabled && (
                 <>
-                  <Divider label="or" />
+                  <Divider label="或者" />
                   <Button
                     type="button"
                     variant="outline"
@@ -282,7 +282,7 @@ export function LoginPage() {
                     onClick={handleOIDCLogin}
                   >
                     <KeyRound className="h-4 w-4" />
-                    Sign in with SSO
+                    使用 SSO 登录
                   </Button>
                 </>
               )}

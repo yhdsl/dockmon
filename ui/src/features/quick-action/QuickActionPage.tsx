@@ -75,7 +75,7 @@ export function QuickActionPage() {
   useEffect(() => {
     if (!token) {
       setState('invalid')
-      setErrorMessage('No token provided')
+      setErrorMessage('未提供令牌')
       return
     }
 
@@ -107,7 +107,7 @@ export function QuickActionPage() {
         return
       }
       setState('invalid')
-      setErrorMessage('Failed to validate token')
+      setErrorMessage('无法验证令牌')
     }
   }
 
@@ -125,7 +125,7 @@ export function QuickActionPage() {
 
       if (!consumeData.success) {
         setState('error')
-        setErrorMessage(consumeData.error || 'Token validation failed')
+        setErrorMessage(consumeData.error || '无法验证令牌')
         return
       }
 
@@ -133,7 +133,7 @@ export function QuickActionPage() {
       const { host_id, container_id } = tokenInfo.action_params
       if (!host_id || !container_id) {
         setState('error')
-        setErrorMessage('Missing host or container information')
+        setErrorMessage('缺乏主机或容器信息')
         return
       }
 
@@ -156,7 +156,7 @@ export function QuickActionPage() {
         setState('success')
       } else {
         setState('error')
-        setErrorMessage(updateData.detail || updateData.message || 'Update failed')
+        setErrorMessage(updateData.detail || updateData.message || '更新失败')
       }
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
@@ -164,22 +164,22 @@ export function QuickActionPage() {
         return
       }
       setState('error')
-      setErrorMessage('Failed to execute action')
+      setErrorMessage('无法执行操作')
     }
   }
 
   const getErrorMessage = (reason?: string): string => {
     switch (reason) {
       case 'expired':
-        return 'This link has expired'
+        return '此链接已过期'
       case 'already_used':
-        return 'This link has already been used'
+        return '此链接已被使用'
       case 'revoked':
-        return 'This link has been revoked'
+        return '此链接已被吊销'
       case 'not_found':
-        return 'Invalid or unknown link'
+        return '无效或未知的链接'
       default:
-        return 'Invalid link'
+        return '无效的链接'
     }
   }
 
@@ -187,9 +187,9 @@ export function QuickActionPage() {
     if (!hours) return ''
     if (hours < 1) {
       const minutes = Math.round(hours * 60)
-      return `${minutes}m remaining`
+      return `剩余 ${minutes} 分钟`
     }
-    return `${Math.round(hours)}h remaining`
+    return `剩余 ${Math.round(hours)} 小时`
   }
 
   return (
@@ -203,7 +203,7 @@ export function QuickActionPage() {
             </div>
             <span className="text-2xl font-semibold text-white">DockMon</span>
           </div>
-          <p className="text-sm text-gray-400">Quick Action</p>
+          <p className="text-sm text-gray-400">快速操作</p>
         </div>
 
         {/* Content Card */}
@@ -212,7 +212,7 @@ export function QuickActionPage() {
           {state === 'loading' && (
             <div className="text-center py-8">
               <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
-              <p className="text-gray-400">Validating link...</p>
+              <p className="text-gray-400">验证链接中...</p>
             </div>
           )}
 
@@ -220,7 +220,7 @@ export function QuickActionPage() {
           {state === 'invalid' && (
             <div className="text-center py-8">
               <XCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-white mb-2">Link Invalid</h2>
+              <h2 className="text-xl font-semibold text-white mb-2">无效的链接</h2>
               <p className="text-gray-400">{errorMessage}</p>
             </div>
           )}
@@ -229,19 +229,19 @@ export function QuickActionPage() {
           {state === 'ready' && tokenInfo?.action_params && (
             <>
               <h2 className="text-lg font-semibold text-white mb-4">
-                {tokenInfo.action_type === 'container_update' ? 'Update Container' : 'Confirm Action'}
+                {tokenInfo.action_type === 'container_update' ? '更新容器' : '确认操作'}
               </h2>
 
               {/* Container Info */}
               <div className="bg-[#161b22] rounded-lg p-4 mb-4">
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-400">Container</span>
+                    <span className="text-gray-400">容器</span>
                     <span className="text-white font-medium">{tokenInfo.action_params.container_name}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-400">Host</span>
-                    <span className="text-white">{tokenInfo.action_params.host_name || 'Unknown'}</span>
+                    <span className="text-gray-400">主机</span>
+                    <span className="text-white">{tokenInfo.action_params.host_name || '未知'}</span>
                   </div>
                 </div>
 
@@ -263,12 +263,12 @@ export function QuickActionPage() {
 
               {/* What will happen */}
               <div className="text-xs text-gray-400 mb-4">
-                <p className="mb-2">This will:</p>
+                <p className="mb-2">这将会:</p>
                 <ul className="list-disc list-inside space-y-1 text-gray-500">
-                  <li>Pull the new image</li>
-                  <li>Stop the current container</li>
-                  <li>Start with new image</li>
-                  <li>Rollback if health check fails</li>
+                  <li>拉取新的镜像</li>
+                  <li>停止当前容器</li>
+                  <li>基于新镜像启动容器</li>
+                  <li>如果健康检查失败则回滚</li>
                 </ul>
               </div>
 
@@ -276,7 +276,7 @@ export function QuickActionPage() {
               {tokenInfo.hours_remaining && (
                 <div className="flex items-center gap-2 text-xs text-gray-500 mb-4">
                   <Clock className="h-3 w-3" />
-                  <span>Link {formatTimeRemaining(tokenInfo.hours_remaining)}</span>
+                  <span>链接还{formatTimeRemaining(tokenInfo.hours_remaining)}</span>
                 </div>
               )}
 
@@ -287,14 +287,14 @@ export function QuickActionPage() {
                   className="w-full"
                   size="lg"
                 >
-                  Confirm Update
+                  确认更新
                 </Button>
                 <Button
                   variant="outline"
                   className="w-full"
                   onClick={() => window.close()}
                 >
-                  Cancel
+                  取消
                 </Button>
               </div>
             </>
@@ -304,8 +304,8 @@ export function QuickActionPage() {
           {state === 'executing' && (
             <div className="text-center py-8">
               <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
-              <p className="text-white font-medium mb-2">Updating container...</p>
-              <p className="text-gray-400 text-sm">This may take a minute</p>
+              <p className="text-white font-medium mb-2">更新容器中...</p>
+              <p className="text-gray-400 text-sm">这可能需要若干分钟</p>
             </div>
           )}
 
@@ -313,9 +313,9 @@ export function QuickActionPage() {
           {state === 'success' && executeResult?.result && (
             <div className="text-center py-8">
               <CheckCircle2 className="h-12 w-12 text-green-500 mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-white mb-2">Update Complete</h2>
+              <h2 className="text-xl font-semibold text-white mb-2">更新完成</h2>
               <p className="text-gray-400 text-sm mb-4">
-                {executeResult.result.message || 'Container updated successfully'}
+                {executeResult.result.message || '容器已成功更新'}
               </p>
 
               {executeResult.result.previous_image && executeResult.result.new_image && (
@@ -334,10 +334,10 @@ export function QuickActionPage() {
           {state === 'error' && (
             <div className="text-center py-8">
               <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-white mb-2">Update Failed</h2>
+              <h2 className="text-xl font-semibold text-white mb-2">更新失败</h2>
               <p className="text-gray-400 text-sm">{errorMessage}</p>
               {executeResult?.error?.includes('rolled back') && (
-                <p className="text-yellow-500 text-xs mt-2">Container was rolled back to previous version</p>
+                <p className="text-yellow-500 text-xs mt-2">容器已回滚至先前的状态</p>
               )}
             </div>
           )}
@@ -345,7 +345,7 @@ export function QuickActionPage() {
 
         {/* Footer */}
         <p className="text-center text-xs text-gray-600 mt-4">
-          Powered by DockMon
+          由 DockMon 提供支持
         </p>
       </div>
     </div>

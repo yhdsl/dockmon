@@ -170,15 +170,15 @@ export function HostCard({ host, onHostClick, onViewDetails, onEditHost }: HostC
   const getSortLabel = (key: ContainerSortKey) => {
     switch (key) {
       case 'name':
-        return 'Name (A–Z)'
+        return '名称 (A–Z)'
       case 'state':
-        return 'State (Running first)'
+        return '状态 (运行优先)'
       case 'cpu':
-        return 'CPU (High to Low)'
+        return 'CPU (从高到低)'
       case 'memory':
-        return 'Memory (High to Low)'
+        return '内存 (从高到低)'
       default:
-        return 'Sort by'
+        return '排序依据'
     }
   }
 
@@ -236,16 +236,16 @@ export function HostCard({ host, onHostClick, onViewDetails, onEditHost }: HostC
           >
           {onViewDetails && (
             <DropdownMenuItem onClick={() => onViewDetails(host.id)} icon={<Info className="h-3.5 w-3.5" />}>
-              View Host Details
+              查看主机详细信息
             </DropdownMenuItem>
           )}
           {onEditHost && (
             <DropdownMenuItem onClick={() => onEditHost(host.id)} icon={<Edit className="h-3.5 w-3.5" />}>
-              Edit Host
+              编辑主机
             </DropdownMenuItem>
           )}
           <DropdownMenuItem onClick={() => setCollapsed(!collapsed)} icon={<ChevronsUp className="h-3.5 w-3.5" />}>
-            {collapsed ? 'Expand' : 'Collapse'} Containers
+            {collapsed ? '展开' : '收起'}容器
           </DropdownMenuItem>
         </DropdownMenu>
         </div>
@@ -274,7 +274,7 @@ export function HostCard({ host, onHostClick, onViewDetails, onEditHost }: HostC
                 data={host.sparklines!.cpu}
                 color="cpu"
                 height={32}
-                label={`${host.name} CPU usage`}
+                label={`${host.name} CPU 使用率`}
               />
             </div>
             <span className="text-xs font-mono text-foreground w-12 text-right">
@@ -284,13 +284,13 @@ export function HostCard({ host, onHostClick, onViewDetails, onEditHost }: HostC
 
           {/* Memory */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground w-8">Mem:</span>
+            <span className="text-xs text-muted-foreground w-8">内存:</span>
             <div className="flex-1">
               <ResponsiveMiniChart
                 data={host.sparklines!.mem}
                 color="memory"
                 height={32}
-                label={`${host.name} Memory usage`}
+                label={`${host.name} 内存使用率`}
               />
             </div>
             <span className="text-xs font-mono text-foreground w-12 text-right">
@@ -300,14 +300,14 @@ export function HostCard({ host, onHostClick, onViewDetails, onEditHost }: HostC
 
           {/* Network */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground w-8">Net:</span>
+            <span className="text-xs text-muted-foreground w-8">网络:</span>
             <div className="flex-1">
               {hasValidNetworkData ? (
                 <ResponsiveMiniChart
                   data={host.sparklines!.net}
                   color="network"
                   height={32}
-                  label={`${host.name} Network I/O`}
+                  label={`${host.name} 网络 I/O`}
                 />
               ) : (
                 <div className="h-[32px] flex items-center justify-center text-xs text-muted-foreground">
@@ -321,14 +321,14 @@ export function HostCard({ host, onHostClick, onViewDetails, onEditHost }: HostC
           </div>
         </div>
       ) : (
-        <div className="text-xs text-muted-foreground mb-3">No stats available</div>
+        <div className="text-xs text-muted-foreground mb-3">没有可用的数据</div>
       )}
 
       {/* Top Containers */}
       {!collapsed && topContainers.length > 0 && (
         <div className="border-t border-border pt-3 mb-3">
           <div className="flex items-center justify-between mb-2">
-            <div className="text-xs text-muted-foreground">Top Containers:</div>
+            <div className="text-xs text-muted-foreground">顶部容器:</div>
             <DropdownMenu
               trigger={
                 <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
@@ -339,16 +339,16 @@ export function HostCard({ host, onHostClick, onViewDetails, onEditHost }: HostC
               align="end"
             >
               <DropdownMenuItem onClick={() => handleSortChange('cpu')}>
-                CPU (High to Low)
+                CPU (从高到低)
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleSortChange('state')}>
-                State (Running first)
+                状态 (运行优先)
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleSortChange('name')}>
-                Name (A–Z)
+                名称 (A–Z)
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleSortChange('memory')}>
-                Memory (High to Low)
+                内存 (从高到低)
               </DropdownMenuItem>
             </DropdownMenu>
           </div>
@@ -367,7 +367,16 @@ export function HostCard({ host, onHostClick, onViewDetails, onEditHost }: HostC
                     {container.name}
                   </button>
                   <span className={`text-xs ${getStateColor(container.state)}`}>
-                    [{container.state}]
+                    [{{
+                      running: "运行中",
+                      stopped: "已停止",
+                      exited: "已暂停",
+                      created: "已创建",
+                      paused: "已暂停",
+                      restarting: "重启中",
+                      removing: "删除中",
+                      dead: "已死亡",
+                    }[container.state] || container.state}]
                   </span>
                 </div>
                 {prefs?.dashboard?.showContainerStats && container.state === 'running' && (
@@ -405,7 +414,7 @@ export function HostCard({ host, onHostClick, onViewDetails, onEditHost }: HostC
               navigate(`/containers?host=${host.id}`)
             }}
             className="flex items-center gap-1 text-info hover:text-info/80 transition-colors"
-            title="View containers with updates on this host"
+            title="查看此主机上可更新的容器"
           >
             <span>🔄</span>
             <span>{host.updates_available}</span>

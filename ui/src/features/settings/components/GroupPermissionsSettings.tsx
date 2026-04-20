@@ -184,7 +184,7 @@ export function GroupPermissionsSettings() {
     }
     await refetch()
     if (errors.length > 0) {
-      toast.error(`Failed to save permissions for: ${errors.join(', ')}`)
+      toast.error(`无法为 ${errors.join(', ')} 保存权限`)
     }
   }
 
@@ -243,15 +243,15 @@ export function GroupPermissionsSettings() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-white">Group Permissions</h2>
+          <h2 className="text-lg font-semibold text-white">群组权限</h2>
           <p className="mt-1 text-sm text-gray-400">
-            Customize what each group can do in the system
+            自定义各群组可对系统执行的操作
           </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={() => refetch()}>
             <RefreshCw className="mr-2 h-4 w-4" />
-            Refresh
+            刷新
           </Button>
         </div>
       </div>
@@ -261,11 +261,11 @@ export function GroupPermissionsSettings() {
         <div className="flex items-center justify-between rounded-lg border border-yellow-700 bg-yellow-900/20 p-3">
           <div className="flex items-center gap-2 text-yellow-300">
             <AlertTriangle className="h-4 w-4" />
-            <span className="text-sm">You have unsaved changes</span>
+            <span className="text-sm">你有未保存的更改</span>
           </div>
           <div className="flex gap-2">
             <Button variant="ghost" size="sm" onClick={handleDiscard}>
-              Discard
+              丢弃
             </Button>
             <Button
               size="sm"
@@ -277,7 +277,7 @@ export function GroupPermissionsSettings() {
               ) : (
                 <Save className="mr-2 h-4 w-4" />
               )}
-              Save All Changes
+              保存
             </Button>
           </div>
         </div>
@@ -289,7 +289,7 @@ export function GroupPermissionsSettings() {
           <thead>
             <tr className="border-b border-gray-700">
               <th className="min-w-[250px] p-3 text-left text-sm font-medium text-gray-400">
-                Capability
+                授权内容
               </th>
               {groups.map((group) => (
                 <th key={group.id} className="w-32 p-3 text-center">
@@ -297,19 +297,19 @@ export function GroupPermissionsSettings() {
                     <div className="flex items-center gap-1">
                       <Users className="h-4 w-4 text-blue-400" />
                       {group.is_system && (
-                        <span title="System group">
+                        <span title="系统群组">
                           <Lock className="h-3 w-3 text-gray-500" />
                         </span>
                       )}
                     </div>
                     <span className="text-sm font-medium text-gray-300">
-                      {group.name}
+                        {group.name}{group.is_system ? ` (${{'Administrators': "管理群组", 'Operators': "操作群组", 'Read Only': "访客群组"}[group.name]})` : ""}
                     </span>
                     <div className="mt-1 flex gap-1">
                       <button
                         onClick={() => openCopyDialog(group.id)}
                         className="rounded px-1.5 py-0.5 text-xs text-gray-500 hover:bg-gray-700 hover:text-gray-300"
-                        title="Copy permissions from another group"
+                        title="从其他群组复制权限设定"
                       >
                         <Copy className="h-3 w-3" />
                       </button>
@@ -319,7 +319,7 @@ export function GroupPermissionsSettings() {
                           disabled={updatePermissions.isPending}
                           className="rounded bg-blue-600/50 px-1.5 py-0.5 text-xs text-blue-300 hover:bg-blue-600"
                         >
-                          Save
+                          保存
                         </button>
                       )}
                     </div>
@@ -349,23 +349,23 @@ export function GroupPermissionsSettings() {
       <Dialog open={showCopyDialog} onOpenChange={setShowCopyDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Copy Permissions</DialogTitle>
+            <DialogTitle>复制权限设定</DialogTitle>
             <DialogDescription>
-              Copy all permissions from another group to{' '}
-              <strong>{groups.find((g) => g.id === copyTargetGroupId)?.name}</strong>.
+              从其他群组复制权限设定至{' '}
+              <strong>{groups.find((g) => g.id === copyTargetGroupId)?.name}</strong> 群组。
             </DialogDescription>
           </DialogHeader>
           <div className="flex items-start gap-2 rounded-md border border-yellow-700 bg-yellow-900/20 p-3 text-sm text-yellow-300">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-            <span>This will overwrite all current permissions for this group.</span>
+            <span>这将覆盖该群组当前的所有权限设定。</span>
           </div>
           <div className="py-2">
             <Select value={copySourceGroupId} onValueChange={setCopySourceGroupId}>
               <SelectTrigger>
-                <SelectValue placeholder="Select source group">
+                <SelectValue placeholder="请选择一个群组">
                   {copySourceGroupId && (() => {
                     const selectedGroup = groups.find((g) => g.id.toString() === copySourceGroupId)
-                    return selectedGroup ? `${selectedGroup.name}${selectedGroup.is_system ? ' (System)' : ''}` : ''
+                    return selectedGroup ? `${selectedGroup.name}${selectedGroup.is_system ? ' (系统群组)' : ''}` : ''
                   })()}
                 </SelectValue>
               </SelectTrigger>
@@ -375,7 +375,7 @@ export function GroupPermissionsSettings() {
                   .map((group) => (
                     <SelectItem key={group.id} value={group.id.toString()}>
                       {group.name}
-                      {group.is_system && ' (System)'}
+                      {group.is_system && ' (系统群组)'}
                     </SelectItem>
                   ))}
               </SelectContent>
@@ -383,7 +383,7 @@ export function GroupPermissionsSettings() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowCopyDialog(false)}>
-              Cancel
+              取消
             </Button>
             <Button
               onClick={handleCopyConfirm}
@@ -392,7 +392,7 @@ export function GroupPermissionsSettings() {
               {copyPermissions.isPending && (
                 <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
               )}
-              Copy Permissions
+              复制权限
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -466,7 +466,7 @@ function CategorySection({
                           : 'bg-gray-800 text-gray-500 hover:bg-gray-700'
                       }
                     `}
-                    title={isAllowed ? 'Allowed' : 'Denied'}
+                    title={isAllowed ? '允许' : '禁止'}
                   >
                     {isAllowed ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
                   </button>

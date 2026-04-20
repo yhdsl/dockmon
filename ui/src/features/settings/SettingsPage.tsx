@@ -34,18 +34,18 @@ interface Tab {
 }
 
 const TABS: Tab[] = [
-  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { id: 'alerts', label: 'Alerts', icon: AlertTriangle, capabilities: ['alerts.view', 'alerts.manage'] },
-  { id: 'notifications', label: 'Notifications', icon: Bell, capabilities: ['notifications.view', 'notifications.manage'] },
-  { id: 'updates', label: 'Container Updates', icon: Package, capabilities: ['policies.view', 'policies.manage'] },
-  { id: 'events', label: 'Events', icon: ScrollText, capabilities: ['events.view'] },
-  { id: 'api-keys', label: 'API Keys', icon: Key, capabilities: ['apikeys.manage_other'] },
-  { id: 'users', label: 'Users', icon: Users, capabilities: ['users.manage'] },
-  { id: 'groups', label: 'Groups', icon: UserSquare2, capabilities: ['groups.manage'] },
-  { id: 'permissions', label: 'Permissions', icon: Shield, capabilities: ['groups.manage'] },
+  { id: 'dashboard', label: '仪表盘', icon: LayoutDashboard },
+  { id: 'alerts', label: '告警设置', icon: AlertTriangle, capabilities: ['alerts.view', 'alerts.manage'] },
+  { id: 'notifications', label: '通知设置', icon: Bell, capabilities: ['notifications.view', 'notifications.manage'] },
+  { id: 'updates', label: '容器更新', icon: Package, capabilities: ['policies.view', 'policies.manage'] },
+  { id: 'events', label: '事件设置', icon: ScrollText, capabilities: ['events.view'] },
+  { id: 'api-keys', label: 'API 密钥', icon: Key, capabilities: ['apikeys.manage_other'] },
+  { id: 'users', label: '用户管理', icon: Users, capabilities: ['users.manage'] },
+  { id: 'groups', label: '群组管理', icon: UserSquare2, capabilities: ['groups.manage'] },
+  { id: 'permissions', label: '权限管理', icon: Shield, capabilities: ['groups.manage'] },
   { id: 'oidc', label: 'OIDC', icon: KeyRound, capabilities: ['oidc.manage'] },
-  { id: 'audit-log', label: 'Audit Log', icon: ClipboardList, capabilities: ['audit.view'], wideLayout: true },
-  { id: 'system', label: 'System', icon: Settings, capabilities: ['settings.manage'] },
+  { id: 'audit-log', label: '审计日志', icon: ClipboardList, capabilities: ['audit.view'], wideLayout: true },
+  { id: 'system', label: '系统设置', icon: Settings, capabilities: ['settings.manage'] },
 ]
 
 export function SettingsPage() {
@@ -68,8 +68,8 @@ export function SettingsPage() {
     <div className="flex h-full flex-col bg-[#0a0e14]">
       {/* Header */}
       <div className="border-b border-gray-800 bg-[#0d1117] px-3 sm:px-4 md:px-6 py-4 mt-12 md:mt-0">
-        <h1 className="text-xl sm:text-2xl font-bold text-white">Settings</h1>
-        <p className="text-sm text-gray-400 mt-1">Manage your preferences and configuration</p>
+        <h1 className="text-xl sm:text-2xl font-bold text-white">设置</h1>
+        <p className="text-sm text-gray-400 mt-1">管理配置偏好与系统设置</p>
       </div>
 
       {/* Tabs */}
@@ -108,11 +108,11 @@ export function SettingsPage() {
           {activeTab === 'alerts' && (hasCapability('alerts.view') || hasCapability('alerts.manage')) && (
             <div className="space-y-8">
               <div>
-                <h2 className="mb-4 text-lg font-semibold text-white">Blackout Windows</h2>
+                <h2 className="mb-4 text-lg font-semibold text-white">黑窗期</h2>
                 <BlackoutWindowsSection />
               </div>
               <div>
-                <h2 className="mb-4 text-lg font-semibold text-white">Alert Message Templates</h2>
+                <h2 className="mb-4 text-lg font-semibold text-white">告警消息模板</h2>
                 <AlertTemplateSettings />
               </div>
             </div>

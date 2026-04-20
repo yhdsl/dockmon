@@ -61,10 +61,10 @@ export function NoChannelsConfirmModal({
                 id="no-channels-modal-title"
                 className="text-lg font-semibold text-text-primary"
               >
-                No Notification Channels Selected
+                未选择通知频道
               </h2>
               <p className="mt-1 text-sm text-text-secondary">
-                This rule will not send any notifications
+                因此该告警规则将不会发送任何通知
               </p>
             </div>
           </div>
@@ -75,20 +75,20 @@ export function NoChannelsConfirmModal({
           <div className="bg-surface-2 rounded-md p-4 border border-border/50">
             <p className="text-sm text-text-secondary mb-3">
               {hasConfiguredChannels
-                ? "You haven't selected any notification channels for this alert rule."
-                : "You haven't configured any notification channels in Settings."}
+                ? "你尚未为此告警规则选择任意一个通知频道。"
+                : "你尚未在设置中创建通知渠道。"}
             </p>
 
             <div className="space-y-2">
               <div className="flex items-start gap-2">
                 <span className="text-sm text-text-primary flex-1">
-                  <strong>What this means:</strong>
+                  <strong>这意味着:</strong>
                   <ul className="list-disc list-inside mt-1 space-y-1 text-text-secondary">
-                    <li>Alerts will be created when conditions are met</li>
-                    <li>Alerts will appear in the Alerts page</li>
+                    <li>当满足条件时将会触发告警</li>
+                    <li>在告警页面中将会限制告警内容</li>
                     <li>
-                      <strong className="text-yellow-400">No notifications will be sent</strong>{' '}
-                      (email, Telegram, etc.)
+                      <strong className="text-yellow-400">但不会发送任何通知</strong>{' '}
+                      (例如电子邮件、Telegram 等)
                     </li>
                   </ul>
                 </span>
@@ -100,13 +100,13 @@ export function NoChannelsConfirmModal({
             <p className="text-xs text-yellow-200/90">
               {hasConfiguredChannels ? (
                 <>
-                  <strong>Recommendation:</strong> Go back and select at least one notification
-                  channel to receive alerts via email, Telegram, Discord, or other services.
+                  <strong>强烈建议:</strong> 返回并至少选择一个通知频道，
+                  以便通过电子邮件、Telegram、Discord 或其他通知服务接收告警。
                 </>
               ) : (
                 <>
-                  <strong>Recommendation:</strong> Configure notification channels in Settings {'>'}{' '}
-                  Notifications before creating alert rules.
+                  <strong>强烈建议:</strong> 创建告警规则前，在设置 {'>'}{' '}
+                  通知选项中创建至少一个通知频道。
                 </>
               )}
             </p>
@@ -116,14 +116,14 @@ export function NoChannelsConfirmModal({
         {/* Footer */}
         <div className="px-6 py-4 bg-surface-2 rounded-b-lg border-t border-border flex justify-end gap-3">
           <Button variant="outline" onClick={onClose} className="min-w-[100px]">
-            Go Back
+            返回
           </Button>
           <Button
             variant="default"
             onClick={handleConfirm}
             className="min-w-[120px] bg-yellow-600 hover:bg-yellow-700 text-white"
           >
-            Create Anyway
+            仍然创建
           </Button>
         </div>
       </div>
