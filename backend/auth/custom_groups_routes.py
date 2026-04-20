@@ -636,7 +636,7 @@ async def delete_group(
 
         return DeleteGroupResponse(
             success=True,
-            message=f"Deleted group '{group_name}' with {member_count} member(s)"
+            message=f"已成功删除包含 {member_count} 个成员的用户群组 '{group_name}'"
         )
 
 
@@ -702,7 +702,7 @@ async def add_member(
 
         return AddMemberResponse(
             success=True,
-            message=f"Added user '{user.username}' to group '{group.name}'"
+            message=f"已成功添加用户 '{user.username}' 至群组 '{group.name}'"
         )
 
 
@@ -779,7 +779,7 @@ async def remove_member(
 
         return RemoveMemberResponse(
             success=True,
-            message=f"Removed user '{member_username}' from group '{group.name}'"
+            message=f"已成功从群组中 '{group.name}' 移除成员 '{member_username}"
         )
 
 
@@ -1010,7 +1010,7 @@ async def update_group_permissions(
 
         return UpdatePermissionsResponse(
             updated=updated_count,
-            message=f"Updated {updated_count} permission(s) for group '{group.name}'"
+            message=f"已成功更新 {updated_count} 项权限设定至群组 '{group.name}'"
         )
 
 
@@ -1125,6 +1125,6 @@ async def copy_group_permissions(
 
         return CopyPermissionsResponse(
             copied=copied_count,
-            message=f"Copied {copied_count} permission(s) from '{source_group.name}' to '{target_group.name}'",
+            message=f"已成功从群组 '{source_group.name}' 中复制 {copied_count} 项权限设置至群组 '{target_group.name}'",
             warning=warning,
         )

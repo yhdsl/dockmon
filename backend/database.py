@@ -1918,17 +1918,17 @@ class DatabaseManager:
         if not admin_exists:
             admin_group = CustomGroup(
                 name='Administrators',
-                description='Full access to all features',
+                description='对所有的功能拥有完全访问权限',
                 is_system=True,
             )
             operators_group = CustomGroup(
                 name='Operators',
-                description='Can operate containers and deploy stacks, limited configuration access',
+                description='可以操作容器并部署堆栈，但配置的权限有限',
                 is_system=True,
             )
             readonly_group = CustomGroup(
                 name='Read Only',
-                description='View-only access to all features',
+                description='仅有各功能的访问权限',
                 is_system=True,
             )
             session.add_all([admin_group, operators_group, readonly_group])

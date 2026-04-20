@@ -18,218 +18,218 @@ Usage:
 CAPABILITY_INFO: dict[str, dict[str, str]] = {
     # Hosts
     'hosts.manage': {
-        'category': 'Hosts',
-        'name': 'Manage Hosts',
-        'description': 'Add, edit, and delete Docker hosts',
+        'category': '主机',
+        'name': '主机管理',
+        'description': '添加、编辑和删除 Docker 主机',
     },
     'hosts.view': {
-        'category': 'Hosts',
-        'name': 'View Hosts',
-        'description': 'View host list and connection status',
+        'category': '主机',
+        'name': '查看主机',
+        'description': '查看主机列表和连接状态',
     },
 
     # Stacks
     'stacks.edit': {
-        'category': 'Stacks',
-        'name': 'Edit Stacks',
-        'description': 'Create, edit, and delete stack definitions',
+        'category': '堆栈',
+        'name': '编辑堆栈',
+        'description': '创建、编辑和删除堆栈',
     },
     'stacks.deploy': {
-        'category': 'Stacks',
-        'name': 'Deploy Stacks',
-        'description': 'Deploy existing stacks to hosts',
+        'category': '堆栈',
+        'name': '部署堆栈',
+        'description': '将现有堆栈部署到主机',
     },
     'stacks.view': {
-        'category': 'Stacks',
-        'name': 'View Stacks',
-        'description': 'View stack list and contents',
+        'category': '堆栈',
+        'name': '查看堆栈',
+        'description': '查看堆栈列表及内容',
     },
     'stacks.view_env': {
-        'category': 'Stacks',
-        'name': 'View Stack Env Files',
-        'description': 'View .env file contents (may contain secrets)',
+        'category': '堆栈',
+        'name': '查看堆栈环境文件',
+        'description': '查看 .env 文件内容 (可能包含敏感信息)',
     },
 
     # Containers
     'containers.operate': {
-        'category': 'Containers',
-        'name': 'Operate Containers',
-        'description': 'Start, stop, and restart containers',
+        'category': '容器',
+        'name': '容器操作',
+        'description': '启动、停止和重启容器',
     },
     'containers.shell': {
-        'category': 'Containers',
-        'name': 'Shell Access',
-        'description': 'Execute commands in containers (essentially root access)',
+        'category': '容器',
+        'name': 'Shell 访问',
+        'description': '在容器中执行命令 (相当于 root 访问权限)',
     },
     'containers.update': {
-        'category': 'Containers',
-        'name': 'Update Containers',
-        'description': 'Trigger container image updates',
+        'category': '容器',
+        'name': '更新容器',
+        'description': '触发容器镜像更新',
     },
     'containers.view': {
-        'category': 'Containers',
-        'name': 'View Containers',
-        'description': 'View container list and details',
+        'category': '容器',
+        'name': '查看容器',
+        'description': '查看容器列表和详细信息',
     },
     'containers.logs': {
-        'category': 'Containers',
-        'name': 'View Logs',
-        'description': 'View container log output',
+        'category': '容器',
+        'name': '查看日志',
+        'description': '查看容器的日志输出',
     },
     'containers.view_env': {
-        'category': 'Containers',
-        'name': 'View Container Env',
-        'description': 'View container environment variables (may contain secrets)',
+        'category': '容器',
+        'name': '查看容器环境变量',
+        'description': '查看容器环境变量 (可能包含敏感信息)',
     },
 
     # Health Checks
     'healthchecks.manage': {
-        'category': 'Health Checks',
-        'name': 'Manage Health Checks',
-        'description': 'Create, edit, and delete HTTP health checks',
+        'category': '健康检查',
+        'name': '管理健康检查',
+        'description': '创建、编辑和删除基于 HTTP 的健康检查',
     },
     'healthchecks.test': {
-        'category': 'Health Checks',
-        'name': 'Test Health Checks',
-        'description': 'Manually trigger health check tests',
+        'category': '健康检查',
+        'name': '测试健康检查',
+        'description': '手动触发健康检查测试',
     },
     'healthchecks.view': {
-        'category': 'Health Checks',
-        'name': 'View Health Checks',
-        'description': 'View health check configurations and results',
+        'category': '健康检查',
+        'name': '查看健康检查',
+        'description': '查看健康检查配置和结果',
     },
 
     # Batch Operations
     'batch.create': {
-        'category': 'Batch Operations',
-        'name': 'Create Batch Jobs',
-        'description': 'Create bulk container operation jobs',
+        'category': '批处理操作',
+        'name': '创建批处理任务',
+        'description': '创建容器批处理操作任务',
     },
     'batch.view': {
-        'category': 'Batch Operations',
-        'name': 'View Batch Jobs',
-        'description': 'View batch job list and status',
+        'category': '批处理操作',
+        'name': '查看批处理任务',
+        'description': '查看批处理任务列表和状态',
     },
 
     # Update Policies
     'policies.manage': {
-        'category': 'Update Policies',
-        'name': 'Manage Policies',
-        'description': 'Create, edit, and delete auto-update policies',
+        'category': '更新策略',
+        'name': '管理更新策略',
+        'description': '创建、编辑和删除自动更新策略',
     },
     'policies.view': {
-        'category': 'Update Policies',
-        'name': 'View Policies',
-        'description': 'View auto-update policy configurations',
+        'category': '更新策略',
+        'name': '查看更新策略',
+        'description': '查看自动更新策略配置',
     },
 
     # Alerts
     'alerts.manage': {
-        'category': 'Alerts',
-        'name': 'Manage Alert Rules',
-        'description': 'Create, edit, and delete alert rules',
+        'category': '告警',
+        'name': '管理告警规则',
+        'description': '创建、编辑和删除告警规则',
     },
     'alerts.view': {
-        'category': 'Alerts',
-        'name': 'View Alerts',
-        'description': 'View alert rules and history',
+        'category': '告警',
+        'name': '查看告警',
+        'description': '查看告警规则和历史记录',
     },
 
     # Notifications
     'notifications.manage': {
-        'category': 'Notifications',
-        'name': 'Manage Channels',
-        'description': 'Create, edit, and delete notification channels',
+        'category': '通知',
+        'name': '管理通知频道',
+        'description': '创建、编辑和删除通知频道',
     },
     'notifications.view': {
-        'category': 'Notifications',
-        'name': 'View Channels',
-        'description': 'View notification channel names (not configs)',
+        'category': '通知',
+        'name': '查看通知频道',
+        'description': '查看通知频道名称 (不包含配置)',
     },
 
     # Registry
     'registry.manage': {
-        'category': 'Registry Credentials',
-        'name': 'Manage Credentials',
-        'description': 'Create, edit, and delete registry credentials',
+        'category': '注册表凭证',
+        'name': '管理注册表凭证',
+        'description': '创建、编辑和删除注册表凭证',
     },
     'registry.view': {
-        'category': 'Registry Credentials',
-        'name': 'View Credentials',
-        'description': 'View registry credential details (contains passwords)',
+        'category': '注册表凭证',
+        'name': '查看注册表凭证',
+        'description': '查看注册表凭证详细信息 (包含密码)',
     },
 
     # Agents
     'agents.manage': {
-        'category': 'Agents',
-        'name': 'Manage Agents',
-        'description': 'Register agents and trigger agent updates',
+        'category': '代理',
+        'name': '管理代理',
+        'description': '注册代理并触发代理更新',
     },
     'agents.view': {
-        'category': 'Agents',
-        'name': 'View Agents',
-        'description': 'View agent status and information',
+        'category': '代理',
+        'name': '查看代理',
+        'description': '查看代理状态和信息',
     },
 
     # Settings
     'settings.manage': {
-        'category': 'Settings',
-        'name': 'Manage Settings',
-        'description': 'Edit global application settings',
+        'category': '设置',
+        'name': '管理设置',
+        'description': '编辑全局设置',
     },
 
     # Users
     'users.manage': {
-        'category': 'Users',
-        'name': 'Manage Users',
-        'description': 'Create, edit, and delete users',
+        'category': '用户',
+        'name': '管理用户',
+        'description': '创建、编辑和删除用户',
     },
 
-    # OIDC (new for v2.4.0)
+    # OIDC
     'oidc.manage': {
         'category': 'OIDC',
-        'name': 'Manage OIDC',
-        'description': 'Configure OIDC provider settings and group mappings',
+        'name': '管理 OIDC',
+        'description': '配置 OIDC 提供商设置和用户群组映射',
     },
 
     # Groups (new for v2.3.0 refactor)
     'groups.manage': {
-        'category': 'Groups',
-        'name': 'Manage Groups',
-        'description': 'Create, edit, and delete groups and their permissions',
+        'category': '用户群组',
+        'name': '管理用户群组',
+        'description': '创建、编辑和删除用户群组及权限',
     },
 
     # Audit
     'audit.view': {
-        'category': 'Audit',
-        'name': 'View Audit Log',
-        'description': 'View the security audit log',
+        'category': '审计',
+        'name': '查看审计日志',
+        'description': '查看安全审计日志',
     },
 
     # API Keys
     'apikeys.manage_other': {
-        'category': 'API Keys',
-        'name': 'Manage Others Keys',
-        'description': 'Manage API keys of other users',
+        'category': 'API 密钥',
+        'name': '管理 API 密钥',
+        'description': '管理其他用户的 API 密钥',
     },
 
     # Tags
     'tags.manage': {
-        'category': 'Tags',
-        'name': 'Manage Tags',
-        'description': 'Create, edit, and delete tags',
+        'category': '标签',
+        'name': '管理标签',
+        'description': '创建、编辑和删除标签',
     },
     'tags.view': {
-        'category': 'Tags',
-        'name': 'View Tags',
-        'description': 'View tag list',
+        'category': '标签',
+        'name': '查看标签',
+        'description': '查看标签列表',
     },
 
     # Events
     'events.view': {
-        'category': 'Events',
-        'name': 'View Events',
-        'description': 'View container and system event log',
+        'category': '事件',
+        'name': '查看事件',
+        'description': '查看容器和系统的事件日志',
     },
 }
 

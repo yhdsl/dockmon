@@ -294,7 +294,7 @@ async def approve_all_users(
         pending_users = session.query(User).filter(User.approved == False).all()  # noqa: E712
 
         if not pending_users:
-            return {"message": "No pending users", "count": 0}
+            return {"message": "暂未待批准的用户", "count": 0}
 
         usernames = [u.username for u in pending_users]
         now = datetime.now(timezone.utc)
@@ -317,7 +317,7 @@ async def approve_all_users(
 
         logger.info(f"Approved {len(usernames)} pending user(s) by {display_name}: {usernames}")
 
-        return {"message": f"Approved {len(usernames)} user(s)", "count": len(usernames)}
+        return {"message": f"已批准 {len(usernames)} 个用户", "count": len(usernames)}
 
 
 @router.get("/{user_id}", response_model=UserResponse, dependencies=[Depends(require_capability("users.manage"))])
@@ -473,7 +473,7 @@ async def approve_user(
         user = get_user_or_404(session, target_user_id)
 
         if user.approved:
-            return {"message": f"User '{user.username}' is already approved"}
+            return {"message": f"用户 '{user.username}' 已被批准"}
 
         user.approved = True
         user.updated_at = datetime.now(timezone.utc)
@@ -494,7 +494,7 @@ async def approve_user(
 
         logger.info(f"User '{user.username}' approved by {display_name}")
 
-        return {"message": f"User '{user.username}' approved"}
+        return {"message": f"批准用户 '{user.username}'"}
 
 
 @router.delete("/{user_id}", dependencies=[Depends(require_capability("users.manage"))])
@@ -560,7 +560,7 @@ async def delete_user(
 
         logger.info(f"User '{username}' deleted by {display_name}")
 
-        return {"message": f"User '{username}' has been deleted"}
+        return {"message": f"用户 '{username}' 已被删除"}
 
 
 @router.post("/{user_id}/reset-password", dependencies=[Depends(require_capability("users.manage"))])
@@ -626,7 +626,7 @@ async def reset_user_password(
         logger.info(f"Password reset for user '{user.username}' by {display_name}")
 
         return {
-            "message": f"Password reset for user '{user.username}'",
+            "message": f"已成功重置用户 '{user.username}' 的密码",
             "temporary_password": new_password if not password_data.new_password else None,
             "must_change_password": True
         }

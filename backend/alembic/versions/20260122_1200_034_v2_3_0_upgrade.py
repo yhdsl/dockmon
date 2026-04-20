@@ -549,19 +549,19 @@ def upgrade():
         # Create Administrators group
         bind.execute(sa.text("""
             INSERT INTO custom_groups (name, description, is_system, created_at, updated_at)
-            VALUES ('Administrators', 'Full access to all features', 1, :now, :now)
+            VALUES ('Administrators', '对所有的功能拥有完全访问权限', 1, :now, :now)
         """), {'now': now})
 
         # Create Operators group
         bind.execute(sa.text("""
             INSERT INTO custom_groups (name, description, is_system, created_at, updated_at)
-            VALUES ('Operators', 'Can operate containers and deploy stacks, limited configuration access', 1, :now, :now)
+            VALUES ('Operators', '可以操作容器并部署堆栈，但配置的权限有限', 1, :now, :now)
         """), {'now': now})
 
         # Create Read Only group
         bind.execute(sa.text("""
             INSERT INTO custom_groups (name, description, is_system, created_at, updated_at)
-            VALUES ('Read Only', 'View-only access to all features', 1, :now, :now)
+            VALUES ('Read Only', '仅有各功能的访问权限', 1, :now, :now)
         """), {'now': now})
 
     # Get group IDs

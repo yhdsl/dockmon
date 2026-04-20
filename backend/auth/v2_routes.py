@@ -340,7 +340,7 @@ async def login_v2(
                 "username": user.username,
                 "is_first_login": user.is_first_login
             },
-            message="Login successful"
+            message="登录成功"
         )
 
 
@@ -422,7 +422,7 @@ async def logout_v2(
 
     logger.info(f"User '{username}' logged out successfully (oidc={is_oidc_user})")
 
-    return LogoutResponse(message="Logout successful", oidc_logout_url=oidc_logout_url)
+    return LogoutResponse(message="登出成功", oidc_logout_url=oidc_logout_url)
 
 
 # Dependency for protected routes (legacy - prefer get_current_user_or_api_key from api_key_auth)
@@ -612,7 +612,7 @@ async def change_password_v2(
 
     return ChangePasswordResponse(
         success=True,
-        message="Password changed successfully"
+        message="已成功修改密码"
     )
 
 
@@ -690,6 +690,6 @@ async def update_profile_v2(
 
     return UpdateProfileResponse(
         success=True,
-        message="Profile updated successfully",
+        message="已成功更新用户配置",
         changes=changes if changes else None
     )

@@ -474,12 +474,12 @@ async def update_retention_settings(
         session.commit()
 
         message = (
-            "Retention set to unlimited - entries will not be automatically deleted"
+            "保留时长被设置为永久，将不会删除任何条目"
             if request.retention_days == 0
-            else f"Retention set to {request.retention_days} days"
+            else f"保留时长设置为 {request.retention_days} 天"
         )
         if entries_to_delete > 0:
-            message += f". {entries_to_delete} entries older than {request.retention_days} days will be cleaned up."
+            message += f". {entries_to_delete} 个超过 {request.retention_days} 天的条目将会被清除。"
 
         logger.info(f"Audit log retention updated to {request.retention_days} days by {display_name}")
 
@@ -503,7 +503,7 @@ async def cleanup_old_entries(
         retention_days = _get_retention_days(settings)
 
         if retention_days == 0:
-            return {"message": "Retention is set to unlimited. No entries deleted.", "deleted_count": 0}
+            return {"message": "保留时长被设置为永久，将不会删除任何条目", "deleted_count": 0}
 
         cutoff = datetime.now(timezone.utc) - timedelta(days=retention_days)
         entries_to_delete = session.query(AuditLog).filter(AuditLog.created_at < cutoff).count()
@@ -530,6 +530,6 @@ async def cleanup_old_entries(
         logger.info(f"Manual audit log cleanup: {deleted_count} entries deleted by {display_name}")
 
         return {
-            "message": f"Cleanup complete. Deleted {deleted_count} entries older than {retention_days} days.",
+            "message": f"清除完成。 已删除 {deleted_count}个超过 {retention_days} 天的过期条目。",
             "deleted_count": deleted_count,
         }

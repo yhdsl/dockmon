@@ -309,12 +309,12 @@ async def _notify_pending_approval(user, config):
 
         from main import monitor  # Local import: circular dependency (main imports this module)
         identifier = user.email or user.display_name or user.username
-        message = f"New user '{user.username}' ({identifier}) is pending approval in DockMon."
+        message = f"新用户 '{user.username}' ({identifier}) 正在等待批准访问 DockMon."
 
         for channel_id in channel_ids:
             try:
                 await monitor.notification_service.send_message_to_channel(
-                    channel_id, message, title="DockMon - User Pending Approval"
+                    channel_id, message, title="DockMon - 用户等待批准访问"
                 )
             except Exception as e:
                 logger.warning(f"Failed to notify channel {channel_id}: {e}")

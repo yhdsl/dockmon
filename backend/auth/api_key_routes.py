@@ -218,7 +218,7 @@ async def create_api_key(
             group_id=group.id,
             group_name=group.name,
             expires_at=format_timestamp(expires_at),
-            message="IMPORTANT: Save this key now - it cannot be retrieved later!"
+            message="重要提示: 请立即妥善保存此密钥 - 之后将无法再次获取！"
         )
 
 
@@ -363,7 +363,7 @@ async def update_api_key(
 
         logger.info(f"{display_name} updated API key: {api_key.name}")
 
-        return {"message": "API key updated successfully"}
+        return {"message": "已成功更新 API 密钥"}
 
 
 @router.delete("/{key_id}", dependencies=[Depends(require_capability("apikeys.manage_other"))])
@@ -415,7 +415,7 @@ async def revoke_api_key(
         # Idempotent revoke
         if api_key.revoked_at is not None:
             logger.info(f"API key {api_key.name} already revoked")
-            return {"message": "API key already revoked"}
+            return {"message": "API 密钥已撤销"}
 
         # Soft delete
         api_key.revoked_at = datetime.now(timezone.utc)
@@ -437,4 +437,4 @@ async def revoke_api_key(
 
         logger.info(f"{display_name} revoked API key: {api_key.name}")
 
-        return {"message": "API key revoked successfully"}
+        return {"message": "已成功撤销 API 密钥"}

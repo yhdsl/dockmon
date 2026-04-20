@@ -438,7 +438,7 @@ async def discover_oidc_provider(
     if not provider_url:
         return OIDCDiscoveryResponse(
             success=False,
-            message="Provider URL not configured",
+            message="未配置提供商 URL",
         )
 
     # Use shared discovery function (handles HTTPS validation, URL normalization, endpoint checks)
@@ -447,7 +447,7 @@ async def discover_oidc_provider(
     except ValueError as e:
         return OIDCDiscoveryResponse(success=False, message=str(e))
     except httpx.TimeoutException:
-        return OIDCDiscoveryResponse(success=False, message="Provider connection timeout")
+        return OIDCDiscoveryResponse(success=False, message="提供商连接超时")
     except httpx.HTTPStatusError as e:
         hint = ""
         if e.response.status_code == 404:
@@ -459,10 +459,10 @@ async def discover_oidc_provider(
                 f". Tried: {discovery_url} — check that the Provider URL includes the full path "
                 "(e.g. for Authentik: https://auth.example.com/application/o/your-app-slug)"
             )
-        return OIDCDiscoveryResponse(success=False, message=f"Provider returned HTTP {e.response.status_code}{hint}")
+        return OIDCDiscoveryResponse(success=False, message=f"提供商返回了状态码 {e.response.status_code}{hint}")
     except Exception as e:
         logger.error(f"OIDC provider discovery error: {e}", exc_info=True)
-        return OIDCDiscoveryResponse(success=False, message="Discovery failed due to an unexpected error. Check server logs for details.")
+        return OIDCDiscoveryResponse(success=False, message="发现处理流程因意外错误而失败。请检查服务器日志以获取详细信息。")
 
     token_endpoint = discovery.get('token_endpoint')
 
@@ -477,7 +477,7 @@ async def discover_oidc_provider(
 
     return OIDCDiscoveryResponse(
         success=True,
-        message="Provider discovery successful",
+        message="提供商发现成功",
         issuer=discovery.get('issuer'),
         authorization_endpoint=discovery.get('authorization_endpoint'),
         token_endpoint=token_endpoint,
@@ -693,4 +693,4 @@ async def delete_group_mapping(
 
         logger.info(f"OIDC group mapping '{oidc_value}' deleted by {display_name}")
 
-        return {"message": f"Group mapping '{oidc_value}' deleted"}
+        return {"message": f"已成功删除映射 '{oidc_value}'"}
