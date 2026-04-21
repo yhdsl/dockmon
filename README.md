@@ -90,7 +90,6 @@
 
 ## 贡献 (原项目)
 
-Contributions are welcome! **No CLA required** - just submit a PR!
 欢迎贡献！无需签署 **CLA 协议** - 只需提交 PR 即可！
 
 - 通过 [GitHub Issues](https://github.com/darthnorse/dockmon/issues) 报告 Bug
