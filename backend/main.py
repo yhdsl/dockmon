@@ -1186,7 +1186,7 @@ async def trigger_agent_update(host_id: str, request: Request, current_user: dic
             "type": "command",
             "command": "self_update",
             "payload": {
-                "image": f"ghcr.io/yhdsl/dockmon-agent:{latest_version}",
+                "image": f"ghcr.io/darthnorse/dockmon-agent:{latest_version}",
                 "version": latest_version,
                 "binary_url": binary_url,
                 "checksum": checksum,

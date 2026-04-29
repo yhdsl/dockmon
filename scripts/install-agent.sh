@@ -113,9 +113,9 @@ if ! curl -fsSL -o "$INSTALL_PATH" "$DOWNLOAD_URL"; then
         DOCKER_TAG="latest"
     fi
 
-    log_info "Pulling Docker image ghcr.io/yhdsl/dockmon-agent:${DOCKER_TAG}..."
-    docker pull "ghcr.io/yhdsl/dockmon-agent:${DOCKER_TAG}"
-    docker create --name temp-dockmon-agent "ghcr.io/yhdsl/dockmon-agent:${DOCKER_TAG}"
+    log_info "Pulling Docker image ghcr.io/darthnorse/dockmon-agent:${DOCKER_TAG}..."
+    docker pull "ghcr.io/darthnorse/dockmon-agent:${DOCKER_TAG}"
+    docker create --name temp-dockmon-agent "ghcr.io/darthnorse/dockmon-agent:${DOCKER_TAG}"
     docker cp temp-dockmon-agent:/app/dockmon-agent "$INSTALL_PATH"
     docker rm temp-dockmon-agent
 fi
