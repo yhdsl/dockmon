@@ -8,6 +8,31 @@
 2. 添加了 UTC+8 时区的支持
 3. 修正原版 DockMon 不支持非英文标签、用户组的问题
 
+一个快速上手的 docker-compose.yml 文件:
+
+```dockerfile
+services:
+  dockmon:
+    image: yhdsl/dockmon:latest
+    container_name: dockmon
+    restart: unless-stopped
+    ports:
+      - "8001:443"
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - dockmon_data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    healthcheck:
+      test: ["CMD", "curl", "-k", "-f", "https://localhost:443/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  dockmon_data:
+```
+
 ![DockMon](https://img.shields.io/badge/DockMon-v2.3.2-blue.svg)
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3.13-3776AB?logo=python&logoColor=white)
