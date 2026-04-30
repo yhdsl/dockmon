@@ -20,10 +20,9 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '@/features/auth/AuthContext'
-import { Cpu, MemoryStick, Network } from 'lucide-react'
 import type { Container } from '../../types'
 import { useContainerSparklines } from '@/lib/stats/StatsProvider'
-import { ResponsiveMiniChart } from '@/lib/charts/ResponsiveMiniChart'
+import { StatsSection } from '@/lib/stats/StatsSection'
 import { toast } from 'sonner'
 import { apiClient } from '@/lib/api/client'
 import { TagInput } from '@/components/TagInput'
@@ -457,79 +456,26 @@ export function ContainerInfoTab({ container }: ContainerInfoTabProps) {
               </div>
             </fieldset>
 
-            {/* Live Stats Header */}
-            <div className="-mb-3">
-              <h4 className="text-lg font-medium text-foreground">实时统计数据</h4>
-            </div>
-
-            {/* CPU */}
-            <div className="bg-surface-2 rounded-lg p-3 border border-border overflow-hidden" data-testid="cpu-usage">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <Cpu className="h-4 w-4 text-amber-500" />
-                  <span className="font-medium text-sm">CPU 使用率</span>
-                </div>
-                <span className="text-xs text-muted-foreground">
-                  {container.cpu_percent !== null && container.cpu_percent !== undefined
-                    ? `${container.cpu_percent.toFixed(0)}%`
-                    : '-'}
-                </span>
-              </div>
-              {cpuData.length > 0 ? (
-                <div className="h-[120px] w-full">
-                  <ResponsiveMiniChart data={cpuData} color="cpu" height={120} showAxes={true} />
-                </div>
-              ) : (
-                <div className="h-[120px] flex items-center justify-center text-muted-foreground text-xs">
-                  没有可用的数据
-                </div>
-              )}
-            </div>
-
-            {/* Memory */}
-            <div className="bg-surface-2 rounded-lg p-3 border border-border overflow-hidden" data-testid="memory-usage">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <MemoryStick className="h-4 w-4 text-green-500" />
-                  <span className="font-medium text-sm">Memory 使用率</span>
-                </div>
-                <span className="text-xs text-muted-foreground">
-                  {container.memory_usage ? formatBytes(container.memory_usage) : '-'}
-                  {container.memory_limit && ` / ${formatBytes(container.memory_limit)}`}
-                </span>
-              </div>
-              {memData.length > 0 ? (
-                <div className="h-[120px] w-full">
-                  <ResponsiveMiniChart data={memData} color="memory" height={120} showAxes={true} />
-                </div>
-              ) : (
-                <div className="h-[120px] flex items-center justify-center text-muted-foreground text-xs">
-                  没有可用的数据
-                </div>
-              )}
-            </div>
-
-            {/* Network */}
-            <div className="bg-surface-2 rounded-lg p-3 border border-border overflow-hidden" data-testid="network-io">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <Network className="h-4 w-4 text-orange-500" />
-                  <span className="font-medium text-sm">网络 I/O</span>
-                </div>
-                <span className="text-xs text-muted-foreground">
-                  {formatNetworkRate(container.net_bytes_per_sec)}
-                </span>
-              </div>
-              {netData.length > 0 ? (
-                <div className="h-[120px] w-full">
-                  <ResponsiveMiniChart data={netData} color="network" height={120} showAxes={true} />
-                </div>
-              ) : (
-                <div className="h-[120px] flex items-center justify-center text-muted-foreground text-xs">
-                  没有可用的数据
-                </div>
-              )}
-            </div>
+            {/* Stats (live + historical via time-range selector) */}
+            <StatsSection
+              hostId={container.host_id || ''}
+              containerId={containerShortId}
+              liveData={{
+                cpu: cpuData,
+                mem: memData,
+                net: netData,
+                cpuValue:
+                  container.cpu_percent !== null && container.cpu_percent !== undefined
+                    ? `${container.cpu_percent.toFixed(1)}%`
+                    : undefined,
+                memValue: container.memory_usage
+                  ? `${formatBytes(container.memory_usage)}${
+                      container.memory_limit ? ` / ${formatBytes(container.memory_limit)}` : ''
+                    }`
+                  : undefined,
+                netValue: formatNetworkRate(container.net_bytes_per_sec),
+              }}
+            />
           </div>
         </div>
       </div>

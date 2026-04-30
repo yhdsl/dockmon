@@ -20,11 +20,11 @@ from fastapi import HTTPException
 from config.paths import DATABASE_PATH, CERTS_DIR
 from database import DatabaseManager, AutoRestartConfig, GlobalSettings, DockerHostDB, Agent
 from models.docker_models import DockerHost, DockerHostConfig, Container
-from models.settings_models import AlertRule, NotificationSettings
+from models.settings_models import NotificationSettings
 from websocket.connection import ConnectionManager
 from realtime import RealtimeMonitor
 from notifications import NotificationService
-from event_logger import EventLogger, EventSeverity, EventType
+from event_logger import EventLogger
 from event_bus import Event, EventType as BusEventType, get_event_bus
 from stats_client import get_stats_client
 from docker_monitor.stats_manager import StatsManager
@@ -33,7 +33,6 @@ from docker_monitor.container_discovery import ContainerDiscovery
 from docker_monitor.state_manager import StateManager
 from docker_monitor.operations import ContainerOperations
 from docker_monitor.periodic_jobs import PeriodicJobsManager
-from auth.session_manager import session_manager
 from utils.keys import make_composite_key
 from utils.host_ips import get_host_ips_from_fib_trie, filter_docker_network_ips, serialize_host_ips
 
@@ -201,7 +200,6 @@ def parse_container_volumes(mounts: list) -> list[str]:
 
     volumes = []
     for mount in mounts:
-        mount_type = mount.get('Type', '')
         source = mount.get('Source', '')
         destination = mount.get('Destination', '')
 
@@ -846,6 +844,16 @@ class DockerMonitor:
                         await agent_connection_manager.unregister_connection(agent_id)
                         logger.info(f"Disconnected agent {agent_id[:8]}... for host {host_name}")
 
+                        # Invalidate the agent's token in stats-service so the next
+                        # reconnect attempt fails fast instead of waiting for the
+                        # 5-minute token cache TTL. Non-fatal on failure.
+                        try:
+                            await get_stats_client().invalidate_agent_token(agent_id)
+                        except Exception as e:
+                            logger.warning(
+                                f"Failed to invalidate agent token in stats service: {e}"
+                            )
+
             del self.hosts[host_id]
             if host_id in self.clients:
                 self.clients[host_id].close()
@@ -893,6 +901,12 @@ class DockerMonitor:
                 del self.reconnect_attempts[host_id]
             if host_id in self.last_reconnect_attempt:
                 del self.last_reconnect_attempt[host_id]
+
+            # Clean up discovery-side per-host trackers (reconnect_attempts
+            # and last_reconnect_attempt are aliases to monitor's own dicts
+            # already cleaned above).
+            self.discovery._reattached_container_ids.pop(host_id, None)
+            self.discovery.host_previous_status.pop(host_id, None)
 
             # Clean up auto-restart tracking for this host
             async with self._restart_lock:
@@ -1269,8 +1283,9 @@ class DockerMonitor:
         """
         import asyncio
         try:
-            # Try to get running loop (works in async context)
-            loop = asyncio.get_running_loop()
+            # asyncio.get_running_loop raises RuntimeError if no event loop
+            # is running — that's the only thing we use it for here.
+            asyncio.get_running_loop()
             asyncio.create_task(self._broadcast_host_status(host_id, status))
         except RuntimeError:
             # No running loop - skip broadcast (sync context without event loop)
@@ -1665,10 +1680,10 @@ class DockerMonitor:
                 has_viewers = self.manager.has_active_connections()
                 logger.debug(f"Monitor loop: has_viewers={has_viewers}, active_connections={len(self.manager.active_connections)}")
 
-                # Periodic stats stream reconciliation (safety net for cleanup)
-                # This ensures stale streams (e.g., from recreated containers with new IDs) are stopped
-                # and new containers get streams started even if no WebSocket reconnect happens
-                if has_viewers and containers:
+                # Periodic stream reconciliation (safety net) — also runs with
+                # no viewers when persistence is on so historical collection continues.
+                persistence_on = getattr(self.settings, 'stats_persistence_enabled', False)
+                if (has_viewers or persistence_on) and containers:
                     try:
                         containers_needing_stats = self.stats_manager.determine_containers_needing_stats(
                             containers,
@@ -2278,7 +2293,6 @@ class DockerMonitor:
         failed_count = 0
 
         # Also refresh agent hosts (separate from legacy hosts)
-        from agent.connection_manager import agent_connection_manager
         agent_hosts_refreshed = await self._refresh_agent_hosts_system_info()
         updated_count += agent_hosts_refreshed
 

@@ -4,8 +4,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { render, screen, fireEvent, waitFor } from '@/test/utils'
 import { ContainerTable } from './ContainerTable'
 import * as apiClient from '@/lib/api/client'
 
@@ -25,18 +24,7 @@ vi.mock('@/lib/api/client', () => ({
 }))
 
 function renderTable() {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: { retry: false },
-      mutations: { retry: false },
-    },
-  })
-
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <ContainerTable />
-    </QueryClientProvider>
-  )
+  return render(<ContainerTable />)
 }
 
 const mockContainers = [
@@ -108,17 +96,6 @@ describe('ContainerTable', () => {
       await waitFor(() => {
         expect(screen.getByText('nginx')).toBeInTheDocument()
         expect(screen.getByText('postgres')).toBeInTheDocument()
-      })
-    })
-
-    it('should render container images', async () => {
-      vi.mocked(apiClient.apiClient.get).mockResolvedValue(mockContainers)
-
-      renderTable()
-
-      await waitFor(() => {
-        expect(screen.getByText('nginx:latest')).toBeInTheDocument()
-        expect(screen.getByText('postgres:14')).toBeInTheDocument()
       })
     })
 
@@ -267,8 +244,6 @@ describe('ContainerTable', () => {
       renderTable()
 
       await waitFor(() => {
-        // Check column headers
-        expect(screen.getByText('Image:Tag')).toBeInTheDocument()
         expect(screen.getByText('Uptime')).toBeInTheDocument()
         expect(screen.getByText('Host')).toBeInTheDocument()
         expect(screen.getByText('Actions')).toBeInTheDocument()

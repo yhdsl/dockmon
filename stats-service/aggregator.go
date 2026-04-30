@@ -6,14 +6,23 @@ import (
 	"time"
 
 	dockerpkg "github.com/yhdsl/dockmon-shared/docker"
+	"github.com/dockmon/stats-service/persistence"
 )
+
+// streamManagerIface is the subset of *StreamManager that Aggregator needs.
+// Defined as an interface so tests can fake it without standing up a real
+// StreamManager (which requires Docker clients).
+type streamManagerIface interface {
+	HasHost(hostID string) bool
+}
 
 // Aggregator aggregates container stats into host-level metrics
 type Aggregator struct {
 	cache             *StatsCache
-	streamManager     *StreamManager
+	streamManager     streamManagerIface
 	aggregateInterval time.Duration
 	hostProcReader    *HostProcReader
+	cascade           *persistence.Cascade // optional; nil disables persistence ingest
 }
 
 // NewAggregator creates a new aggregator
@@ -29,6 +38,16 @@ func NewAggregator(cache *StatsCache, streamManager *StreamManager, interval tim
 		aggregateInterval: interval,
 		hostProcReader:    hostProcReader,
 	}
+}
+
+// SetCascade enables persistence ingest. Pass nil to disable.
+//
+// Startup-ordering contract: callers MUST invoke SetCascade BEFORE
+// Start(ctx) is called in its own goroutine. a.cascade is read from the
+// aggregation goroutine without a mutex; wiring it in after Start has
+// spawned would race. main() enforces this by construction.
+func (a *Aggregator) SetCascade(c *persistence.Cascade) {
+	a.cascade = c
 }
 
 // Start begins the aggregation loop
@@ -62,13 +81,47 @@ func (a *Aggregator) aggregate() {
 		hostContainers[stats.HostID] = append(hostContainers[stats.HostID], stats)
 	}
 
-	// Aggregate stats for each host that has a registered Docker client
 	for hostID, containers := range hostContainers {
-		// Only aggregate if the host still has a registered Docker client
-		// This prevents recreating stats for hosts that were just deleted
+		hostStats := a.aggregateHostStats(hostID, containers)
+
+		// Push to live dashboard cache only for hosts with a registered
+		// Docker client. Agent-managed hosts update the cache directly
+		// via the ingest WebSocket handler.
 		if a.streamManager.HasHost(hostID) {
-			hostStats := a.aggregateHostStats(hostID, containers)
 			a.cache.UpdateHostStats(hostStats)
+		}
+
+		// Cascade ingest runs for ALL hosts (including agent-managed ones
+		// that don't register Docker clients). The 30-second freshness
+		// cutoff skips stale containers; cache.RemoveHost cleans up
+		// deleted hosts.
+		if a.cascade != nil && settingsProvider.PersistEnabled() {
+			now := time.Now()
+			cutoff := now.Add(-30 * time.Second)
+
+			var hostNetBps float64
+			var freshCount int
+			for _, cs := range containers {
+				if cs.LastUpdate.Before(cutoff) {
+					continue
+				}
+				hostNetBps += cs.NetBytesPerSec
+				freshCount++
+			}
+
+			// Only ingest host sample when there is fresh data. An
+			// all-stale host would produce an all-zeros sample that
+			// corrupts blended cascade tiers instead of leaving gaps.
+			if freshCount > 0 {
+				a.cascade.Ingest(hostID, true, now, sampleFromHostStats(hostStats, hostNetBps))
+			}
+			for _, cs := range containers {
+				if cs.LastUpdate.Before(cutoff) {
+					continue
+				}
+				compositeID := cs.HostID + ":" + cs.ContainerID
+				a.cascade.Ingest(compositeID, false, now, sampleFromContainerStats(cs))
+			}
 		}
 	}
 }
@@ -186,6 +239,48 @@ func (a *Aggregator) aggregateHostStats(hostID string, containers []*ContainerSt
 		NetworkRxBytes:   totalNetRx,
 		NetworkTxBytes:   totalNetTx,
 		ContainerCount:   validContainers,
+	}
+}
+
+// sampleFromHostStats builds a persistence.Sample from aggregated HostStats.
+// HostStats.NetworkRxBytes/NetworkTxBytes are cumulative byte counters, not
+// rates, so the caller must compute the per-second rate (summed from each
+// container's cache-computed NetBytesPerSec) and pass it as netBps. See the
+// "combined rx+tx bytes/sec" column contract in spec §6.
+func sampleFromHostStats(h *HostStats, netBps float64) persistence.Sample {
+	// Recompute memory percent from bytes when a limit is known: both the
+	// /host/proc and container-aggregation paths in aggregateHostStats round
+	// MemoryPercent to 1 decimal for display. Historical persistence wants
+	// the unrounded value for more accurate blending, and the raw bytes are
+	// always set alongside the rounded percent. Fall back to the stored
+	// percentage only if MemoryLimitBytes is unknown.
+	var memPct float64
+	if h.MemoryLimitBytes > 0 {
+		memPct = float64(h.MemoryUsedBytes) / float64(h.MemoryLimitBytes) * 100
+	} else {
+		memPct = h.MemoryPercent
+	}
+	return persistence.Sample{
+		CPU:            h.CPUPercent,
+		MemPercent:     memPct,
+		MemUsed:        h.MemoryUsedBytes,
+		MemLimit:       h.MemoryLimitBytes,
+		NetBps:         netBps,
+		ContainerCount: h.ContainerCount,
+	}
+}
+
+// sampleFromContainerStats builds a persistence.Sample from ContainerStats.
+// NetBytesPerSec is already a delta rate computed by StatsCache on each
+// UpdateContainerStats call (cache.go), including counter-reset handling
+// and outlier capping — reusing it avoids duplicating that logic here.
+func sampleFromContainerStats(cs *ContainerStats) persistence.Sample {
+	return persistence.Sample{
+		CPU:        cs.CPUPercent,
+		MemPercent: cs.MemoryPercent,
+		MemUsed:    cs.MemoryUsage,
+		MemLimit:   cs.MemoryLimit,
+		NetBps:     cs.NetBytesPerSec,
 	}
 }
 

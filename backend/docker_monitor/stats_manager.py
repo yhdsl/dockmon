@@ -68,28 +68,30 @@ class StatsManager:
         Centralized decision: determine which containers need stats collection
 
         Rules:
-        1. If show_container_stats OR show_host_stats is ON → collect ALL running containers
+        1. If stats persistence is enabled → collect ALL running containers
+           (historical views need continuous data even when no viewer is active)
+        2. If show_container_stats OR show_host_stats is ON → collect ALL running containers
            (host stats are aggregated from container stats)
-        2. Always collect stats for containers with open modals
+        3. Always collect stats for containers with open modals
 
         Args:
             containers: List of all containers
-            settings: Global settings with show_container_stats and show_host_stats flags
+            settings: Global settings with show_container_stats, show_host_stats,
+                      and stats_persistence_enabled flags
 
         Returns:
             Set of composite keys (host_id:container_id) that need stats collection
         """
         containers_needing_stats = set()
 
-        # Rule 1: Container stats OR host stats enabled = ALL running containers
-        # (host stats need container data for aggregation)
-        if settings.show_container_stats or settings.show_host_stats:
+        persistence_on = getattr(settings, 'stats_persistence_enabled', False)
+        if persistence_on or settings.show_container_stats or settings.show_host_stats:
             for container in containers:
                 if container.status == 'running':
                     # Use short_id for consistency
                     containers_needing_stats.add(make_composite_key(container.host_id, container.short_id))
 
-        # Rule 2: Always add modal containers (even if settings are off)
+        # Rule 3: Always add modal containers (even if settings are off)
         # Modal containers are already stored as composite keys
         for modal_composite_key in self.modal_containers:
             # Verify container is still running before adding

@@ -27,6 +27,7 @@
 import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { RemoveScroll } from 'react-remove-scroll'
 import { z } from 'zod'
 
 // Type for API errors
@@ -66,8 +67,9 @@ const hostSchema = z.object({
     .regex(/^[a-zA-Z0-9][a-zA-Z0-9 ._-]*$/, '主机名称包含非法字符'),
   url: z
     .string()
+    .min(1, '地址或端点为必填项')
     .refine(
-      (val) => val === '' || val === 'agent://' || /^(tcp|unix|http|https):\/\/.+/.test(val),
+      (val) => val === 'agent://' || /^(tcp|unix|http|https):\/\/.+/.test(val),
       'URL 必须以 tcp://、unix://、http:// 或 https:// 开头'
     ),
   enableTls: z.boolean(),
@@ -746,9 +748,15 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
             {...register('description')}
             rows={3}
             placeholder="可选的关于主机的笔记..."
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            className={cn(
+              'w-full rounded-md border bg-background px-3 py-2 text-sm',
+              errors.description ? 'border-destructive' : 'border-input'
+            )}
             data-testid="host-description"
           />
+          {errors.description && (
+            <p className="text-xs text-destructive mt-1">{errors.description.message}</p>
+          )}
         </div>
 
         </fieldset>
@@ -785,6 +793,7 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
   )
 
   return (
+    <RemoveScroll>
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" data-testid="host-modal">
       <div
         className="relative w-full max-w-2xl max-h-[90vh] rounded-2xl border border-border bg-background shadow-lg flex flex-col"
@@ -898,5 +907,6 @@ export function HostModal({ isOpen, onClose, host }: HostModalProps) {
         </div>
       )}
     </div>
+    </RemoveScroll>
   )
 }

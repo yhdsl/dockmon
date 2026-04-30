@@ -86,6 +86,8 @@ from utils.base_path import get_base_path
 from utils.response_filtering import filter_container_env, filter_container_inspect_env, filter_ws_container_message
 from utils.host_ips import deserialize_host_ips
 from utils.client_ip import get_client_ip_ws
+import aiohttp
+from stats_client import get_stats_client, StatsServiceClient
 from updates.container_validator import ContainerValidator, ValidationResult
 from agent.manager import AgentManager
 from agent import handle_agent_websocket
@@ -548,7 +550,16 @@ async def root(current_user: dict = Depends(get_current_user)):
 @app.get("/health", tags=["system"])
 async def health_check():
     """Health check endpoint for Docker health checks - no authentication required"""
-    return {"status": "healthy", "service": "dockmon-backend"}
+    subsystems = {"event_logger": monitor.event_logger.is_healthy()}
+    healthy = all(subsystems.values())
+    payload = {
+        "status": "healthy" if healthy else "unhealthy",
+        "service": "dockmon-backend",
+        "subsystems": subsystems,
+    }
+    if not healthy:
+        return JSONResponse(status_code=503, content=payload)
+    return payload
 
 @app.get("/docs", include_in_schema=False)
 async def redoc_html():
@@ -1044,6 +1055,88 @@ async def get_host_metrics(host_id: str, current_user: dict = Depends(get_curren
     except Exception as e:
         logger.error(f"Error fetching metrics for host {host_id}: {e}")
         raise HTTPException(status_code=500, detail="Failed to fetch host metrics")
+
+
+# Range validation for /stats/history proxy endpoints. Must stay in lockstep
+# with stats-service ComputeTiers() and frontend TimeRange in historyTypes.ts.
+STATS_RANGE_PATTERN = r"^(1h|8h|24h|7d|30d)$"
+
+
+def _map_history_upstream_error(exc: Exception) -> HTTPException:
+    """
+    Map a stats-service history client error to an HTTPException.
+
+    - HistoryUpstreamError with 4xx upstream status → mirror the status
+      (the caller sent bad params, so it's a client error at the proxy too)
+    - HistoryUpstreamError with 5xx upstream status → 502 Bad Gateway
+      (upstream itself failed — not the caller's fault)
+    - aiohttp.ClientError (connection refused, timeout, etc.) → 502
+    """
+    if isinstance(exc, StatsServiceClient.HistoryUpstreamError):
+        if 400 <= exc.status < 500:
+            return HTTPException(status_code=exc.status, detail=exc.body.strip() or "stats-service rejected request")
+        return HTTPException(status_code=502, detail=f"stats-service error: {exc.body.strip() or exc.status}")
+    if isinstance(exc, aiohttp.ClientError):
+        return HTTPException(status_code=502, detail="stats-service unavailable")
+    return HTTPException(status_code=500, detail="internal error")
+
+
+@app.get(
+    "/api/hosts/{host_id}/stats/history",
+    tags=["hosts"],
+    dependencies=[Depends(require_capability("hosts.view"))],
+)
+async def get_host_stats_history(
+    host_id: str,
+    range_: Optional[str] = Query(None, alias="range", pattern=STATS_RANGE_PATTERN),
+    from_: Optional[int] = Query(None, alias="from"),
+    to: Optional[int] = Query(None),
+    since: Optional[int] = Query(None),
+):
+    """Proxy to stats-service GET /api/stats/history/host (spec §9)."""
+    if range_ is None and from_ is None:
+        raise HTTPException(status_code=400, detail="must specify range or from/to")
+    try:
+        return await get_stats_client().get_host_stats_history(
+            host_id=host_id,
+            range_=range_,
+            from_=from_,
+            to=to,
+            since=since,
+        )
+    except (StatsServiceClient.HistoryUpstreamError, aiohttp.ClientError) as e:
+        raise _map_history_upstream_error(e)
+
+
+@app.get(
+    "/api/hosts/{host_id}/containers/{container_id}/stats/history",
+    tags=["containers"],
+    dependencies=[Depends(require_capability("containers.view"))],
+)
+async def get_container_stats_history(
+    host_id: str,
+    container_id: str,
+    range_: Optional[str] = Query(None, alias="range", pattern=STATS_RANGE_PATTERN),
+    from_: Optional[int] = Query(None, alias="from"),
+    to: Optional[int] = Query(None),
+    since: Optional[int] = Query(None),
+):
+    """Proxy to stats-service GET /api/stats/history/container (spec §9)."""
+    # Defense-in-depth: normalize container_id at endpoint entry (CLAUDE.md).
+    container_id = normalize_container_id(container_id)
+    if range_ is None and from_ is None:
+        raise HTTPException(status_code=400, detail="must specify range or from/to")
+    try:
+        return await get_stats_client().get_container_stats_history(
+            host_id=host_id,
+            container_id=container_id,
+            range_=range_,
+            from_=from_,
+            to=to,
+            since=since,
+        )
+    except (StatsServiceClient.HistoryUpstreamError, aiohttp.ClientError) as e:
+        raise _map_history_upstream_error(e)
 
 
 @app.get("/api/hosts/{host_id}/agent", tags=["hosts"], dependencies=[Depends(require_capability("agents.view"))])
@@ -3347,6 +3440,10 @@ async def get_settings(current_user: dict = Depends(get_current_user)):
         "editor_theme": getattr(settings, 'editor_theme', 'aura'),
         # Session timeout
         "session_timeout_hours": getattr(settings, 'session_timeout_hours', 24),
+        # Stats persistence (v2.3.4+)
+        "stats_persistence_enabled": getattr(settings, 'stats_persistence_enabled', False),
+        "stats_retention_days": getattr(settings, 'stats_retention_days', 30),
+        "stats_points_per_view": getattr(settings, 'stats_points_per_view', 500),
     }
 
 @app.post("/api/settings", tags=["system"], dependencies=[Depends(require_capability("settings.manage"))])
@@ -3370,6 +3467,7 @@ async def update_settings(
     # Check if stats settings changed
     old_show_host_stats = monitor.settings.show_host_stats
     old_show_container_stats = monitor.settings.show_container_stats
+    old_stats_persistence_enabled = getattr(monitor.settings, 'stats_persistence_enabled', False)
 
     # Convert to dict, excluding unset fields (supports partial updates)
     validated_dict = settings.dict(exclude_unset=True)
@@ -3383,6 +3481,19 @@ async def update_settings(
         logger.info(f"Host stats collection {'enabled' if updated.show_host_stats else 'disabled'}")
     if 'show_container_stats' in validated_dict and old_show_container_stats != updated.show_container_stats:
         logger.info(f"Container stats collection {'enabled' if updated.show_container_stats else 'disabled'}")
+
+    # Persistence toggled off with no viewers: sync gate won't teardown in-flight streams.
+    new_stats_persistence_enabled = getattr(updated, 'stats_persistence_enabled', False)
+    if (old_stats_persistence_enabled and not new_stats_persistence_enabled
+            and len(monitor.manager.active_connections) == 0):
+        def _handle_task_exception(task):
+            try:
+                task.result()
+            except Exception as e:
+                logger.error(f"Task exception during stream teardown: {e}", exc_info=True)
+
+        await monitor.stats_manager.stop_all_streams(get_stats_client(), _handle_task_exception)
+        logger.info("Stopped all stats streams (persistence disabled with no viewers)")
 
     # Invalidate session timeout cache so change takes effect immediately
     if 'session_timeout_hours' in validated_dict:
@@ -3398,6 +3509,19 @@ async def update_settings(
     # Wake periodic job if update schedule changed (no restart required)
     if 'update_check_time' in validated_dict:
         monitor.periodic_jobs.notify_schedule_changed()
+
+    # Hot-push stats-related settings to stats-service so retention and the
+    # cascade pick up the new values without a service restart.
+    stats_keys = ("stats_persistence_enabled", "stats_retention_days", "stats_points_per_view")
+    stats_updates = {k: validated_dict[k] for k in stats_keys if k in validated_dict}
+    if stats_updates:
+        try:
+            client = get_stats_client()
+            await client.push_settings_update(**stats_updates)
+        except Exception as e:
+            logger.warning(f"Failed to push stats settings update to stats-service: {e}")
+            # Non-fatal: Python has already persisted the settings; stats-service
+            # will pick them up on next restart.
 
     changed_keys = list(validated_dict.keys())
     _safe_audit(current_user, log_settings_change, ', '.join(changed_keys), request)
@@ -3448,6 +3572,10 @@ async def update_settings(
         "editor_theme": getattr(updated, 'editor_theme', 'aura'),
         # Session timeout
         "session_timeout_hours": getattr(updated, 'session_timeout_hours', 24),
+        # Stats persistence (v2.4.0+) — hot-pushed to stats-service above
+        "stats_persistence_enabled": getattr(updated, 'stats_persistence_enabled', False),
+        "stats_retention_days": getattr(updated, 'stats_retention_days', 30),
+        "stats_points_per_view": getattr(updated, 'stats_points_per_view', 500),
     }
 
 
@@ -5999,20 +6127,23 @@ async def websocket_endpoint(websocket: WebSocket, session_id: Optional[str] = C
         # Clear modal containers for this connection only (not all users)
         monitor.stats_manager.clear_modal_containers_for_connection(connection_id)
 
-        # Event-driven stats control: Stop stats streams when last viewer disconnects
+        # Stop streams on last viewer disconnect, unless persistence keeps them live.
         if len(monitor.manager.active_connections) == 0:
-            # No more viewers - stop all stats streams immediately
-            from stats_client import get_stats_client
-            stats_client = get_stats_client()
+            persistence_on = getattr(monitor.settings, 'stats_persistence_enabled', False)
+            if not persistence_on:
+                from stats_client import get_stats_client
+                stats_client = get_stats_client()
 
-            def _handle_task_exception(task):
-                try:
-                    task.result()
-                except Exception as e:
-                    logger.error(f"Task exception: {e}", exc_info=True)
+                def _handle_task_exception(task):
+                    try:
+                        task.result()
+                    except Exception as e:
+                        logger.error(f"Task exception: {e}", exc_info=True)
 
-            await monitor.stats_manager.stop_all_streams(stats_client, _handle_task_exception)
-            logger.info("Stopped all stats streams (last viewer disconnected)")
+                await monitor.stats_manager.stop_all_streams(stats_client, _handle_task_exception)
+                logger.info("Stopped all stats streams (last viewer disconnected)")
+            else:
+                logger.info("Last viewer disconnected but persistence is on — keeping streams live")
 
         # Clean up rate limiter tracking
         ws_rate_limiter.cleanup_connection(connection_id)

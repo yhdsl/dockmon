@@ -33,11 +33,11 @@ volumes:
   dockmon_data:
 ```
 
-![DockMon](https://img.shields.io/badge/DockMon-v2.3.2-blue.svg)
+![DockMon](https://img.shields.io/badge/DockMon-v2.4.0-blue.svg)
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3.13-3776AB?logo=python&logoColor=white)
 ![React](https://img.shields.io/badge/React-18.3-61DAFB?logo=react&logoColor=white)
-![Go](https://img.shields.io/badge/Go-1.24-00ADD8?logo=go&logoColor=white)
+![Go](https://img.shields.io/badge/Go-1.25-00ADD8?logo=go&logoColor=white)
 ![License](https://img.shields.io/badge/license-BSL%201.1-blue.svg)
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Support-FFDD00?logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/darthnorse)
 
@@ -51,6 +51,7 @@ volumes:
 - **基于代理的远程监控** - 由 Go 编写的轻量级代理服务，无需暴露 Docker 端口即可安全监控远程主机，支持以容器或 systemd 服务形式运行
 - **实时仪表板** - 支持拖拽的可自定义仪表板组件，基于 WebSocket 实现实时更新
 - **实时统计信息** - 实时展示 CPU 使用率、内存使用率以及网络 I/O
+- **历史数据统计** - 可选的时间序列数据持久化功能，用于记录 CPU、内存和网络指标，最长可保留 90 天的历史数据。允许在主机和容器的弹出窗口中，浏览 5 分钟 / 1 小时 / 24 小时 / 7 天 / 30 天 / 60 天 / 90 天的历史图表。出于隐私考虑，此功能默认关闭，可在 设置 → 系统设置 页面中启用。
 - **实时容器日志** - 支持同时查看多个容器的实时日志流
 - **事件管理** - 提供完整的且实时更新的事件日志记录，支持过滤和搜索
 - **智能重启** - 基于容器配置的重启策略自动恢复异常退出的容器，并支持自定义重试逻辑

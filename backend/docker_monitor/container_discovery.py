@@ -8,7 +8,7 @@ import os
 import time
 import traceback
 from datetime import datetime, timezone
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 import docker
 from docker import DockerClient
@@ -182,6 +182,10 @@ class ContainerDiscovery:
         self.last_reconnect_attempt: Dict[str, float] = {}  # Track last attempt time per host
         self.host_previous_status: Dict[str, str] = {}  # Track previous host status to detect transitions
 
+        # Reattach is idempotent setup; gate it on a per-host seen-set,
+        # rewritten each sweep so destroyed entries are pruned automatically.
+        self._reattached_container_ids: Dict[str, set[str]] = {}
+
     async def attempt_reconnection(self, host_id: str) -> bool:
         """
         Attempt to reconnect to an offline host with exponential backoff.
@@ -315,10 +319,19 @@ class ContainerDiscovery:
 
             # Test the connection
             await async_client_ping(client)
-            # Connection successful - add to clients
-            self.clients[host_id] = client
 
-            # Reset reconnection attempts on success
+            # If remove_host raced us mid-reconnection, drop the new client
+            # and bail out — otherwise we'd leak the open daemon connection
+            # (remove_host already ran its self.clients cleanup, so it
+            # won't be closed elsewhere).
+            if host_id not in self.hosts:
+                try:
+                    client.close()
+                except Exception:
+                    pass
+                return False
+
+            self.clients[host_id] = client
             self.reconnect_attempts[host_id] = 0
             logger.info(f"Reconnected to offline host: {host.name}")
 
@@ -363,8 +376,9 @@ class ContainerDiscovery:
             return True
 
         except Exception as e:
-            # Increment reconnection attempts on failure
-            self.reconnect_attempts[host_id] = attempts + 1
+            # Increment reconnection attempts on failure (skip if remove_host raced).
+            if host_id in self.hosts:
+                self.reconnect_attempts[host_id] = attempts + 1
 
             # Still offline - update status
             host.status = "offline"
@@ -443,6 +457,15 @@ class ContainerDiscovery:
                 host.container_count = len(docker_containers)
                 host.error = None
 
+                # Batch-fetch DB state for every container on this host.
+                # Collapses 2N per-container queries into 2 (tags + desired
+                # state). reattach_* calls below are gated on the seen-set
+                # so steady-state sweeps do zero per-container DB work.
+                host_tags = self.db.get_tags_for_host(host_id)
+                host_desired_states = self.db.get_desired_states_for_host(host_id)
+                prev_reattached = self._reattached_container_ids.get(host_id, set())
+                seen_container_ids: set[str] = set()
+
                 # Convert Docker API container data to Container objects
                 # Agent returns same format as Docker Python SDK
                 for dc_data in docker_containers:
@@ -474,67 +497,65 @@ class ContainerDiscovery:
                         compose_project = labels.get("com.docker.compose.project")
                         compose_service = labels.get("com.docker.compose.service")
 
-                        # Reattach tags (sticky tags feature)
-                        container_key = make_composite_key(host_id, container_id)
-                        existing_tags = self.db.get_tags_for_subject('container', container_key)
-                        if not existing_tags:
+                        seen_container_ids.add(container_id)
+                        custom_tags = host_tags.get(container_id, [])
+
+                        # Reattach is idempotent setup; only run on first sight.
+                        if container_id not in prev_reattached:
+                            if not custom_tags:
+                                try:
+                                    reattached_tags = self.db.reattach_tags_for_container(
+                                        host_id=host_id,
+                                        container_id=container_id,
+                                        container_name=container_name,
+                                        compose_project=compose_project,
+                                        compose_service=compose_service
+                                    )
+                                    if reattached_tags:
+                                        logger.debug(f"Reattached {len(reattached_tags)} tags to container {container_name}")
+                                        # reattach wrote new TagAssignments;
+                                        # surface them on this sweep too.
+                                        custom_tags = reattached_tags
+                                except Exception as e:
+                                    logger.warning(f"Failed to reattach tags: {e}")
+
                             try:
-                                reattached_tags = self.db.reattach_tags_for_container(
+                                self.db.reattach_update_settings_for_container(
+                                    host_id=host_id,
+                                    container_id=container_id,
+                                    container_name=container_name,
+                                    current_image=container_image,
+                                    compose_project=compose_project,
+                                    compose_service=compose_service
+                                )
+                            except Exception as e:
+                                logger.warning(f"Failed to reattach update settings for {container_name}: {e}")
+
+                            try:
+                                self.db.reattach_http_health_check_for_container(
                                     host_id=host_id,
                                     container_id=container_id,
                                     container_name=container_name,
                                     compose_project=compose_project,
                                     compose_service=compose_service
                                 )
-                                if reattached_tags:
-                                    logger.debug(f"Reattached {len(reattached_tags)} tags to container {container_name}")
                             except Exception as e:
-                                logger.warning(f"Failed to reattach tags: {e}")
+                                logger.warning(f"Failed to reattach HTTP health check for {container_name}: {e}")
 
-                        # Reattach update settings (Issue #116 - settings were lost for agent hosts)
-                        try:
-                            self.db.reattach_update_settings_for_container(
-                                host_id=host_id,
-                                container_id=container_id,
-                                container_name=container_name,
-                                current_image=container_image,
-                                compose_project=compose_project,
-                                compose_service=compose_service
-                            )
-                        except Exception as e:
-                            logger.warning(f"Failed to reattach update settings for {container_name}: {e}")
+                            try:
+                                self.db.reattach_deployment_metadata_for_container(
+                                    host_id=host_id,
+                                    container_id=container_id,
+                                    container_name=container_name,
+                                    compose_project=compose_project,
+                                    compose_service=compose_service
+                                )
+                            except Exception as e:
+                                logger.warning(f"Failed to reattach deployment metadata for {container_name}: {e}")
 
-                        # Reattach HTTP health check configuration
-                        try:
-                            self.db.reattach_http_health_check_for_container(
-                                host_id=host_id,
-                                container_id=container_id,
-                                container_name=container_name,
-                                compose_project=compose_project,
-                                compose_service=compose_service
-                            )
-                        except Exception as e:
-                            logger.warning(f"Failed to reattach HTTP health check for {container_name}: {e}")
-
-                        # Reattach deployment metadata
-                        try:
-                            self.db.reattach_deployment_metadata_for_container(
-                                host_id=host_id,
-                                container_id=container_id,
-                                container_name=container_name,
-                                compose_project=compose_project,
-                                compose_service=compose_service
-                            )
-                        except Exception as e:
-                            logger.warning(f"Failed to reattach deployment metadata for {container_name}: {e}")
-
-                        # Derive tags from labels (compose:*, swarm:*, dockmon.tag)
+                        # Combine custom tags (DB-backed) with derived tags
+                        # (label-based: compose:*, swarm:*, dockmon.tag).
                         derived_tags = derive_container_tags(labels)
-
-                        # Get custom tags from database
-                        custom_tags = self.db.get_tags_for_subject('container', container_key)
-
-                        # Combine tags: custom tags first, then derived (remove duplicates)
                         tags = []
                         seen = set()
                         for tag in custom_tags + derived_tags:
@@ -545,8 +566,7 @@ class ContainerDiscovery:
                         # Get auto-restart status
                         auto_restart = get_auto_restart_status_fn(host_id, container_id)
 
-                        # Get desired state and web UI URL from database
-                        desired_state, web_ui_url = self.db.get_desired_state(host_id, container_id)
+                        desired_state, web_ui_url = host_desired_states.get(container_id, ('unspecified', None))
 
                         ports_data = dc_data.get("Ports") or []
                         ports_set: set[str] = set()
@@ -628,6 +648,12 @@ class ContainerDiscovery:
                         logger.error(f"Error parsing agent container data ({container_info}): {e}\n{traceback.format_exc()}")
                         continue
 
+                # Rewrite the seen-set so destroyed containers are pruned.
+                # Skip if remove_host removed us mid-sweep — otherwise we'd
+                # leak an orphan entry that no future sweep ever prunes.
+                if host_id in self.hosts:
+                    self._reattached_container_ids[host_id] = seen_container_ids
+
                 logger.debug(f"Discovered {len(containers)} containers from agent {agent_id[:8]}... for host {host.name}")
                 return containers
 
@@ -674,8 +700,15 @@ class ContainerDiscovery:
                     except Exception as e:
                         logger.error(f"Failed to emit host connected event: {e}")
 
-            # Update previous status
-            self.host_previous_status[host_id] = "online"
+            # Update previous status (skip if remove_host raced us)
+            if host_id in self.hosts:
+                self.host_previous_status[host_id] = "online"
+
+            # Batch-fetch DB state for the whole host (see agent path).
+            host_tags = self.db.get_tags_for_host(host_id)
+            host_desired_states = self.db.get_desired_states_for_host(host_id)
+            prev_reattached = self._reattached_container_ids.get(host_id, set())
+            seen_container_ids: set[str] = set()
 
             for dc in docker_containers:
                 try:
@@ -722,98 +755,83 @@ class ContainerDiscovery:
                     compose_project = labels.get('com.docker.compose.project')
                     compose_service = labels.get('com.docker.compose.service')
 
-                    # Reattach tags from previous containers with same logical identity (sticky tags)
-                    # Only do this for NEW containers that don't have existing tag assignments
-                    # Use SHORT ID (12 chars) for consistency with database storage
-                    container_key = make_composite_key(host_id, dc.id[:12])
-                    existing_tags = self.db.get_tags_for_subject('container', container_key)
-                    if not existing_tags:  # Only reattach if no tags exist yet (new container)
+                    seen_container_ids.add(container_id)
+                    custom_tags = host_tags.get(container_id, [])
+
+                    # Reattach is idempotent setup; only run on first sight.
+                    if container_id not in prev_reattached:
+                        if not custom_tags:
+                            try:
+                                reattached_tags = self.db.reattach_tags_for_container(
+                                    host_id=host_id,
+                                    container_id=container_id,
+                                    container_name=dc.name,
+                                    compose_project=compose_project,
+                                    compose_service=compose_service
+                                )
+                                if reattached_tags:
+                                    logger.debug(f"Reattached {len(reattached_tags)} tags to container {dc.name}")
+                                    custom_tags = reattached_tags
+                            except Exception as e:
+                                logger.warning(f"Failed to reattach tags for container {dc.name}: {e}")
+
                         try:
-                            reattached_tags = self.db.reattach_tags_for_container(
+                            self.db.reattach_auto_restart_for_container(
                                 host_id=host_id,
-                                container_id=dc.id[:12],
+                                container_id=container_id,
                                 container_name=dc.name,
                                 compose_project=compose_project,
                                 compose_service=compose_service
                             )
-                            if reattached_tags:
-                                # Log tag count only to avoid excessive logging
-                                logger.debug(f"Reattached {len(reattached_tags)} tags to container {dc.name}")
                         except Exception as e:
-                            # Don't fail container discovery if tag reattachment fails
-                            logger.warning(f"Failed to reattach tags for container {dc.name}: {e}")
+                            logger.warning(f"Failed to reattach auto-restart for {dc.name}: {e}")
 
-                    # Reattach configuration from previous containers (TrueNAS container recreation support)
-                    # These methods are idempotent and safe to call on every discovery
+                        try:
+                            self.db.reattach_desired_state_for_container(
+                                host_id=host_id,
+                                container_id=container_id,
+                                container_name=dc.name,
+                                compose_project=compose_project,
+                                compose_service=compose_service
+                            )
+                        except Exception as e:
+                            logger.warning(f"Failed to reattach desired state for {dc.name}: {e}")
 
-                    # Reattach auto-restart configuration
-                    try:
-                        self.db.reattach_auto_restart_for_container(
-                            host_id=host_id,
-                            container_id=dc.id[:12],
-                            container_name=dc.name,
-                            compose_project=compose_project,
-                            compose_service=compose_service
-                        )
-                    except Exception as e:
-                        logger.warning(f"Failed to reattach auto-restart for {dc.name}: {e}")
+                        try:
+                            self.db.reattach_http_health_check_for_container(
+                                host_id=host_id,
+                                container_id=container_id,
+                                container_name=dc.name,
+                                compose_project=compose_project,
+                                compose_service=compose_service
+                            )
+                        except Exception as e:
+                            logger.warning(f"Failed to reattach HTTP health check for {dc.name}: {e}")
 
-                    # Reattach desired state
-                    try:
-                        self.db.reattach_desired_state_for_container(
-                            host_id=host_id,
-                            container_id=dc.id[:12],
-                            container_name=dc.name,
-                            compose_project=compose_project,
-                            compose_service=compose_service
-                        )
-                    except Exception as e:
-                        logger.warning(f"Failed to reattach desired state for {dc.name}: {e}")
+                        try:
+                            self.db.reattach_update_settings_for_container(
+                                host_id=host_id,
+                                container_id=container_id,
+                                container_name=dc.name,
+                                current_image=image_name,
+                                compose_project=compose_project,
+                                compose_service=compose_service
+                            )
+                        except Exception as e:
+                            logger.warning(f"Failed to reattach update settings for {dc.name}: {e}")
 
-                    # Reattach HTTP health check
-                    try:
-                        self.db.reattach_http_health_check_for_container(
-                            host_id=host_id,
-                            container_id=dc.id[:12],
-                            container_name=dc.name,
-                            compose_project=compose_project,
-                            compose_service=compose_service
-                        )
-                    except Exception as e:
-                        logger.warning(f"Failed to reattach HTTP health check for {dc.name}: {e}")
+                        try:
+                            self.db.reattach_deployment_metadata_for_container(
+                                host_id=host_id,
+                                container_id=container_id,
+                                container_name=dc.name,
+                                compose_project=compose_project,
+                                compose_service=compose_service
+                            )
+                        except Exception as e:
+                            logger.warning(f"Failed to reattach deployment metadata for {dc.name}: {e}")
 
-                    # Reattach update settings
-                    try:
-                        self.db.reattach_update_settings_for_container(
-                            host_id=host_id,
-                            container_id=dc.id[:12],
-                            container_name=dc.name,
-                            current_image=image_name,
-                            compose_project=compose_project,
-                            compose_service=compose_service
-                        )
-                    except Exception as e:
-                        logger.warning(f"Failed to reattach update settings for {dc.name}: {e}")
-
-                    # Reattach deployment metadata
-                    try:
-                        self.db.reattach_deployment_metadata_for_container(
-                            host_id=host_id,
-                            container_id=dc.id[:12],
-                            container_name=dc.name,
-                            compose_project=compose_project,
-                            compose_service=compose_service
-                        )
-                    except Exception as e:
-                        logger.warning(f"Failed to reattach deployment metadata for {dc.name}: {e}")
-
-                    # Derive tags from labels
                     derived_tags = derive_container_tags(labels)
-
-                    # Get custom tags from database (use SHORT ID for lookup)
-                    custom_tags = self.db.get_tags_for_subject('container', container_key)
-
-                    # Combine tags: custom tags first, then derived tags (remove duplicates)
                     tags = []
                     seen = set()
                     for tag in custom_tags + derived_tags:
@@ -822,7 +840,7 @@ class ContainerDiscovery:
                             seen.add(tag)
 
                     # Get desired state and web UI URL from database
-                    desired_state, web_ui_url = self.db.get_desired_state(host_id, container_id)
+                    desired_state, web_ui_url = host_desired_states.get(container_id, ('unspecified', None))
 
                     # Extract ports, restart policy, volumes, env
                     network_settings = dc.attrs.get('NetworkSettings', {})
@@ -870,6 +888,10 @@ class ContainerDiscovery:
                     # Log but don't fail the whole host for one bad container
                     logger.warning(f"Skipping container {dc.name if hasattr(dc, 'name') else 'unknown'} on {host.name} due to error: {container_error}")
                     continue
+
+            # Prune seen-set to currently-visible containers (see agent path).
+            if host_id in self.hosts:
+                self._reattached_container_ids[host_id] = seen_container_ids
 
         except docker.errors.NotFound as e:
             # Container was deleted between list() and attribute access - this is normal during bulk deletions
@@ -938,8 +960,9 @@ class ContainerDiscovery:
                     except Exception as alert_error:
                         logger.error(f"Failed to emit host disconnection event: {alert_error}")
 
-            # Update previous status
-            self.host_previous_status[host_id] = "offline"
+            # Update previous status (skip if remove_host raced us)
+            if host_id in self.hosts:
+                self.host_previous_status[host_id] = "offline"
 
         host.last_checked = datetime.now(timezone.utc)
         return containers

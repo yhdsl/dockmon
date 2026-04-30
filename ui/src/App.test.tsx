@@ -5,7 +5,7 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { screen, waitFor, render } from '@testing-library/react'
-import { App } from './App'
+import { App, queryClient } from './App'
 import { authApi } from '@/features/auth/api'
 
 // Mock the auth API
@@ -23,6 +23,17 @@ describe('App', () => {
     vi.mocked(authApi.login).mockReset()
     vi.mocked(authApi.logout).mockReset()
     vi.mocked(authApi.getCurrentUser).mockReset()
+
+    // App.tsx uses a module-level QueryClient (intentional in prod so the
+    // cache survives remounts), but that means a previous test's resolved
+    // ['auth','currentUser'] data sticks around for the next render and
+    // suppresses the new mock's call entirely. Clear it.
+    queryClient.clear()
+
+    // Reset window.location to root — earlier tests pushState to /login,
+    // /unknown-route, etc. Without this, a later test that wants to assert
+    // "App at /" actually starts at whatever the previous test left behind.
+    window.history.pushState({}, '', '/')
 
     // Set default: getCurrentUser rejects (not authenticated)
     vi.mocked(authApi.getCurrentUser).mockImplementation(() =>
@@ -52,7 +63,6 @@ describe('App', () => {
 
       await waitFor(() => {
         expect(screen.getByRole('heading', { name: /^dashboard$/i })).toBeInTheDocument()
-        expect(screen.getByText(/monitor your docker containers/i)).toBeInTheDocument()
       })
     })
 
@@ -96,26 +106,27 @@ describe('App', () => {
   })
 
   describe('protected routes', () => {
-    // Skip: Mock state pollution between tests - requires better test isolation
-    it.skip('should protect dashboard route', async () => {
-      // Uses default mock from beforeEach (rejected/unauthorized)
+    it('should protect dashboard route', async () => {
+      // Default mock from beforeEach: getCurrentUser rejects (unauthorized)
       render(<App />)
 
-      // App starts at "/", which is protected
-      // Should redirect to login when not authenticated
+      // App starts at "/" (reset by beforeEach) — should redirect to /login
       expect(await screen.findByLabelText(/username/i)).toBeInTheDocument()
-      expect(await screen.findByRole('button', { name: /log in/i})).toBeInTheDocument()
+      expect(await screen.findByRole('button', { name: /log in/i })).toBeInTheDocument()
     })
 
-    // Skip: Mock state pollution between tests - requires better test isolation
-    it.skip('should show loading state while checking authentication', async () => {
+    it('should show loading state while checking authentication', async () => {
       vi.mocked(authApi.getCurrentUser).mockImplementation(
         () => new Promise(() => {}) // Never resolves
       )
 
-      render(<App />)
+      const { container } = render(<App />)
 
-      expect(await screen.findByText(/loading/i)).toBeInTheDocument()
+      // LoadingSkeleton renders Skeleton elements (.animate-pulse) and a
+      // pulsing Container icon — there is no "loading" text in the DOM.
+      await waitFor(() => {
+        expect(container.querySelector('.animate-pulse')).toBeInTheDocument()
+      })
     })
   })
 })

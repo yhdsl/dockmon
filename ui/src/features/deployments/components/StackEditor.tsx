@@ -62,10 +62,12 @@ import {
 } from '../hooks/useStacks'
 import { useStackAction } from '../hooks/useDeployments'
 import type { StackAction } from '../hooks/useDeployments'
+import { usePortConflicts } from '../hooks/usePortConflicts'
 import { ConfigurationEditor, ConfigurationEditorHandle } from './ConfigurationEditor'
 import { DeploymentProgress } from './DeploymentProgress'
+import { PortConflictBanner } from './PortConflictBanner'
 import { validateStackName, MAX_STACK_NAME_LENGTH } from '../types'
-import type { DeployedHost } from '../types'
+import type { DeployedHost, PortConflict } from '../types'
 import { handleApiError, getErrorMessage } from '../utils'
 import { useAuth } from '@/features/auth/AuthContext'
 
@@ -175,6 +177,18 @@ export function StackEditor({
     () => hostId && deployedTo?.some((h) => h.host_id === hostId),
     [hostId, deployedTo]
   )
+
+  const {
+    conflicts: portConflicts,
+    isLoading: portCheckLoading,
+    error: portCheckError,
+    recheck: recheckPorts,
+  } = usePortConflicts({
+    stackName: selectedStackName && selectedStackName !== '__new__' ? selectedStackName : null,
+    hostId: hostId || null,
+  })
+
+  const [showPortConfirm, setShowPortConfirm] = useState(false)
 
   // Reset form state
   const resetForm = useCallback(() => {
@@ -393,7 +407,25 @@ export function StackEditor({
   }
 
   // Deploy stack (convenience for deploy button)
-  const handleDeploy = () => handleAction('up')
+  const executeDeploy = () => handleAction('up')
+
+  // Guarded deploy: re-check port conflicts fresh, and if any remain, ask
+  // the user before proceeding. Docker is still the final gate.
+  const onDeployClick = async () => {
+    if (!hostId || !selectedStackName || selectedStackName === '__new__') return
+    let fresh: PortConflict[] = []
+    try {
+      fresh = await recheckPorts()
+    } catch {
+      await executeDeploy()
+      return
+    }
+    if (fresh.length > 0) {
+      setShowPortConfirm(true)
+      return
+    }
+    await executeDeploy()
+  }
 
   // Save changes, then either show remove-confirm dialog or execute the pending action
   const handleSaveAndDeploy = async () => {
@@ -622,6 +654,16 @@ export function StackEditor({
         {!isCreateMode && (
           <fieldset disabled={!canDeploy} className="pt-3 mt-3 border-t shrink-0 disabled:opacity-60">
             <Label className="text-sm font-medium mb-2 block">部署至主机</Label>
+            {hostId && selectedStackName && selectedStackName !== '__new__' && (
+              <div className="mb-2">
+                <PortConflictBanner
+                  conflicts={portConflicts}
+                  isLoading={portCheckLoading}
+                  error={portCheckError}
+                  hostName={sortedHosts.find((h) => h.id === hostId)?.name || hostId.slice(0, 8)}
+                />
+              </div>
+            )}
             <div className="flex gap-2">
               <Select value={hostId} onValueChange={setHostId}>
                 <SelectTrigger className="min-w-[250px] flex-1">
@@ -644,7 +686,7 @@ export function StackEditor({
                 </SelectContent>
               </Select>
               <Button
-                onClick={handleDeploy}
+                onClick={onDeployClick}
                 disabled={!hostId || isSubmitting}
                 className="gap-2"
               >
@@ -754,6 +796,42 @@ export function StackEditor({
                 删除
               </AlertDialogAction>
             </fieldset>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Port conflict confirmation */}
+      <AlertDialog open={showPortConfirm} onOpenChange={setShowPortConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>检测到端口冲突</AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-2">
+                <p>
+                  以下目标主机的端口已被占用。
+                  Docker 可能无法绑定这些端口，继续部署将会失败。
+                </p>
+                <ul className="space-y-0.5 text-sm">
+                  {portConflicts.map((c) => (
+                    <li key={`${c.port}-${c.protocol}-${c.container_id}`}>
+                      Port <code className="rounded bg-muted px-1">{c.port}/{c.protocol}</code>
+                      {' '}— {c.container_name}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>取消</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={async () => {
+                setShowPortConfirm(false)
+                await executeDeploy()
+              }}
+            >
+              强制部署
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

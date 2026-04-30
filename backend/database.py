@@ -8,11 +8,9 @@ from typing import Optional, List, Dict, Any
 from sqlalchemy import create_engine, Column, String, Integer, BigInteger, Boolean, DateTime, JSON, ForeignKey, Text, UniqueConstraint, CheckConstraint, text, Float, func, Index
 from sqlalchemy.orm import sessionmaker, Session, relationship, declarative_base
 from sqlalchemy.pool import StaticPool
-import json
 import os
 import logging
 import secrets
-import bcrypt
 import uuid
 
 from auth.capabilities import ALL_CAPABILITIES, OPERATOR_CAPABILITIES, READONLY_CAPABILITIES
@@ -733,6 +731,14 @@ class GlobalSettings(Base):
     # Session timeout (0 = never expires, 1-8760 hours)
     session_timeout_hours = Column(Integer, default=24)
 
+    # Stats persistence (v2.3.4+). Disabled by default so upgrades don't
+    # change behavior for existing users; opt-in via the settings UI.
+    # server_default mirrors migration 037 so create_all()-bootstrapped fresh
+    # installs match migration-upgraded schemas.
+    stats_persistence_enabled = Column(Boolean, nullable=False, server_default='0', default=False)
+    stats_retention_days = Column(Integer, nullable=False, server_default='30', default=30)  # 1..30
+    stats_points_per_view = Column(Integer, nullable=False, server_default='500', default=500)  # 100..2000
+
     updated_at = Column(DateTime, default=utcnow, onupdate=utcnow)
 
 class ContainerUpdate(Base):
@@ -1396,7 +1402,7 @@ class DatabaseManager:
         Returns the existing instance if one exists, otherwise creates it.
         Thread-safe using a lock to prevent race conditions.
         """
-        global _database_manager_instance, _database_manager_lock
+        global _database_manager_instance
 
         # Fast path: instance already exists
         if _database_manager_instance is not None:
@@ -1814,7 +1820,7 @@ class DatabaseManager:
     def _schedule_file_permissions(self):
         """Schedule file permission setting for after database file is created"""
         # Create a connection to ensure the file exists
-        with self.engine.connect() as conn:
+        with self.engine.connect():
             pass
 
         # Now set permissions
@@ -2521,6 +2527,68 @@ class DatabaseManager:
             ).order_by(TagAssignment.order_index).all()
 
             return [name[0] for name in tag_names]
+
+    def get_tags_for_host(self, host_id: str) -> dict[str, list[str]]:
+        """
+        Batch fetch container tags for every container on a host in one
+        query. Returns dict mapping short container_id (12 chars) to a
+        list of tag names in user-defined order_index order.
+
+        Used by container discovery to collapse N per-container
+        get_tags_for_subject calls into one.
+        """
+        if not host_id:
+            return {}
+
+        # Half-open range scan instead of LIKE 'prefix%'. SQLite's default
+        # case_sensitive_like=OFF disables the LIKE-to-index optimization,
+        # so a startswith() filter would full-scan tag_assignments. Comparing
+        # against ":" and ";" (next ASCII char) keeps the query on the
+        # composite index over (subject_type, subject_id).
+        lo = f"{host_id}:"
+        hi = f"{host_id};"
+        with self.get_session() as session:
+            rows = session.query(
+                TagAssignment.subject_id,
+                Tag.name,
+            ).join(
+                Tag,
+                TagAssignment.tag_id == Tag.id,
+            ).filter(
+                TagAssignment.subject_type == 'container',
+                TagAssignment.subject_id >= lo,
+                TagAssignment.subject_id < hi,
+            ).order_by(
+                TagAssignment.subject_id,
+                TagAssignment.order_index,
+            ).all()
+
+            result: dict[str, list[str]] = {}
+            for subject_id, tag_name in rows:
+                container_id = subject_id[len(lo):]
+                result.setdefault(container_id, []).append(tag_name)
+            return result
+
+    def get_desired_states_for_host(self, host_id: str) -> dict[str, tuple[str, Optional[str]]]:
+        """
+        Batch fetch (desired_state, web_ui_url) for every container on a
+        host in one query. Returns dict mapping short container_id to
+        the tuple. Containers with no row are absent from the dict;
+        callers should default to ('unspecified', None) on miss.
+        """
+        if not host_id:
+            return {}
+
+        with self.get_session() as session:
+            rows = session.query(
+                ContainerDesiredState.container_id,
+                ContainerDesiredState.desired_state,
+                ContainerDesiredState.web_ui_url,
+            ).filter(
+                ContainerDesiredState.host_id == host_id,
+            ).all()
+
+            return {row[0]: (row[1], row[2]) for row in rows}
 
     def get_subjects_with_tag(self, tag_name: str, subject_type: str = None) -> list[dict]:
         """Get all subjects that have a specific tag"""
@@ -3442,7 +3510,12 @@ class DatabaseManager:
                     # Editor theme preference (v2.2.8+)
                     'editor_theme',
                     # Session timeout
-                    'session_timeout_hours'
+                    'session_timeout_hours',
+                    # Stats persistence (v2.4.0+): hot-pushed to stats-service
+                    # by main.update_settings; persisted here so the values
+                    # survive a backend restart.
+                    'stats_persistence_enabled', 'stats_retention_days',
+                    'stats_points_per_view',
                 }
 
                 for key, value in updates.items():
@@ -3763,7 +3836,6 @@ class DatabaseManager:
             # When filtering by container_id, include events even if host_id is NULL
             # (v2 alerts don't have host_id set)
             if host_id and container_id:
-                from sqlalchemy import or_
                 if isinstance(container_id, list) and container_id:
                     container_filter = EventLog.container_id.in_(container_id)
                 elif isinstance(container_id, str):

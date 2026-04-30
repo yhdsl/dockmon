@@ -14,9 +14,11 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
 	"syscall"
 	"time"
 
+	"github.com/dockmon/stats-service/persistence"
 	"github.com/gorilla/websocket"
 )
 
@@ -225,6 +227,70 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	// Open persistence DB. dockmon.db lives at the same path Python uses;
+	// the bind-mount makes it available at /app/data/dockmon.db inside both
+	// containers. The schema is owned by Alembic; we verify on open and fall
+	// back to "persistence disabled" if migration 037 hasn't run yet.
+	persistDBPath := getEnv("DOCKMON_DB_PATH", "/app/data/dockmon.db")
+	var persistErr error
+	persistDB, persistErr = persistence.Open(persistDBPath)
+	if persistErr != nil {
+		log.Printf("Persistence disabled: %v", persistErr)
+		persistDB = nil
+	}
+	// persistWg tracks the writer and retention goroutines. The deferred
+	// cleanup below cancels the context, waits for them to drain, then
+	// closes the DB — in that order — so a mid-batch commit can never
+	// race a closed sqlite handle. The explicit cancel() at the bottom
+	// of main() signals shutdown on the normal SIGTERM path; this defer
+	// exists for both belt-and-suspenders and the panic unwind path.
+	var persistWg sync.WaitGroup
+	defer func() {
+		if persistDB == nil {
+			return
+		}
+		cancel()
+		persistWg.Wait()
+		if err := persistDB.Close(); err != nil {
+			log.Printf("Error closing persistence DB: %v", err)
+		}
+	}()
+
+	// Seed settings from the DB so user opt-ins survive a restart.
+	if persistDB != nil {
+		if s, err := persistDB.LoadGlobalSettings(ctx); err != nil {
+			log.Printf("Could not load stats settings from DB; using defaults: %v", err)
+		} else if s != nil {
+			settingsProvider.ApplyPartialUpdate(&s.PersistEnabled, &s.RetentionDays, &s.PointsPerView)
+		}
+	}
+
+	// Tiers are computed once at startup. Runtime points_per_view changes
+	// land in settingsProvider but do not rebuild the cascade or retention
+	// tier list — a restart is required for that setting to take effect.
+	var persistTiers []persistence.Tier
+	if persistDB != nil {
+		persistTiers = persistence.ComputeTiers(settingsProvider.PointsPerView())
+		writes := make(chan persistence.WriteJob, 4096)
+		cascade = persistence.NewCascade(persistTiers, writes)
+		writer = persistence.NewWriter(persistDB, writes)
+		retention = persistence.NewRetention(persistDB, persistTiers)
+		aggregator.SetCascade(cascade)
+
+		persistWg.Add(2)
+		go func() {
+			defer persistWg.Done()
+			writer.Run(ctx)
+		}()
+		go func() {
+			defer persistWg.Done()
+			retention.Run(ctx, settingsProvider)
+		}()
+
+		log.Printf("Stats persistence subsystems initialized (tiers=%d, points_per_view=%d, persist_enabled=%t)",
+			len(persistTiers), settingsProvider.PointsPerView(), settingsProvider.PersistEnabled())
+	}
+
 	// Start aggregator
 	go aggregator.Start(ctx)
 
@@ -290,6 +356,47 @@ func main() {
 		containerStats := cache.GetAllContainerStats()
 		json.NewEncoder(w).Encode(containerStats)
 	}))
+
+	// Historical stats endpoints (PROTECTED). Reuses persistTiers computed
+	// above so the handler sees the same tier definitions the cascade/writer
+	// are feeding into the DB.
+	if persistDB != nil {
+		historyHandler := NewHistoryHandler(persistDB, persistTiers)
+		mux.HandleFunc("/api/stats/history/container",
+			authMiddleware(token, historyHandler.ServeContainer))
+		mux.HandleFunc("/api/stats/history/host",
+			authMiddleware(token, historyHandler.ServeHost))
+	}
+
+	// Hot-reload of stats settings pushed from Python. Registered
+	// unconditionally so a user who flips stats_persistence_enabled from
+	// false to true doesn't get a 404 — the flag lives on settingsProvider
+	// and is consulted by the ingest path without a restart.
+	settingsHandler := &SettingsHandler{provider: settingsProvider}
+	mux.HandleFunc("/api/settings", authMiddleware(token, settingsHandler.ServeHTTP))
+
+	// Agent ingest WebSocket endpoint. Remote agents push container stats
+	// directly into the same StatsCache that local and mTLS-remote stats
+	// feed into. Requires the persistence DB for agent token validation.
+	//
+	// NOT wrapped in authMiddleware: auth is per-WebSocket via the agent's
+	// permanent UUID token, validated inside HandleWebSocket itself.
+	if persistDB != nil {
+		ingestHandler := &IngestHandler{
+			db:    persistDB,
+			cache: cache,
+			upgrader: websocket.Upgrader{
+				CheckOrigin: func(r *http.Request) bool { return true },
+			},
+		}
+		mux.HandleFunc("/api/stats/ws/ingest", ingestHandler.HandleWebSocket)
+
+		// Agent token invalidation. Python posts here after deleting an
+		// agent row so stats-service evicts the cached token instead of
+		// honouring it for up to the 5-minute cache TTL.
+		invalidateHandler := &InvalidateHandler{db: persistDB}
+		mux.HandleFunc("/api/agents/invalidate", authMiddleware(token, invalidateHandler.ServeHTTP))
+	}
 
 	// Start stream for a container (called by Python backend) - PROTECTED
 	mux.HandleFunc("/api/streams/start", authMiddleware(token, limitRequestBody(func(w http.ResponseWriter, r *http.Request) {
@@ -424,6 +531,9 @@ func main() {
 		}
 
 		streamManager.RemoveDockerHost(req.HostID)
+		if cascade != nil {
+			cascade.RemoveHost(req.HostID)
+		}
 
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(map[string]string{"status": "removed"})
@@ -572,7 +682,9 @@ func main() {
 			return
 		}
 
-		// Handle connection (read loop to detect disconnect)
+		// Read loop detects client disconnect. Server shutdown is handled
+		// separately by EventBroadcaster.CloseAll, which closes every conn
+		// and forces ReadMessage to error out here.
 		go func() {
 			defer func() {
 				eventBroadcaster.RemoveConnection(conn)
@@ -580,7 +692,6 @@ func main() {
 			}()
 
 			for {
-				// Read messages (just to detect disconnect, we don't expect any)
 				_, _, err := conn.ReadMessage()
 				if err != nil {
 					break
@@ -591,11 +702,15 @@ func main() {
 
 	// Create server with configured port
 	srv := &http.Server{
-		Addr:         ":" + config.Port,
-		Handler:      mux,
-		ReadTimeout:  10 * time.Second,
-		WriteTimeout: 10 * time.Second,
-		IdleTimeout:  60 * time.Second,
+		Addr:              ":" + config.Port,
+		Handler:           mux,
+		ReadHeaderTimeout: 10 * time.Second,
+		IdleTimeout:       60 * time.Second,
+		// ReadTimeout and WriteTimeout are intentionally omitted: they apply
+		// to the underlying TCP connection and would kill long-lived WebSocket
+		// connections (/ws/events, /api/stats/ws/ingest) that are idle for
+		// more than the timeout. Per-connection deadlines are managed at the
+		// application layer (ping/pong, context cancellation).
 	}
 
 	// Start server in goroutine
@@ -631,7 +746,9 @@ func main() {
 		log.Printf("Server shutdown error: %v", err)
 	}
 
-	// Cancel context to stop aggregator
+	// Cancel context to stop aggregator. The persistence goroutines are
+	// drained and the DB is closed by the deferred cleanup above, in
+	// strict cancel → Wait → Close order.
 	cancel()
 
 	// Clean up token file

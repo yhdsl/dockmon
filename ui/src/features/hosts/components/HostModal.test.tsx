@@ -4,25 +4,23 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@/test/utils'
 import userEvent from '@testing-library/user-event'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { HostModal } from './HostModal'
 import * as useHostsModule from '../hooks/useHosts'
 import * as useTagsModule from '@/lib/hooks/useTags'
 import type { Host } from '../hooks/useHosts'
 
-// Mock hooks
 vi.mock('../hooks/useHosts', () => ({
   useAddHost: vi.fn(),
   useUpdateHost: vi.fn(),
+  useDeleteHost: vi.fn(),
 }))
 
 vi.mock('@/lib/hooks/useTags', () => ({
   useTags: vi.fn(),
 }))
 
-// Mock toast
 vi.mock('sonner', () => ({
   toast: {
     success: vi.fn(),
@@ -30,16 +28,13 @@ vi.mock('sonner', () => ({
   },
 }))
 
-function createWrapper() {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: { retry: false },
-    },
-  })
-
-  return ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  )
+// Add-mode renders an Agent (recommended) / Legacy tab pair. The host form
+// (Host Name / Address / mTLS / etc.) lives in the Legacy tab, so add-mode
+// tests must switch to it first; edit-mode renders the form directly.
+async function openAddForm() {
+  const user = userEvent.setup()
+  await user.click(screen.getByRole('button', { name: /legacy/i }))
+  return user
 }
 
 describe('HostModal', () => {
@@ -70,15 +65,20 @@ describe('HostModal', () => {
       mutateAsync: mockMutateAsync,
       isPending: false,
     } as any)
+
+    vi.mocked(useHostsModule.useDeleteHost).mockReturnValue({
+      mutate: mockMutate,
+      mutateAsync: mockMutateAsync,
+      isPending: false,
+    } as any)
   })
 
   describe('rendering', () => {
-    it('should render add host modal', () => {
-      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />, {
-        wrapper: createWrapper(),
-      })
+    it('should render add host modal', async () => {
+      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />)
 
       expect(screen.getByRole('heading', { name: /add host/i })).toBeInTheDocument()
+      await openAddForm()
       expect(screen.getByLabelText(/host name/i)).toBeInTheDocument()
       expect(screen.getByLabelText(/address.*endpoint/i)).toBeInTheDocument()
       expect(screen.getByLabelText(/enable mtls/i)).toBeInTheDocument()
@@ -97,9 +97,7 @@ describe('HostModal', () => {
         security_status: null, // No mTLS
       }
 
-      render(<HostModal isOpen={true} onClose={mockOnClose} host={existingHost} />, {
-        wrapper: createWrapper(),
-      })
+      render(<HostModal isOpen={true} onClose={mockOnClose} host={existingHost} />)
 
       expect(screen.getByText('Edit Host')).toBeInTheDocument()
       expect(screen.getByDisplayValue('production-server')).toBeInTheDocument()
@@ -108,9 +106,7 @@ describe('HostModal', () => {
     })
 
     it('should not render when isOpen is false', () => {
-      render(<HostModal isOpen={false} onClose={mockOnClose} host={null} />, {
-        wrapper: createWrapper(),
-      })
+      render(<HostModal isOpen={false} onClose={mockOnClose} host={null} />)
 
       expect(screen.queryByRole('heading', { name: /add host/i })).not.toBeInTheDocument()
     })
@@ -118,11 +114,8 @@ describe('HostModal', () => {
 
   describe('form validation', () => {
     it('should require host name', async () => {
-      const user = userEvent.setup()
-
-      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />, {
-        wrapper: createWrapper(),
-      })
+      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />)
+      const user = await openAddForm()
 
       const submitButton = screen.getByRole('button', { name: /add host/i })
       await user.click(submitButton)
@@ -135,11 +128,8 @@ describe('HostModal', () => {
     })
 
     it('should require address/endpoint', async () => {
-      const user = userEvent.setup()
-
-      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />, {
-        wrapper: createWrapper(),
-      })
+      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />)
+      const user = await openAddForm()
 
       const nameInput = screen.getByLabelText(/host name/i)
       await user.type(nameInput, 'test-server')
@@ -155,11 +145,8 @@ describe('HostModal', () => {
     })
 
     it('should validate URL format', async () => {
-      const user = userEvent.setup()
-
-      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />, {
-        wrapper: createWrapper(),
-      })
+      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />)
+      const user = await openAddForm()
 
       const nameInput = screen.getByLabelText(/host name/i)
       const urlInput = screen.getByLabelText(/address.*endpoint/i)
@@ -180,11 +167,8 @@ describe('HostModal', () => {
     })
 
     it('should validate host name format', async () => {
-      const user = userEvent.setup()
-
-      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />, {
-        wrapper: createWrapper(),
-      })
+      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />)
+      const user = await openAddForm()
 
       const nameInput = screen.getByLabelText(/host name/i)
       const urlInput = screen.getByLabelText(/address.*endpoint/i)
@@ -203,11 +187,8 @@ describe('HostModal', () => {
     })
 
     it('should enforce max length for host name', async () => {
-      const user = userEvent.setup()
-
-      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />, {
-        wrapper: createWrapper(),
-      })
+      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />)
+      const user = await openAddForm()
 
       const nameInput = screen.getByLabelText(/host name/i)
       const urlInput = screen.getByLabelText(/address.*endpoint/i)
@@ -230,11 +211,8 @@ describe('HostModal', () => {
     })
 
     it('should enforce max length for description', async () => {
-      const user = userEvent.setup()
-
-      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />, {
-        wrapper: createWrapper(),
-      })
+      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />)
+      const user = await openAddForm()
 
       const nameInput = screen.getByLabelText(/host name/i)
       const urlInput = screen.getByLabelText(/address.*endpoint/i)
@@ -262,11 +240,8 @@ describe('HostModal', () => {
 
   describe('mTLS toggle', () => {
     it('should show mTLS fields when enabled', async () => {
-      const user = userEvent.setup()
-
-      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />, {
-        wrapper: createWrapper(),
-      })
+      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />)
+      const user = await openAddForm()
 
       // mTLS fields should be hidden initially
       expect(screen.queryByLabelText(/ca certificate/i)).not.toBeInTheDocument()
@@ -286,11 +261,8 @@ describe('HostModal', () => {
     })
 
     it('should hide mTLS fields when disabled', async () => {
-      const user = userEvent.setup()
-
-      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />, {
-        wrapper: createWrapper(),
-      })
+      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />)
+      const user = await openAddForm()
 
       // Enable mTLS
       const mtlsToggle = screen.getByLabelText(/enable mtls/i)
@@ -321,9 +293,7 @@ describe('HostModal', () => {
         security_status: 'secure', // Has mTLS
       }
 
-      render(<HostModal isOpen={true} onClose={mockOnClose} host={existingHost} />, {
-        wrapper: createWrapper(),
-      })
+      render(<HostModal isOpen={true} onClose={mockOnClose} host={existingHost} />)
 
       // mTLS checkbox should be checked
       const mtlsToggle = screen.getByLabelText(/enable mtls/i) as HTMLInputElement
@@ -338,44 +308,13 @@ describe('HostModal', () => {
     })
   })
 
-  describe('TagInput integration', () => {
-    it('should render TagInput component', () => {
-      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />, {
-        wrapper: createWrapper(),
-      })
-
-      expect(screen.getByPlaceholderText(/add tags for organization/i)).toBeInTheDocument()
-    })
-
-    it('should pre-populate tags when editing host', () => {
-      const existingHost: Host = {
-        id: '1',
-        name: 'production-server',
-        url: 'tcp://192.168.1.100:2376',
-        status: 'online',
-        last_checked: new Date().toISOString(),
-        container_count: 5,
-        tags: ['production', 'web'],
-        description: null,
-        security_status: null,
-      }
-
-      render(<HostModal isOpen={true} onClose={mockOnClose} host={existingHost} />, {
-        wrapper: createWrapper(),
-      })
-
-      expect(screen.getByText('production')).toBeInTheDocument()
-      expect(screen.getByText('web')).toBeInTheDocument()
-    })
-  })
+  // Tags are no longer managed in HostModal — they live in the host drawer
+  // (see HostModal.tsx file header). TagInput tests removed.
 
   describe('form submission', () => {
     it('should submit valid form for adding host', async () => {
-      const user = userEvent.setup()
-
-      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />, {
-        wrapper: createWrapper(),
-      })
+      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />)
+      const user = await openAddForm()
 
       const nameInput = screen.getByLabelText(/host name/i)
       const urlInput = screen.getByLabelText(/address.*endpoint/i)
@@ -414,9 +353,7 @@ describe('HostModal', () => {
         security_status: null,
       }
 
-      render(<HostModal isOpen={true} onClose={mockOnClose} host={existingHost} />, {
-        wrapper: createWrapper(),
-      })
+      render(<HostModal isOpen={true} onClose={mockOnClose} host={existingHost} />)
 
       const nameInput = screen.getByLabelText(/host name/i)
       await user.clear(nameInput)
@@ -438,11 +375,8 @@ describe('HostModal', () => {
     })
 
     it('should include mTLS certificates when mTLS is enabled', async () => {
-      const user = userEvent.setup()
-
-      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />, {
-        wrapper: createWrapper(),
-      })
+      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />)
+      const user = await openAddForm()
 
       const nameInput = screen.getByLabelText(/host name/i)
       const urlInput = screen.getByLabelText(/address.*endpoint/i)
@@ -486,11 +420,8 @@ describe('HostModal', () => {
 
   describe('cancel behavior', () => {
     it('should close modal when cancel button is clicked', async () => {
-      const user = userEvent.setup()
-
-      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />, {
-        wrapper: createWrapper(),
-      })
+      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />)
+      const user = await openAddForm()
 
       const cancelButton = screen.getByRole('button', { name: /cancel/i })
       await user.click(cancelButton)
@@ -501,9 +432,7 @@ describe('HostModal', () => {
     it('should close modal when X button is clicked', async () => {
       const user = userEvent.setup()
 
-      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />, {
-        wrapper: createWrapper(),
-      })
+      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />)
 
       const closeButton = screen.getByRole('button', { name: /close/i })
       await user.click(closeButton)
@@ -514,8 +443,6 @@ describe('HostModal', () => {
 
   describe('loading state', () => {
     it('should show Saving text when form is submitting', async () => {
-      const user = userEvent.setup()
-
       // Make mutateAsync take a long time so we can catch the submitting state
       const slowMutateAsync = vi.fn(() => new Promise(resolve => setTimeout(resolve, 1000)))
 
@@ -525,9 +452,8 @@ describe('HostModal', () => {
         isPending: false,
       } as any)
 
-      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />, {
-        wrapper: createWrapper(),
-      })
+      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />)
+      const user = await openAddForm()
 
       // Fill in minimal required fields
       const nameInput = screen.getByLabelText(/host name/i)
@@ -548,21 +474,17 @@ describe('HostModal', () => {
   })
 
   describe('test connection', () => {
-    it('should show test connection button for non-mTLS connections', () => {
-      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />, {
-        wrapper: createWrapper(),
-      })
+    it('should show test connection button for non-mTLS connections', async () => {
+      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />)
+      await openAddForm()
 
       // Should have Test Connection button when mTLS is disabled
       expect(screen.getByRole('button', { name: /test connection/i })).toBeInTheDocument()
     })
 
     it('should show test connection button within mTLS section', async () => {
-      const user = userEvent.setup()
-
-      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />, {
-        wrapper: createWrapper(),
-      })
+      render(<HostModal isOpen={true} onClose={mockOnClose} host={null} />)
+      const user = await openAddForm()
 
       // Enable mTLS
       const mtlsToggle = screen.getByLabelText(/enable mtls/i)

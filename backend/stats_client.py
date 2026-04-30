@@ -5,7 +5,7 @@ import aiohttp
 import asyncio
 import logging
 import os
-from typing import Dict, Optional, Callable
+from typing import Any, Dict, Optional, Callable
 import json
 
 logger = logging.getLogger(__name__)
@@ -294,6 +294,179 @@ class StatsServiceClient:
                 logger.error(f"Error getting container stats from stats service: {e}")
                 return {}
         return {}
+
+    class HistoryUpstreamError(Exception):
+        """
+        Raised when the stats-service returns a non-OK response for a
+        history query. Carries both the upstream HTTP status and the
+        response body so the FastAPI proxy can decide how to map it.
+
+        - 4xx from upstream → client-side bad request (mirror status)
+        - 5xx from upstream → 502 Bad Gateway at the proxy
+        """
+
+        def __init__(self, status: int, body: str):
+            self.status = status
+            self.body = body
+            super().__init__(f"stats-service returned {status}: {body}")
+
+    async def _get_history(
+        self,
+        endpoint: str,
+        params: Dict[str, str],
+        log_label: str,
+    ) -> Dict[str, Any]:
+        """
+        Shared GET helper for stats-service history endpoints.
+
+        Implements the standard 401-retry pattern used elsewhere in this
+        client, then either returns the decoded JSON body or raises
+        HistoryUpstreamError with the upstream status and body so the
+        FastAPI proxy can map upstream errors to appropriate responses.
+        """
+        url = f"{self.base_url}{endpoint}"
+        for attempt in range(2):
+            try:
+                session = await self._get_session()
+                async with session.get(url, params=params) as resp:
+                    if resp.status == 401 and attempt == 0:
+                        logger.warning("Stats service returned 401, refreshing token...")
+                        await self._invalidate_auth()
+                        continue
+                    if resp.status != 200:
+                        body = await resp.text()
+                        logger.warning(
+                            f"stats-service {log_label} returned {resp.status}: {body}"
+                        )
+                        raise StatsServiceClient.HistoryUpstreamError(resp.status, body)
+                    return await resp.json()
+            except aiohttp.ClientError as e:
+                logger.error(f"Failed to get {log_label} from stats service: {e}")
+                raise
+        # Unreachable: the retry loop either returns JSON or raises.
+        raise RuntimeError(f"_get_history({log_label}): retry loop exhausted without response")
+
+    @staticmethod
+    def _history_params(
+        base: Dict[str, str],
+        range_: Optional[str],
+        from_: Optional[int],
+        to: Optional[int],
+        since: Optional[int],
+    ) -> Dict[str, str]:
+        """Build the query-string params dict for a history request."""
+        params = dict(base)
+        if range_ is not None:
+            params["range"] = range_
+        if from_ is not None:
+            params["from"] = str(from_)
+        if to is not None:
+            params["to"] = str(to)
+        if since is not None:
+            params["since"] = str(since)
+        return params
+
+    async def get_host_stats_history(
+        self,
+        host_id: str,
+        range_: Optional[str] = None,
+        from_: Optional[int] = None,
+        to: Optional[int] = None,
+        since: Optional[int] = None,
+    ) -> Dict[str, Any]:
+        """
+        Proxy to stats-service GET /api/stats/history/host.
+
+        Raises HistoryUpstreamError if the stats-service returns a non-2xx
+        response; the FastAPI proxy endpoint maps that to an HTTPException.
+        """
+        params = self._history_params(
+            {"host_id": host_id}, range_, from_, to, since
+        )
+        return await self._get_history(
+            "/api/stats/history/host", params, "host stats history"
+        )
+
+    async def get_container_stats_history(
+        self,
+        host_id: str,
+        container_id: str,
+        range_: Optional[str] = None,
+        from_: Optional[int] = None,
+        to: Optional[int] = None,
+        since: Optional[int] = None,
+    ) -> Dict[str, Any]:
+        """
+        Proxy to stats-service GET /api/stats/history/container.
+
+        Raises HistoryUpstreamError on non-2xx upstream responses.
+        """
+        composite_id = f"{host_id}:{container_id}"
+        params = self._history_params(
+            {"host_id": host_id, "container_id": composite_id},
+            range_, from_, to, since,
+        )
+        return await self._get_history(
+            "/api/stats/history/container", params, "container stats history"
+        )
+
+    async def push_settings_update(
+        self,
+        stats_persistence_enabled: Optional[bool] = None,
+        stats_retention_days: Optional[int] = None,
+        stats_points_per_view: Optional[int] = None,
+    ) -> None:
+        """Notify stats-service of settings changes for hot reload.
+
+        Non-fatal: if the push fails, stats-service picks up the new values
+        on next restart. The caller should catch and log any exception.
+        """
+        payload: Dict[str, Any] = {}
+        if stats_persistence_enabled is not None:
+            payload["stats_persistence_enabled"] = stats_persistence_enabled
+        if stats_retention_days is not None:
+            payload["stats_retention_days"] = stats_retention_days
+        if stats_points_per_view is not None:
+            payload["stats_points_per_view"] = stats_points_per_view
+        if not payload:
+            return
+
+        try:
+            for attempt in range(2):
+                session = await self._get_session()
+                async with session.post(f"{self.base_url}/api/settings", json=payload) as resp:
+                    if resp.status == 401 and attempt == 0:
+                        await self._invalidate_auth()
+                        continue
+                    resp.raise_for_status()
+                    return
+        except aiohttp.ClientError as e:
+            logger.error(f"Failed to push stats settings to stats service: {e}")
+            raise
+
+    async def invalidate_agent_token(self, agent_id: str) -> None:
+        """Tell stats-service to drop a given agent's cached token entry.
+
+        Non-fatal: if the push fails, the token cache will expire naturally
+        within 5 minutes. The caller should catch and log any exception.
+        """
+        payload = {"agent_id": agent_id}
+        try:
+            for attempt in range(2):
+                session = await self._get_session()
+                async with session.post(
+                    f"{self.base_url}/api/agents/invalidate", json=payload
+                ) as resp:
+                    if resp.status == 401 and attempt == 0:
+                        await self._invalidate_auth()
+                        continue
+                    if resp.status in (200, 204, 404):
+                        return
+                    resp.raise_for_status()
+                    return
+        except aiohttp.ClientError as e:
+            logger.error(f"Failed to invalidate agent token in stats service: {e}")
+            raise
 
     # Event service methods
 

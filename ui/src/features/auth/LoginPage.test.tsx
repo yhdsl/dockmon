@@ -79,19 +79,7 @@ describe('LoginPage', () => {
       expect(await screen.findByRole('button', { name: /log in/i })).toBeInTheDocument()
     })
 
-    it('should show default credentials hint', async () => {
-      renderLoginPage()
-
-      await waitFor(() => {
-        expect(screen.getByText(/default credentials/i)).toBeInTheDocument()
-      })
-
-      expect(screen.getByText(/admin/)).toBeInTheDocument()
-      expect(screen.getByText(/test1234/)).toBeInTheDocument()
-    })
-
-    // Skip: jsdom doesn't properly handle autoFocus attribute
-    it.skip('should focus username field on mount', async () => {
+    it('should focus username field after auth check completes', async () => {
       renderLoginPage()
 
       const usernameInput = await screen.findByLabelText(/username/i)

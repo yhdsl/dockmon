@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	version = "1.0.4"
+	version = "1.0.8"
 	commit  = "dev"
 )
 
@@ -102,6 +102,31 @@ func main() {
 	// Check for pending self-update on startup
 	if err := wsClient.CheckPendingUpdate(); err != nil {
 		log.WithError(err).Warn("Failed to check/apply pending update")
+	}
+
+	// Stats service dual-send: open a separate WebSocket to stats-service for
+	// historical stats persistence. Falls back gracefully if either the token
+	// or the URL is missing. The token is the agent's permanent UUID, the
+	// same value Python's validate_permanent_token() consumes.
+	//
+	// Note on first-boot behavior: on an agent's very first startup the
+	// PermanentToken is empty (it is received in the registration response
+	// and persisted to disk). On that first run dual-send will be disabled
+	// and will only engage on the next agent restart. Subsequent restarts
+	// load the persisted token from DataPath/permanent_token and dual-send
+	// activates immediately. This matches the spec's gating intent.
+	if cfg.PermanentToken != "" && cfg.DockMonURL != "" {
+		statsClient := client.NewStatsServiceClient(cfg.DockMonURL, cfg.PermanentToken, log)
+		if statsHandler := wsClient.StatsHandler(); statsHandler != nil {
+			statsHandler.SetStatsServiceClient(statsClient)
+		}
+		go statsClient.Run(ctx)
+		log.Info("Stats service dual-send enabled")
+	} else {
+		log.WithFields(logrus.Fields{
+			"have_token": cfg.PermanentToken != "",
+			"have_url":   cfg.DockMonURL != "",
+		}).Debug("Stats service dual-send disabled (missing token or URL)")
 	}
 
 	// Start client in background

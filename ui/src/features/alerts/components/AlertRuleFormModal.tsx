@@ -5,8 +5,9 @@
  */
 
 import { useState, useRef, useEffect } from 'react'
-import { X, Search, Check, Bell, BellRing, Send, MessageSquare, Hash, Smartphone, Mail, Globe, Users } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
+import { X, Search, Check, Bell, BellRing, Send, MessageSquare, Hash, Smartphone, Mail, Globe, Users } from 'lucide-react'
+import { RemoveScroll } from 'react-remove-scroll'
 import { useCreateAlertRule, useUpdateAlertRule } from '../hooks/useAlertRules'
 import { useNotificationChannels } from '../hooks/useNotificationChannels'
 import type { AlertRule, AlertSeverity, AlertScope, AlertRuleRequest } from '@/types/alerts'
@@ -67,6 +68,10 @@ interface ContainerSelector {
   should_run?: boolean | null
 }
 
+// CPU metrics can exceed 100% on multi-core containers (up to cores * 100%)
+const CPU_METRIC = 'cpu_percent'
+const MAX_CPU_THRESHOLD = 6400
+
 const RULE_KINDS = [
   {
     value: 'cpu_high',
@@ -74,7 +79,7 @@ const RULE_KINDS = [
     description: '当 CPU 使用率超过阈值时告警',
     category: '性能',
     requiresMetric: true,
-    metric: 'cpu_percent',
+    metric: CPU_METRIC,
     defaultOperator: '>=',
     defaultThreshold: 90,
     scopes: ['host', 'container']
@@ -710,7 +715,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
   const submitButtonText = isSaving ? '保存中...' : (isEditing ? '更新规则' : '保存规则')
 
   return (
-    <>
+    <RemoveScroll>
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/70 z-50"
@@ -957,10 +962,10 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                   <input
                     type="number"
                     value={formData.threshold}
-                    onChange={(e) => handleChange('threshold', parseFloat(e.target.value))}
+                    onChange={(e) => handleChange('threshold', e.target.value ? parseFloat(e.target.value) : undefined)}
                     required={requiresMetric}
                     min={0}
-                    max={100}
+                    max={formData.metric === CPU_METRIC ? MAX_CPU_THRESHOLD : 100}
                     step={0.1}
                     className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
@@ -978,7 +983,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
                     value={formData.clear_threshold || ''}
                     onChange={(e) => handleChange('clear_threshold', e.target.value ? parseFloat(e.target.value) : undefined)}
                     min={0}
-                    max={100}
+                    max={formData.metric === CPU_METRIC ? MAX_CPU_THRESHOLD : 100}
                     step={0.1}
                     className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     placeholder="可选"
@@ -1607,12 +1612,17 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
           <div className="w-80 p-6 bg-gray-800/30">
             <h3 className="text-sm font-semibold text-white mb-4">告警规则摘要</h3>
             <div className="space-y-3">
-              {getSummaryText().map((line, idx) => (
-                <div key={idx} className="text-sm">
-                  <span className="text-gray-400">{line.split(':')[0]}:</span>
-                  <span className="text-white ml-1">{line.split(':')[1]}</span>
-                </div>
-              ))}
+              {getSummaryText().map((line, idx) => {
+                const colonIdx = line.indexOf(':')
+                const label = colonIdx >= 0 ? line.slice(0, colonIdx) : line
+                const value = colonIdx >= 0 ? line.slice(colonIdx + 1) : ''
+                return (
+                  <div key={idx} className="text-sm">
+                    <span className="text-gray-400">{label}:</span>
+                    <span className="text-white ml-1">{value}</span>
+                  </div>
+                )
+              })}
             </div>
           </div>
         </form>
@@ -1653,6 +1663,6 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
         }}
         hasConfiguredChannels={configuredChannels.length > 0}
       />
-    </>
+    </RemoveScroll>
   )
 }
