@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dockmon/stats-service/persistence"
+	"github.com/yhdsl/stats-service/persistence"
 )
 
 // stubStreamManager implements streamManagerIface so tests can run

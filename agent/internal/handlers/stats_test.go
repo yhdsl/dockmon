@@ -4,9 +4,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/darthnorse/dockmon-agent/internal/client"
-	"github.com/darthnorse/dockmon-agent/internal/client/statsmsg"
-	"github.com/darthnorse/dockmon-agent/internal/handlers"
+	"github.com/yhdsl/dockmon-agent/internal/client"
+	"github.com/yhdsl/dockmon-agent/internal/client/statsmsg"
+	"github.com/yhdsl/dockmon-agent/internal/handlers"
 	"github.com/sirupsen/logrus"
 )
 
