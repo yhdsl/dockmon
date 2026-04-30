@@ -29,7 +29,7 @@ export function StatsSection({ hostId, containerId, liveData }: Props) {
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-sm font-semibold">Stats</h3>
+        <h3 className="text-sm font-semibold">统计信息</h3>
         <StatsTimeRangeSelector value={range} onChange={setRange} />
       </div>
       {range === 'live' ? (
@@ -64,7 +64,7 @@ function HistoricalCharts({
   if (!data && (isLoading || isFetching)) {
     return (
       <div className="flex items-center justify-center py-8 text-muted-foreground text-sm">
-        Loading history...
+        加载历史数据中...
       </div>
     )
   }
@@ -73,7 +73,7 @@ function HistoricalCharts({
     return (
       <div className="flex flex-col items-center justify-center py-8 gap-3">
         <p className="text-sm text-muted-foreground">
-          Failed to load history.
+          无法加载历史数据。
         </p>
         <button
           type="button"
@@ -82,7 +82,7 @@ function HistoricalCharts({
           aria-busy={isFetching}
           className="px-3 py-1 text-xs rounded bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isFetching ? 'Retrying…' : 'Retry'}
+          {isFetching ? '重试中…' : '重试'}
         </button>
       </div>
     )
@@ -91,7 +91,7 @@ function HistoricalCharts({
   if (!data) return null
 
   const nonNullCpu = data.cpu.filter((v) => v !== null).length
-  const footer = `${nonNullCpu} data points (${data.interval_seconds}s resolution)`
+  const footer = `${nonNullCpu} 个数据采样点 (分辨率: ${data.interval_seconds}s)`
 
   return (
     <StatsCharts

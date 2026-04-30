@@ -151,9 +151,9 @@ export function SystemSettings() {
     setStatsPersistenceEnabled(checked)
     try {
       await updateSettings.mutateAsync({ stats_persistence_enabled: checked })
-      toast.success(checked ? 'Stats persistence enabled' : 'Stats persistence disabled')
+      toast.success(checked ? '统计持久化储存已启用' : '统计持久化储存已禁用')
     } catch (error) {
-      toast.error('Failed to update stats persistence')
+      toast.error('无法更新统计持久化储存状态')
       setStatsPersistenceEnabled(!checked)
     }
   }
@@ -162,9 +162,9 @@ export function SystemSettings() {
     if (statsRetentionDays !== settings?.stats_retention_days) {
       try {
         await updateSettings.mutateAsync({ stats_retention_days: statsRetentionDays })
-        toast.success('Stats retention updated')
+        toast.success('已更新统计保留策略')
       } catch (error) {
-        toast.error('Failed to update stats retention')
+        toast.error('无法更新统计保留策略')
       }
     }
   }
@@ -173,9 +173,9 @@ export function SystemSettings() {
     if (statsPointsPerView !== settings?.stats_points_per_view) {
       try {
         await updateSettings.mutateAsync({ stats_points_per_view: statsPointsPerView })
-        toast.success('Chart resolution updated — restart to apply')
+        toast.success('已更新图表分辨率 - 请重启容器以应用更新')
       } catch (error) {
-        toast.error('Failed to update chart resolution')
+        toast.error('无法更新图表分辨率')
       }
     }
   }
@@ -443,17 +443,17 @@ export function SystemSettings() {
       {/* Stats History */}
       <div>
         <div className="mb-4">
-          <h3 className="text-lg font-semibold text-white">Stats History</h3>
+          <h3 className="text-lg font-semibold text-white">统计历史数据</h3>
           <p className="text-xs text-gray-400 mt-1">
-            Persisted CPU, memory, and network history for the long-range chart views (1h / 8h / 24h / 7d / 30d).
-            Live charts work without this; persistence is only required for views that look back further than the live window.
+            为长时间统计数据的图表视图 (1小时 / 8小时 / 24小时 / 7天 / 30天) 持久化储存 CPU、内存和网络的历史数据。
+            实时性的图表无需此功能，只有需要查看超出实时窗口时间范围外的历史数据时才需要启用统计数据持久化。
           </p>
         </div>
         <div className="space-y-4">
           <ToggleSwitch
             id="stats-persistence-enabled"
-            label="Persist stats to disk"
-            description="Off by default. Turn on to start recording samples for the historical chart views."
+            label="统计持久化储存至磁盘"
+            description="默认关闭。启用后将开始记录统计采样数据，用于图表的历史视图。"
             checked={statsPersistenceEnabled}
             onChange={handleStatsPersistenceToggle}
             disabled={!canManage}
@@ -461,7 +461,7 @@ export function SystemSettings() {
 
           <div>
             <label htmlFor="stats-retention-days" className="block text-sm font-medium text-gray-300 mb-2">
-              Retention (days)
+              保留策略 (天)
             </label>
             <input
               id="stats-retention-days"
@@ -474,13 +474,13 @@ export function SystemSettings() {
               className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
             <p className="mt-1 text-xs text-gray-400">
-              How long to keep persisted stats. Older buckets are dropped during the periodic retention pass. (1-30 days)
+              保留已持久化的统计数据的时长。较旧的数据将会在定期的清理过程中被删除。 (1–30 天)
             </p>
           </div>
 
           <div>
             <label htmlFor="stats-points-per-view" className="block text-sm font-medium text-gray-300 mb-2">
-              Chart resolution (points per view)
+              图表分辨率 (各视图的采样点数目)
             </label>
             <input
               id="stats-points-per-view"
@@ -493,8 +493,8 @@ export function SystemSettings() {
               className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
             <p className="mt-1 text-xs text-gray-400">
-              Number of data points per chart view. Higher = smoother charts, more disk and memory.{' '}
-              <strong>Requires a restart to take effect.</strong> (100-2000)
+              每个图表视图的数据点的数量。数值越高，图表越平滑，但会占用更多磁盘IO和内存。
+              <strong>需要重启容器后才能生效。</strong> (100–2000)
             </p>
           </div>
         </div>

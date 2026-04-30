@@ -2,7 +2,7 @@ import { VIEWS } from '@/lib/statsConfig'
 import type { TimeRange } from './historyTypes'
 
 const RANGES: { value: TimeRange; label: string }[] = [
-  { value: 'live', label: 'Live' },
+  { value: 'live', label: '实时' },
   ...VIEWS.map((v) => ({ value: v.name, label: v.label })),
 ]
 

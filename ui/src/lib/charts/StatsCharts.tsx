@@ -20,9 +20,9 @@ interface StatsChartsProps {
 const CHART_HEIGHT = 120
 
 const CHARTS = [
-  { key: 'cpu', label: 'CPU Usage', color: 'cpu', Icon: Cpu },
-  { key: 'mem', label: 'Memory Usage', color: 'memory', Icon: MemoryStick },
-  { key: 'net', label: 'Network I/O', color: 'network', Icon: Network },
+  { key: 'cpu', label: 'CPU 占用率', color: 'cpu', Icon: Cpu },
+  { key: 'mem', label: '内存占用率', color: 'memory', Icon: MemoryStick },
+  { key: 'net', label: '网络 I/O', color: 'network', Icon: Network },
 ] as const
 
 export function StatsCharts({
@@ -65,7 +65,7 @@ export function StatsCharts({
               />
             ) : (
               <div className="flex items-center justify-center text-muted-foreground text-xs" style={{ height: CHART_HEIGHT }}>
-                No data available
+                暂无可用数据
               </div>
             )}
           </div>

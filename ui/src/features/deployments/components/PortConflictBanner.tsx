@@ -30,7 +30,7 @@ export function PortConflictBanner({
       <div className="flex items-start gap-3 rounded-lg border border-border bg-muted/30 p-3 text-sm">
         <Info className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
         <div className="text-muted-foreground">
-          Port check skipped — unable to reach <strong>{hostName}</strong>. Deploy will still attempt normally.
+          已跳过端口冲突检查 — 无法连接到 <strong>{hostName}</strong>。部署将按照正常流程继续尝试。
         </div>
       </div>
     )
@@ -43,13 +43,13 @@ export function PortConflictBanner({
       <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-warning" aria-hidden="true" />
       <div className="space-y-1">
         <p className="font-medium text-warning">
-          Port conflicts on {hostName}
+          {hostName}上存在端口冲突
         </p>
         <ul className="space-y-0.5 text-muted-foreground">
           {conflicts.map((c) => (
             <li key={`${c.port}-${c.protocol}-${c.container_id}`}>
-              Port <code className="rounded bg-warning/20 px-1 text-foreground">{c.port}/{c.protocol}</code>{' '}
-              is used by <strong className="text-foreground">{c.container_name}</strong>
+              端口 <code className="rounded bg-warning/20 px-1 text-foreground">{c.port}/{c.protocol}</code>{' '}
+              已被 <strong className="text-foreground">{c.container_name}</strong> 使用
             </li>
           ))}
         </ul>

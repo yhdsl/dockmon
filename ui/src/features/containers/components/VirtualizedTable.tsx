@@ -225,7 +225,7 @@ function VirtualizedTableShell({
         <div role="rowgroup">
           <div role="row">
             <div role="cell" className="px-4 py-8 text-center text-sm text-muted-foreground">
-              No containers found
+              尚未找到任何容器
             </div>
           </div>
         </div>
