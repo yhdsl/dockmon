@@ -33,7 +33,7 @@ volumes:
   dockmon_data:
 ```
 
-![DockMon](https://img.shields.io/badge/DockMon-v2.4.0-blue.svg)
+![DockMon](https://img.shields.io/badge/DockMon-v2.4.1-blue.svg)
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3.13-3776AB?logo=python&logoColor=white)
 ![React](https://img.shields.io/badge/React-18.3-61DAFB?logo=react&logoColor=white)

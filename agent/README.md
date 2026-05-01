@@ -56,6 +56,8 @@ docker run -d \
 
 ### 可选的选项
 
+- `AGENT_NAME` - 在 DockMon UI 中显示的代理名称。会在注册时以及每次重新连接时覆盖自动检测到的主机名。当多个主机共享相同的操作系统主机名 (例如克隆的虚拟机或者 LXC 模板) 且你不希望修改底层服务器名称时非常有用。未设置时，将依次回退为 Docker 守护进程主机名 → 操作系统主机名 → 引擎 ID。
+- `FORCE_UNIQUE_REGISTRATION` - 设置为真 (`true`, `1`, `t`, `T`, `TRUE`, `True` — 或者任何 Go 的 `strconv.ParseBool` 所能接受的值) 时，即使 Docker 的 `engine_id` 与已注册主机相同，也会将该代理注册为一个独立的主机。适用于克隆的虚拟机或 LXC 模板共享 `/var/lib/docker/engine-id` 的场景。**需要同时设置 `AGENT_NAME`** (代理在启动时、systemd 安装脚本在安装时以及 DockMon 后端在注册时都会强制校验)。此设置会跳过 DockMon 从现有 remote-mTLS 主机的自动迁移行为。默认值为 `false`。
 - `DOCKER_HOST` - Docker 套接字路径 (默认: `unix:///var/run/docker.sock`)
 - `DOCKER_CERT_PATH` - Docker TLS 证书路径 (仅启用 TLS 时使用)
 - `DOCKER_TLS_VERIFY` -  启用 Docker TLS 校验 (默认: `false`)
