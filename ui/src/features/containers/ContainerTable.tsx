@@ -937,7 +937,7 @@ export function ContainerTable({ hostId: propHostId, scrollElement }: ContainerT
             ? sanitizeHref(row.original.web_ui_url)
             : undefined
 
-          const containerName = row.original.name || 'Unknown'
+          const containerName = row.original.name || '未知'
 
           return (
             <div className="flex flex-col gap-1 min-w-0">

@@ -300,7 +300,7 @@ export function OIDCSettings() {
         <div className="rounded-lg border border-gray-800 bg-gray-900/50 p-4 space-y-3">
           <div className="flex items-center gap-2">
             <ShieldCheck className={`h-4 w-4 ${localLoginDisabled ? 'text-amber-400' : 'text-gray-500'}`} />
-            <span className="text-sm font-medium text-gray-200">SSO-only sign-in</span>
+            <span className="text-sm font-medium text-gray-200">仅允许单点登录</span>
           </div>
           <div className="flex items-center gap-2">
             <Switch
@@ -310,24 +310,24 @@ export function OIDCSettings() {
               disabled={localLoginEnvOverride || setLocalLogin.isPending}
             />
             <Label htmlFor="disable-local-login" className="text-sm text-gray-300">
-              Disable local (username/password) login
+              禁用本地登录 (用户名/密码)
             </Label>
           </div>
           <p className="text-xs text-gray-400">
             {localLoginDisabled
-              ? 'Password login is rejected; users must sign in with SSO. API keys are unaffected.'
-              : 'Username/password login is allowed. Turn on to enforce SSO-only sign-in.'}
+              ? '本地登录已被禁止，用户必须使用 SSO 登录。其中 API 密钥不受影响。'
+              : '允许使用用户名和密码登录。启用此选项以强制所有用户仅能使用 SSO 登录。'}
           </p>
           {localLoginEnvOverride && (
             <p className="text-xs text-amber-400">
-              Local login is forced ON by the <span className="font-mono">DOCKMON_FORCE_LOCAL_LOGIN</span> environment
-              variable. Remove it to control this here.
+              由于已设置环境变量 <span className="font-mono">DOCKMON_FORCE_LOCAL_LOGIN</span>，
+              本地登录已被强制启用。如果需要在此页面进行配置，请先移除该环境变量。
             </p>
           )}
           <p className="text-xs text-gray-500">
-            Break-glass: re-enable from the Docker host with
-            <span className="font-mono text-gray-400"> docker exec dockmon python backend/manage_auth.py enable-local-login</span>,
-            or set <span className="font-mono text-gray-400">DOCKMON_FORCE_LOCAL_LOGIN=true</span> and restart.
+            紧急恢复访问: 可在 Docker 主机上执行
+            <span className="font-mono text-gray-400"> docker exec dockmon python backend/manage_auth.py enable-local-login</span>，
+            或者设置 <span className="font-mono text-gray-400">DOCKMON_FORCE_LOCAL_LOGIN=true</span> 环境变量并重启。
           </p>
         </div>
 
@@ -808,20 +808,20 @@ export function OIDCSettings() {
       <Dialog open={showDisableLocalConfirm} onOpenChange={() => setShowDisableLocalConfirm(false)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Disable local login?</DialogTitle>
+            <DialogTitle>禁用本地登录?</DialogTitle>
             <DialogDescription>
-              Users will only be able to sign in with SSO. Username/password login will be rejected.
-              Already signed-in local users are not logged out — existing sessions remain until they
-              expire or the container restarts. API keys are unaffected. If SSO breaks, recover from
-              the Docker host with the manage_auth CLI or the DOCKMON_FORCE_LOCAL_LOGIN env override.
+              用户将只能使用 SSO 登录，用户名/密码登录将会被拒绝。
+              已经登录的本地用户不会被强制登出，现有的会话将继续保持，直到会话过期或者容器重启。
+              其中 API 密钥不受影响。
+              如果 SSO 出现故障，可在 Docker 主机上使用 manage_auth 命令行工具紧急恢复访问，或者通过设置 DOCKMON_FORCE_LOCAL_LOGIN 环境变量恢复本地登录。
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowDisableLocalConfirm(false)}>
-              Cancel
+              取消
             </Button>
             <Button onClick={confirmDisableLocalLogin} disabled={setLocalLogin.isPending}>
-              Disable local login
+              禁用本地登录
             </Button>
           </DialogFooter>
         </DialogContent>

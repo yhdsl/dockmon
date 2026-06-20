@@ -101,7 +101,7 @@ function SortableColumnItem({
         <button
           onClick={onRemove}
           className="text-muted-foreground hover:text-destructive"
-          title="Remove custom column"
+          title="移除自定义列"
         >
           <Trash2 className="h-4 w-4" />
         </button>

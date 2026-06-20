@@ -133,9 +133,9 @@ const RULE_KINDS = [
   },
   {
     value: 'container_started',
-    label: 'Container Started / Now Running',
-    description: 'Alert when container transitions to running state — fresh start, restart, host reboot recovery, or external trigger (a restart also matches the Container Restarted rule)',
-    category: 'Container State',
+    label: '容器启动/正在运行',
+    description: '当容器运行时告警 — 包括首次启动、容器重启、主机重启后的状态恢复，或者外部触发的启动行为 (其中 "重启" 行为同时也会触发 "容器重启" 告警规则)。',
+    category: '容器状态',
     requiresMetric: false,
     scopes: ['container']
   },
@@ -1489,7 +1489,7 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
 
           {/* Resolve / Recovery Notifications */}
           <div className="space-y-4 rounded-lg border border-gray-700 bg-gray-800/30 p-4">
-            <h3 className="text-sm font-semibold text-white">Recovery Notification</h3>
+            <h3 className="text-sm font-semibold text-white">告警解决通知</h3>
 
             <div className="flex items-start gap-3">
               <input
@@ -1501,11 +1501,11 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
               />
               <div className="flex-1">
                 <label htmlFor="notify_on_resolve" className="block text-sm font-medium text-gray-300 cursor-pointer">
-                  Notify when alert resolves
+                  当告警自动解决后发送通知
                 </label>
                 <p className="mt-1 text-xs text-gray-400">
-                  Send a recovery notification (to the same channels as this rule) when this
-                  alert clears. Manual resolves through the DockMon UI are always silent.
+                  当告警自动解决后，向告警规则设置的相同通知频道发送告警解决通知。
+                  但通过 DockMon 界面手动解决的告警始终不会发送告警解决通知。
                 </p>
               </div>
             </div>

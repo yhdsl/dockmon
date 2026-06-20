@@ -94,7 +94,7 @@ function SortableRow({
         type="button"
         {...attributes}
         {...listeners}
-        title="Drag to reorder"
+        title="拖动以重新排列顺序"
         className="cursor-grab active:cursor-grabbing p-1 text-gray-400 hover:text-white"
       >
         <GripVertical className="h-4 w-4" />
@@ -111,7 +111,7 @@ function SortableRow({
       <button
         type="button"
         onClick={onRemove}
-        title="Remove"
+        title="移除"
         className="p-2 text-gray-400 hover:text-red-400"
       >
         <Trash2 className="h-4 w-4" />
@@ -217,7 +217,7 @@ export function WebUIUrlMappingSection() {
         } catch {
           // Skip side effects if we've unmounted (user navigated away mid-flight).
           if (!mountedRef.current) return
-          toast.error('Failed to update WebUI URL mapping')
+          toast.error('自动添加 WebUI URL 时出错')
           // Only revert if (a) the caller gave us a meaningful pre-op snapshot
           // (handlers that mutate local state pass it; blur/typing doesn't),
           // and (b) no local edits happened since this persist was enqueued —
@@ -291,28 +291,26 @@ export function WebUIUrlMappingSection() {
   return (
     <div>
       <div className="mb-4">
-        <h3 className="text-lg font-semibold text-white">WebUI URL auto-mapping</h3>
+        <h3 className="text-lg font-semibold text-white">WebUI URL 自动填充</h3>
         <p className="text-xs text-gray-400 mt-1">
-          When a container has no manually-set WebUI URL, DockMon evaluates these
-          templates in order against its environment variables and Docker labels.
-          The first template that resolves to a non-empty URL is used. Manually-set
-          URLs always take precedence.
+          当容器未设置 WebUI URL 时，DockMon 会按顺序根据环境变量和 Docker 标签解析以下 URL 模板，
+          并使用第一个解析结果非空的 URL。手动设置的 WebUI URL 始终具有最高优先级。
         </p>
         <p className="text-xs text-gray-500 mt-2">
-          Placeholders: <code className="text-gray-300">{'${env:NAME}'}</code> for env vars,{' '}
-          <code className="text-gray-300">{'${label:NAME}'}</code> for Docker labels. Example:{' '}
+          占位符说明: <code className="text-gray-300">{'${env:NAME}'}</code> 引用环境变量，而{' '}
+          <code className="text-gray-300">{'${label:NAME}'}</code> 引用 Docker 标签。例如:{' '}
           <code className="text-gray-300">{'https://${env:VIRTUAL_HOST}'}</code>
         </p>
         <p className="text-xs text-gray-500 mt-2">
-          Note: <code className="text-gray-300">env:</code> placeholders on agent-monitored
-          hosts require <strong className="text-gray-300">agent v1.1.0 or newer</strong>.
-          Older agents resolve <code className="text-gray-300">label:</code> placeholders only.
+          注意: 在使用代理管理的主机上，<code className="text-gray-300">env:</code>
+          占位符需要使用 <strong className="text-gray-300">Agent v1.1.0 或者更高版本</strong>。
+          旧版本的代理仅支持解析 <code className="text-gray-300">label:</code> 占位符。
         </p>
       </div>
 
       {displayRows.length === 0 && (
         <p className="text-sm text-gray-500 italic">
-          No templates configured. Auto-mapping is disabled.
+          未配置任何模板，自动填充功能已禁用。
         </p>
       )}
       <DndContext
@@ -346,7 +344,7 @@ export function WebUIUrlMappingSection() {
         className="mt-3 inline-flex items-center gap-2 rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-gray-300 hover:bg-gray-700"
       >
         <Plus className="h-3.5 w-3.5" />
-        Add template
+        添加填充模板
       </button>
     </div>
   )

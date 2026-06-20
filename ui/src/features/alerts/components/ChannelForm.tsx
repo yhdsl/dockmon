@@ -97,9 +97,9 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
         break
       case 'google_chat':
         if (!formData.config.webhook_url) {
-          newErrors['config.webhook_url'] = 'Webhook URL is required'
+          newErrors['config.webhook_url'] = 'Webhook URL 为必填项'
         } else if (!formData.config.webhook_url.startsWith('https://chat.googleapis.com/')) {
-          newErrors['config.webhook_url'] = 'URL must start with https://chat.googleapis.com/'
+          newErrors['config.webhook_url'] = 'URL 必须以 https://chat.googleapis.com/ 开头'
         }
         break
       case 'pushover':
@@ -317,7 +317,7 @@ export function ChannelForm({ channel, onSubmit, onCancel, onTest, isSubmitting,
             />
             {errors['config.webhook_url'] && <p className="mt-1 text-xs text-red-400">{errors['config.webhook_url']}</p>}
             <p className="mt-1 text-xs text-gray-400">
-              In Google Chat space: Apps & integrations → Webhooks → Add webhook. Copy the full URL including key &amp; token.
+              在 Google Chat 空间中，依次点击 应用和集成 → Webhooks → 添加 Webhook，然后复制完整的 Webhook URL，包括其中的 key 与 token 参数。
             </p>
           </div>
         )}

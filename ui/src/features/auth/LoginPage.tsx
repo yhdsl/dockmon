@@ -254,8 +254,8 @@ export function LoginPage() {
             role="alert"
             className="rounded-lg border-l-4 border-danger bg-danger/10 p-3 text-sm text-danger"
           >
-            Local login is disabled and SSO is currently unavailable. Please contact
-            your administrator to restore access.
+            本地登录已被禁用，并且当前无法使用单点登录 (SSO)。
+            请联系管理员以恢复访问权限。
           </div>
         )
       }
@@ -263,10 +263,10 @@ export function LoginPage() {
         <>
           <Button type="button" className="w-full" size="lg" onClick={handleOIDCLogin}>
             <KeyRound className="h-4 w-4" />
-            Sign in with SSO
+            使用 SSO 登录
           </Button>
           <p className="mt-4 text-center text-sm text-muted-foreground">
-            Local login is disabled. Sign in with SSO.
+            本地登录已被禁用，请使用单点登录 (SSO)。
           </p>
         </>
       )
@@ -329,7 +329,7 @@ export function LoginPage() {
             <img src={`${getBasePath()}/logo-192.png`} alt="DockMon" className="h-16 w-16 rounded-xl" />
           </div>
           <CardTitle className="text-2xl">DockMon</CardTitle>
-          <CardDescription>Docker Container Monitor</CardDescription>
+          <CardDescription>Docker 容器监控服务</CardDescription>
         </CardHeader>
 
         <CardContent>

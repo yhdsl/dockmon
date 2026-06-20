@@ -27,29 +27,29 @@ logger = logging.getLogger(__name__)
 # Human-readable labels for alert kinds, used in notification titles ({KIND}).
 # Unmapped kinds fall back to title-casing (e.g. 'some_kind' -> 'Some Kind').
 _KIND_LABELS = {
-    "container_started": "Container Started",
-    "container_stopped": "Container Stopped",
-    "container_restart": "Container Restarted",
-    "container_restarted": "Container Restarted",
-    "container_paused": "Container Paused",
-    "container_died": "Container Died",
-    "container_killed": "Container Killed",
-    "container_unhealthy": "Container Unhealthy",
-    "unhealthy": "Container Unhealthy",
-    "container_healthy": "Container Healthy",
-    "health_check_failed": "Health Check Failed",
-    "host_disconnected": "Host Disconnected",
-    "host_down": "Host Down",
-    "cpu_high": "High CPU",
-    "cpu_low": "Low CPU",
-    "memory_high": "High Memory",
-    "memory_low": "Low Memory",
-    "disk_high": "High Disk Usage",
-    "disk_low": "Low Disk Space",
-    "network_high": "High Network",
-    "update_available": "Update Available",
-    "update_completed": "Update Completed",
-    "update_failed": "Update Failed",
+    "container_started": "容器已启动",
+    "container_stopped": "容器已停止",
+    "container_restart": "容器已重启",
+    "container_restarted": "容器已重启",
+    "container_paused": "容器已暂停",
+    "container_died": "容器已死亡",
+    "container_killed": "容器已杀死",
+    "container_unhealthy": "容器健康状态异常",
+    "unhealthy": "容器健康状态异常",
+    "container_healthy": "容器健康状态正常",
+    "health_check_failed": "健康检查失败",
+    "host_disconnected": "主机已断开连接",
+    "host_down": "主机离线",
+    "cpu_high": "CPU 使用率高",
+    "cpu_low": "CPU 使用率低",
+    "memory_high": "Memory 使用率高",
+    "memory_low": "Memory 使用率低",
+    "disk_high": "磁盘空间不足",
+    "disk_low": "磁盘空间充足",
+    "network_high": "网络占用率高",
+    "update_available": "更新可用",
+    "update_completed": "更新完成",
+    "update_failed": "更新失败",
 }
 
 
@@ -1311,7 +1311,7 @@ class NotificationService:
                 if await self._dispatch_to_channel(
                     channel, message,
                     alert=alert, title=alert.title, action_url=action_url,
-                    context=f"Alert {alert.id}",
+                    context=f"告警 {alert.id}",
                 ):
                     success_count += 1
 
@@ -1391,17 +1391,17 @@ class NotificationService:
         channel_map_by_type = {ch.type: ch for ch in channels}
 
         message = self._format_resolve_message_v2(alert, rule)
-        title = f"Recovered: {alert.title}"
+        title = f"已解决: {alert.title}"
         success_count = 0
 
         for channel_id in channel_ids:
-            channel = self._resolve_channel(channel_id, channel_map_by_id, channel_map_by_type, context="Resolve notification")
+            channel = self._resolve_channel(channel_id, channel_map_by_id, channel_map_by_type, context="解决通知")
             if channel is None:
                 continue
             if await self._dispatch_to_channel(
                 channel, message,
                 alert=alert, title=title,
-                context=f"Resolve {alert.id}",
+                context=f"已解决 {alert.id}",
             ):
                 success_count += 1
 
@@ -1506,14 +1506,14 @@ class NotificationService:
 
     def _get_default_resolve_template_v2(self) -> str:
         """Built-in default template for resolve/recovery notifications."""
-        return """✅ **Recovered: {KIND}**
+        return """✅ **已解决: {KIND}**
 
-**Container:** {CONTAINER_NAME}
-**Host:** {HOST_NAME}
-**Resolution:** {RESOLVED_REASON}
-**Was active for:** {ALERT_DURATION}
-**Resolved at:** {RESOLVED_AT}
-**Rule:** {RULE_NAME}"""
+**容器名称:** {CONTAINER_NAME}
+**主机名称:** {HOST_NAME}
+**解决原因:** {RESOLVED_REASON}
+**激活原因:** {ALERT_DURATION}
+**解决时间:** {RESOLVED_AT}
+**告警规则:** {RULE_NAME}"""
 
     def _get_local_tz(self) -> timezone:
         """Build the local timezone object from settings.timezone_offset (minutes)."""
@@ -1562,7 +1562,7 @@ class NotificationService:
             "{KIND}": _friendly_kind(alert.kind),
             "{CONTAINER_NAME}": alert.container_name or "N/A",
             "{HOST_NAME}": alert.host_name or "N/A",
-            "{RESOLVED_REASON}": alert.resolved_reason or "Clear condition met",
+            "{RESOLVED_REASON}": alert.resolved_reason or "已满足解决条件",
             "{RESOLVED_AT}": resolved_local.strftime("%Y-%m-%d %H:%M:%S %z"),
             "{ALERT_DURATION}": duration_str,
             "{RULE_NAME}": rule.name or "",

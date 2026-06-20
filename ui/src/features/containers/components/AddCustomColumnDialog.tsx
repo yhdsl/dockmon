@@ -44,12 +44,12 @@ export function AddCustomColumnDialog({
   const handleSubmit = () => {
     const trimmed = name.trim()
     if (!trimmed) {
-      setError('Name is required')
+      setError('名称为必填项')
       return
     }
     const id = `${effectiveKind}:${trimmed}`
     if (existingColumnIds.includes(id)) {
-      setError('This column already exists')
+      setError('列已存在')
       return
     }
     onAdd(id)
@@ -70,18 +70,18 @@ export function AddCustomColumnDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Custom Column</DialogTitle>
+          <DialogTitle>添加自定义列</DialogTitle>
           <DialogDescription>
             {canAddEnv
-              ? 'Show a Docker environment variable or label as a column in the table.'
-              : 'Show a Docker label as a column in the table.'}
+              ? '将 Docker 中的环境变量或者标签显示为列表中单独的一列。'
+              : '将 Docker 中的标签显示为列表中单独的一列。'}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-2">
           {canAddEnv && (
             <div>
-              <label className="block text-sm font-medium mb-2">Source</label>
+              <label className="block text-sm font-medium mb-2">来源</label>
               <div className="flex gap-2">
                 <Button
                   type="button"
@@ -89,7 +89,7 @@ export function AddCustomColumnDialog({
                   size="sm"
                   onClick={() => setKind('env')}
                 >
-                  Environment variable
+                  环境变量
                 </Button>
                 <Button
                   type="button"
@@ -97,7 +97,7 @@ export function AddCustomColumnDialog({
                   size="sm"
                   onClick={() => setKind('label')}
                 >
-                  Docker label
+                  Docker 标签
                 </Button>
               </div>
             </div>
@@ -105,7 +105,7 @@ export function AddCustomColumnDialog({
 
           <div>
             <label className="block text-sm font-medium mb-2">
-              {effectiveKind === 'env' ? 'Variable name' : 'Label name'}
+              {effectiveKind === 'env' ? '变量名称' : '标签名称'}
             </label>
             <Input
               value={name}
@@ -123,9 +123,9 @@ export function AddCustomColumnDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={() => handleOpenChange(false)}>
-            Cancel
+            取消
           </Button>
-          <Button onClick={handleSubmit}>Add column</Button>
+          <Button onClick={handleSubmit}>添加自定义列</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

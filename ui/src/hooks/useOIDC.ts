@@ -86,14 +86,14 @@ export function useSetLocalLogin() {
     },
     onSuccess: (_data, disabled) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.status })
-      toast.success(disabled ? 'Local login disabled' : 'Local login enabled', {
+      toast.success(disabled ? '本地登录已禁用' : '本地登录已启用', {
         description: disabled
-          ? 'Only SSO can be used to sign in. Existing sessions remain active.'
-          : 'Username/password login is allowed again.',
+          ? '仅允许使用 SSO 登录，现有的会话将继续保持有效。'
+          : '用户名/密码登录已被重新启用。',
       })
     },
     onError: (error: Error) => {
-      toast.error('Could not change local login', { description: error.message })
+      toast.error('更新本地登录配置时失败', { description: error.message })
     },
   })
 }
