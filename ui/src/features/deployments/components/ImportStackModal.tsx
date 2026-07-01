@@ -86,7 +86,7 @@ function warnSkippedEnvFiles(skipped: string[] | undefined, prefix?: string): vo
   if (!skipped || skipped.length === 0) return
   const where = prefix ? `${prefix}: ` : ''
   toast.warning(
-    `${where}Env file(s) outside the stack directory were not imported: ${skipped.join(', ')}`
+    `${where}Env 文件位于堆栈目录之外，未被导入: ${skipped.join(', ')}`
   )
 }
 

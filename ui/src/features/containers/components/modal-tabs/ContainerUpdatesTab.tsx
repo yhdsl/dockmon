@@ -379,9 +379,9 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
             <>
               <Box className="h-8 w-8 text-muted-foreground" />
               <div>
-                <h3 className="text-lg font-semibold">Built Locally</h3>
+                <h3 className="text-lg font-semibold">本地构建</h3>
                 <p className="text-sm text-muted-foreground">
-                  This image isn't tracked in a registry, so there are no updates to check
+                  此容器的镜像无法在注册表中进行追踪，因此无需检查更新。
                 </p>
               </div>
             </>

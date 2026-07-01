@@ -95,10 +95,10 @@ export function useCreateNetwork(hostId: string) {
     mutationFn: (params: CreateNetworkParams) => createNetwork(hostId, params),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['host-networks', hostId] })
-      toast.success(`Network '${data.name}' created`)
+      toast.success(`已成功创建网络 '${data.name}'`)
     },
     onError: (error: unknown) => {
-      toast.error(getErrorMessage(error, 'Failed to create network'))
+      toast.error(getErrorMessage(error, '创建网络时失败'))
     },
   })
 }

@@ -51,16 +51,16 @@ export function normalizeEnvFileName(name: string): string {
  * authoritative gate. Returns a user-facing error message, or null when valid.
  */
 export function validateEnvFileName(name: string): string | null {
-  if (!name) return 'Filename is required'
+  if (!name) return '文件名为必填项'
   const candidate = normalizeEnvFileName(name)
   if (!candidate || candidate === '.' || candidate === '..') {
-    return 'Enter a valid filename (e.g. .env, .db.env)'
+    return '请输入一个合法的文件名 (例如 .env, .db.env)'
   }
   if (candidate !== candidate.trim()) {
-    return 'Filename cannot have leading or trailing spaces'
+    return '文件名首尾不能包含空格'
   }
   if (candidate.includes('/') || candidate.includes('\\') || candidate.includes(' ')) {
-    return 'Filename cannot contain spaces or path separators'
+    return '文件名不能包含空格或者路径分隔符'
   }
   return null
 }

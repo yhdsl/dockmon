@@ -23,10 +23,10 @@ const SESSION_TIMEOUT_OPTIONS = [
 
 // Live chart window presets (seconds). Default 600 (10 min); capped at 30 min.
 const LIVE_CHART_WINDOW_OPTIONS = [
-  { value: '300', label: '5 minutes' },
-  { value: '600', label: '10 minutes' },
-  { value: '900', label: '15 minutes' },
-  { value: '1800', label: '30 minutes' },
+  { value: '300', label: '5 分钟' },
+  { value: '600', label: '10 分钟' },
+  { value: '900', label: '15 分钟' },
+  { value: '1800', label: '30 分钟' },
 ]
 
 export function SystemSettings() {
@@ -455,15 +455,15 @@ export function SystemSettings() {
       {/* Live charts */}
       <div>
         <div className="mb-4">
-          <h3 className="text-lg font-semibold text-white">Live charts</h3>
+          <h3 className="text-lg font-semibold text-white">实时图表</h3>
           <p className="text-xs text-gray-400 mt-1">
-            Real-time CPU, memory, and network charts. Works independently of stats persistence below.
+            实时显示 CPU、内存和网络的使用情况。此功能独立于下方的统计持久化储存至磁盘设置。
           </p>
         </div>
         <div className="space-y-4">
           <div>
             <label htmlFor="live-chart-window" className="block text-sm font-medium text-gray-300 mb-2">
-              Live window
+              实时图表窗口
             </label>
             <Select
               value={String(settings?.live_chart_window_seconds ?? 600)}
@@ -471,15 +471,15 @@ export function SystemSettings() {
                 const value = Number(v)
                 try {
                   await updateSettings.mutateAsync({ live_chart_window_seconds: value })
-                  toast.success('Live chart window updated')
+                  toast.success('已成功更新实时图表窗口')
                 } catch (error) {
-                  toast.error('Failed to update live chart window')
+                  toast.error('更新实时图表窗口时失败')
                 }
               }}
             >
               <SelectTrigger id="live-chart-window" className="w-full max-w-xs">
                 <SelectValue>
-                  {LIVE_CHART_WINDOW_OPTIONS.find(o => o.value === String(settings?.live_chart_window_seconds ?? 600))?.label ?? '10 minutes'}
+                  {LIVE_CHART_WINDOW_OPTIONS.find(o => o.value === String(settings?.live_chart_window_seconds ?? 600))?.label ?? '10 分钟'}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
@@ -489,10 +489,10 @@ export function SystemSettings() {
               </SelectContent>
             </Select>
             <p className="mt-1 text-xs text-gray-400">
-              How far back the live chart reaches when you open a host or container. Higher values use more
-              server memory (it keeps this much live data buffered for every monitored container) and apply
-              only to the opened detail view; dashboard cards are unaffected. Opening a detail view also
-              fetches a little more data and renders a denser chart.
+              设置打开主机或容器时实时图表显示的历史时间范围。
+              该数值越大，占用的服务器内存越多 (服务器会为每个受监控的容器缓存相应时长的实时数据)，
+              且仅影响已打开的详情视图，不会影响仪表板卡片。
+              打开详情视图时，还会额外获取更多数据并渲染更高密度的图表。
             </p>
           </div>
         </div>

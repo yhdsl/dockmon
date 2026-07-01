@@ -58,10 +58,10 @@ export function NetworkCreateModal({
       isOpen={isOpen}
       onClose={onClose}
       onConfirm={handleConfirm}
-      title="Create Network"
-      description="Create a Docker bridge network on this host."
-      confirmText="Create Network"
-      pendingText="Creating..."
+      title="创建网络"
+      description="在此主机上创建一个 Docker Bridge 网络。"
+      confirmText="创建网络"
+      pendingText="创建中..."
       variant="info"
       isPending={isPending}
       disabled={!trimmedName}
@@ -69,7 +69,7 @@ export function NetworkCreateModal({
       <div className="space-y-4">
         <div>
           <label htmlFor="net-name" className="block text-sm font-medium mb-1">
-            Name <span className="text-danger">*</span>
+            名称 <span className="text-danger">*</span>
           </label>
           <input
             id="net-name"
@@ -84,7 +84,7 @@ export function NetworkCreateModal({
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label htmlFor="net-subnet" className="block text-sm font-medium mb-1">
-              Subnet
+              子网
             </label>
             <input
               id="net-subnet"
@@ -97,7 +97,7 @@ export function NetworkCreateModal({
           </div>
           <div>
             <label htmlFor="net-gateway" className="block text-sm font-medium mb-1">
-              Gateway
+              网关
             </label>
             <input
               id="net-gateway"
@@ -110,7 +110,7 @@ export function NetworkCreateModal({
           </div>
         </div>
         <p className="text-xs text-muted-foreground -mt-2">
-          Leave the subnet blank to let Docker assign addressing automatically.
+          将子网留空，以便于使用 Docker 自动地址分配。
         </p>
 
         <label className="flex items-center gap-2 text-sm cursor-pointer">
@@ -120,7 +120,7 @@ export function NetworkCreateModal({
             onChange={(e) => setInternal(e.target.checked)}
             className="w-4 h-4 rounded border-border"
           />
-          Internal (no external connectivity)
+          内部网络 (无法连接外部网络)
         </label>
       </div>
     </ConfirmModal>

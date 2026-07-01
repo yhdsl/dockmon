@@ -531,7 +531,7 @@ export function StackEditor({
     }
     const fname = normalizeEnvFileName(raw)
     if (envTabNames.includes(fname)) {
-      setEnvFileNameError('A tab for this file already exists')
+      setEnvFileNameError('该文件的标签页已存在')
       return
     }
     setEnvFiles((prev) => ({ ...prev, [fname]: '' }))
@@ -727,9 +727,9 @@ export function StackEditor({
                     {isUnreferenced && (
                       <span
                         className="ml-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
-                        title="Not referenced by your compose — edits won't affect the running stack until an env_file: directive points here."
+                        title="此文件尚未被 Compose 配置引用 - 编辑它不会影响当前运行的堆栈，除非在 env_file: 中加以引用。"
                       >
-                        unref
+                        未被引用
                       </span>
                     )}
                     {removable && (
@@ -739,7 +739,7 @@ export function StackEditor({
                         size="icon"
                         className="h-6 w-6 -ml-1"
                         disabled={!canEdit || deleteEnvFile.isPending}
-                        title={`Remove ${fname}`}
+                        title={`移除 ${fname}`}
                         onClick={() => {
                           setEnvFileToRemove(fname)
                           setActiveDialog('remove-env-file')
@@ -758,7 +758,7 @@ export function StackEditor({
                 size="sm"
                 onClick={openAddEnvFileDialog}
                 disabled={!canEdit}
-                title="Add env file"
+                title="添加环境变量"
                 className="px-2"
               >
                 <Plus className="h-4 w-4" />
@@ -1030,17 +1030,17 @@ export function StackEditor({
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Env File</DialogTitle>
+            <DialogTitle>添加环境变量</DialogTitle>
             <DialogDescription>
-              Add an environment file to this stack. Reference it from your compose
-              with <code className="bg-muted px-1 rounded">env_file:</code> to load it
-              into a service.
+              添加一个 Env 文件到此堆栈中。在 Compose 配置中通过
+              <code className="bg-muted px-1 rounded">env_file:</code>
+              来进行引用，即可将其加载到相应的服务中。
             </DialogDescription>
           </DialogHeader>
 
           <fieldset disabled={!canEdit} className="space-y-4 disabled:opacity-60">
             <div className="space-y-2 py-2">
-              <Label htmlFor="new-env-file-name">Filename</Label>
+              <Label htmlFor="new-env-file-name">文件名</Label>
               <Input
                 id="new-env-file-name"
                 value={newEnvFileName}
@@ -1062,7 +1062,7 @@ export function StackEditor({
                 <p className="text-xs text-destructive">{envFileNameError}</p>
               ) : (
                 <p className="text-xs text-muted-foreground">
-                  A bare filename in the stack directory (no slashes), e.g. .env or .db.env
+                  请输入对应堆栈目录中的文件名 (不包含路径分隔符)，例如 .env 或 .db.env。
                 </p>
               )}
             </div>
@@ -1070,11 +1070,11 @@ export function StackEditor({
 
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => setActiveDialog(null)}>
-              Cancel
+              取消
             </Button>
             <fieldset disabled={!canEdit} className="disabled:opacity-60">
               <Button onClick={handleAddEnvFile} disabled={!newEnvFileName.trim()}>
-                Add File
+                添加文件
               </Button>
             </fieldset>
           </div>
@@ -1147,40 +1147,40 @@ export function StackEditor({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {isEnvFileToRemovePersisted ? 'Delete env file' : 'Remove env file'}
+              {isEnvFileToRemovePersisted ? '删除 Env 文件' : '移除 Env 文件'}
             </AlertDialogTitle>
             <AlertDialogDescription asChild>
               <div className="space-y-2">
                 {isEnvFileToRemovePersisted ? (
                   <>
                     <p>
-                      Delete &ldquo;<strong className="font-mono">{envFileToRemove}</strong>&rdquo; from
-                      this stack? This permanently removes the file from the stack directory.
+                      删除此堆栈中的 &ldquo;<strong className="font-mono">{envFileToRemove}</strong>&rdquo;?
+                      这将永久从堆栈目录中删除该文件。
                     </p>
                     <p className="text-amber-500">
-                      If your compose references this file with{' '}
-                      <code className="bg-muted px-1 rounded">env_file:</code>, remove that line
-                      too, or it will reappear empty and deploys may fail.
+                      如果你的 Compose 配置中通过{' '}
+                      <code className="bg-muted px-1 rounded">env_file:</code> 引用了此文件，
+                      也请一并删除对应的配置，否则该文件会以空文件重新出现，并且部署可能会失败。
                     </p>
                   </>
                 ) : (
                   <p>
-                    Remove &ldquo;<strong className="font-mono">{envFileToRemove}</strong>&rdquo;? It hasn&apos;t
-                    been saved yet.
+                    移除 &ldquo;<strong className="font-mono">{envFileToRemove}</strong>&rdquo;?
+                    该文件尚未保存。
                   </p>
                 )}
               </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>取消</AlertDialogCancel>
             <fieldset disabled={!canEdit} className="disabled:opacity-60">
               <AlertDialogAction
                 onClick={handleRemoveEnvFile}
                 disabled={deleteEnvFile.isPending}
                 className={isEnvFileToRemovePersisted ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90' : undefined}
               >
-                {deleteEnvFile.isPending ? 'Deleting...' : isEnvFileToRemovePersisted ? 'Delete file' : 'Remove file'}
+                {deleteEnvFile.isPending ? '删除中...' : isEnvFileToRemovePersisted ? '删除文件' : '移除文件'}
               </AlertDialogAction>
             </fieldset>
           </AlertDialogFooter>
