@@ -14,7 +14,7 @@ from collections import defaultdict
 from database import DatabaseManager, BatchJob, BatchJobItem, ContainerUpdate
 from websocket.connection import ConnectionManager
 from event_bus import Event, EventType, get_event_bus
-from updates.update_checker import get_update_checker
+from updates.update_checker import get_update_checker, LOCAL_IMAGE_STATUS
 from updates.update_executor import get_update_executor
 from utils.keys import make_composite_key
 from utils.async_docker import async_docker_call
@@ -480,8 +480,11 @@ class BatchJobManager:
                 # Note: bypass_cache=False (default) - bulk checks should respect cache
                 # to avoid rate limiting (Issue #101)
                 checker = get_update_checker(self.db, self.monitor)
-                await checker.check_single_container(host_id, short_id)
-                message = '已完成更新检查'
+                check_result = await checker.check_single_container(host_id, short_id)
+                if check_result and check_result.get('status') == LOCAL_IMAGE_STATUS:
+                    message = '已跳过: 缺少注册表摘要 (可能为本地构建版本)'
+                else:
+                    message = '已完成更新检查'
             elif action == 'delete-containers':
                 # Delete container and clean up database records
                 remove_volumes = params.get('remove_volumes', False) if params else False

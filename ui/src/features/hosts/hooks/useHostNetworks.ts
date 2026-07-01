@@ -31,6 +31,14 @@ interface DeleteNetworkResponse {
   message: string
 }
 
+export interface CreateNetworkParams {
+  name: string
+  driver?: string
+  subnet?: string
+  gateway?: string
+  internal?: boolean
+}
+
 interface PruneNetworksResponse {
   removed_count: number
   networks_removed: string[]
@@ -59,6 +67,13 @@ async function pruneNetworks(hostId: string): Promise<PruneNetworksResponse> {
 }
 
 /**
+ * Create a network on a host
+ */
+async function createNetwork(hostId: string, params: CreateNetworkParams): Promise<DockerNetwork> {
+  return await apiClient.post<DockerNetwork>(`/hosts/${hostId}/networks`, params)
+}
+
+/**
  * Hook to fetch networks for a specific host
  */
 export function useHostNetworks(hostId: string) {
@@ -67,6 +82,24 @@ export function useHostNetworks(hostId: string) {
     queryFn: () => fetchHostNetworks(hostId),
     enabled: !!hostId,
     staleTime: 30_000, // 30 seconds
+  })
+}
+
+/**
+ * Hook to create a network on a host
+ */
+export function useCreateNetwork(hostId: string) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (params: CreateNetworkParams) => createNetwork(hostId, params),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['host-networks', hostId] })
+      toast.success(`Network '${data.name}' created`)
+    },
+    onError: (error: unknown) => {
+      toast.error(getErrorMessage(error, 'Failed to create network'))
+    },
   })
 }
 

@@ -7,7 +7,7 @@
 
 import { memo, useState, useEffect } from 'react'
 import { useAuth } from '@/features/auth/AuthContext'
-import { Package, RefreshCw, Check, AlertCircle, Download, Shield, ExternalLink, Edit2, X } from 'lucide-react'
+import { Package, RefreshCw, Check, AlertCircle, Download, Shield, ExternalLink, Edit2, X, Box } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -99,11 +99,17 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
     setLastCheckTime(now)
 
     try {
-      await checkUpdate.mutateAsync({
+      const result = await checkUpdate.mutateAsync({
         hostId: container.host_id,
         containerId: containerShortId,
       })
-      toast.success('检查更新完成')
+      if (result?.status === 'local_image') {
+        toast.info('无需检查更新', {
+          description: result.message || "DockMon 无法在注册表中找到该镜像 - 可能该镜像来源于本地构建。如果镜像来自于私有注册表，请检查是否已配置相应的注册表凭证。",
+        })
+      } else {
+        toast.success('检查更新完成')
+      }
       // Query will auto-invalidate via the mutation's onSuccess
     } catch (error) {
       toast.error('检查更新时出错', {
@@ -352,6 +358,7 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
   }
 
   const hasUpdate = updateStatus?.update_available
+  const isLocalImage = updateStatus?.status === 'local_image'
   const lastChecked = updateStatus?.last_checked_at
     ? formatDateTime(updateStatus.last_checked_at, timeFormat)
     : '从未进行'
@@ -368,7 +375,17 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
       {/* Header with status */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          {hasUpdate ? (
+          {isLocalImage ? (
+            <>
+              <Box className="h-8 w-8 text-muted-foreground" />
+              <div>
+                <h3 className="text-lg font-semibold">Built Locally</h3>
+                <p className="text-sm text-muted-foreground">
+                  This image isn't tracked in a registry, so there are no updates to check
+                </p>
+              </div>
+            </>
+          ) : hasUpdate ? (
             <>
               <Package className="h-8 w-8 text-amber-500" />
               <div>
