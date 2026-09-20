@@ -693,8 +693,8 @@ export function HostTable({ onEditHost, searchQuery = '' }: HostTableProps = {})
   if (hosts.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
-        <p className="text-lg font-medium">No hosts match your search</p>
-        <p className="text-sm mt-1">Try a different name, URL, or tag</p>
+        <p className="text-lg font-medium">尚未配置任何主机</p>
+        <p className="text-sm mt-1">请尝试其他名称，URL 或者标签</p>
       </div>
     )
   }

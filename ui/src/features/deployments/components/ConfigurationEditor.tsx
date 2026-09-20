@@ -158,7 +158,7 @@ export const ConfigurationEditor = forwardRef<ConfigurationEditorHandle, Configu
         if (tabLine !== null) {
           return {
             valid: false,
-            error: `Line ${tabLine}: tab character in indentation — YAML requires spaces, not tabs.`,
+            error: `第 ${tabLine} 行中，缩进内包含制表符，而 YAML 规范要求使用空格。`,
           }
         }
 

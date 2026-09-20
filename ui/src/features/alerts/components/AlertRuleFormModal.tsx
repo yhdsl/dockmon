@@ -1047,8 +1047,8 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
               {metricNotCollected && (
                 <MetricWarning>
                   <p>
-                    DockMon does not collect {formData.metric?.replace(/_/g, ' ')} for hosts yet, so no host can
-                    report it and this rule will never fire.
+                    DockMon 目前尚未为主机收集 {formData.metric?.replace(/_/g, ' ')} 指标，
+                    因此没有任何主机能够报告此指标，该规则将永远不会被触发。
                   </p>
                 </MetricWarning>
               )}
@@ -1056,21 +1056,20 @@ export function AlertRuleFormModal({ rule, onClose }: Props) {
               {hostsWithoutMetric.length > 0 && (
                 <MetricWarning>
                   <p>
-                    {hostsWithoutMetric.length === 1 ? 'This host is' : `${hostsWithoutMetric.length} of these hosts are`}{' '}
-                    not reporting {formData.metric?.replace(/_/g, ' ')}, so this rule cannot fire for{' '}
-                    {hostsWithoutMetric.length === 1 ? 'it' : 'them'}:{' '}
+                    {hostsWithoutMetric.length === 1 ? '此主机' : `这些主机中的 ${hostsWithoutMetric.length} 台`}
+                    未收集 {formData.metric?.replace(/_/g, ' ')} 指标，因此该规则无法被以下主机触发：{' '}
                     <span className="font-medium">
                       {hostsWithoutMetric.map((h) => h.host_name).join(', ')}
                     </span>
                   </p>
                   {showMountRemedy && (
                     <p className="mt-1 text-amber-300/80">
-                      A containerized agent needs <code className="text-amber-200">{agentMountRemedy(formData.metric)}</code> to
-                      collect this metric.
+                      容器化的代理需要 <code className="text-amber-200">{agentMountRemedy(formData.metric)}</code> 才能
+                      收集这些指标。
                     </p>
                   )}
                   <p className="mt-1 text-amber-300/80">
-                    The rule can still be saved and starts working once metrics arrive.
+                    该规则仍然可以保存，并且会在指标开始收集后生效。
                   </p>
                 </MetricWarning>
               )}

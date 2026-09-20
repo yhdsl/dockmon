@@ -274,11 +274,11 @@ export function useUpdateGroupTagScopes() {
       void queryClient.invalidateQueries({ queryKey: TAG_SCOPES_QUERY_KEY })
       void queryClient.invalidateQueries({ queryKey: ['hosts'] })
       void queryClient.invalidateQueries({ queryKey: ['containers'] })
-      toast.success('Host visibility updated')
+      toast.success('已更新主机可见性')
     },
     onError: (error: Error) => {
       console.error('Failed to update tag scopes:', error)
-      toast.error('Failed to update host visibility. Please try again.')
+      toast.error('无法更新主机可见性，请稍后再试。')
     },
   })
 }

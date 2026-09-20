@@ -374,28 +374,28 @@ export function OIDCSettings() {
               </Button>
             </div>
             <p className="text-xs text-gray-500">
-              Add this URL as an allowed redirect URI in your OIDC provider. This is the exact
-              value DockMon sends when signing in.
+              将 OIDC 提供商中的允许重定向 URI 设置为此 URL。这是 DockMon
+              登录时实际发送的具体内容。
             </p>
             {callbackMismatch && (
               <div className="rounded-md border border-amber-500/30 bg-amber-500/10 p-3 space-y-1">
                 <p className="text-xs text-amber-400">
-                  This differs from the URL in your browser
-                  (<span className="font-mono">{browserCallbackUrl}</span>), so your reverse proxy is
-                  not forwarding the public origin. Register the URL above, or set an override.
+                  此 URL 与浏览器中的 URL 不一致
+                  (<span className="font-mono">{browserCallbackUrl}</span>)，这表示你的反向代理
+                  可能没有正确转发公网信息。请注册上面的 URL，或者设置覆盖值。
                 </p>
               </div>
             )}
             {hasOverride && (
               <p className="text-xs text-gray-500">
-                Set from the override below, not detected from this request.
+                此 URL 来自下方设置的覆盖值，而不是根据当前请求自动检测得到的。
               </p>
             )}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="redirect-uri-override" className="text-sm text-gray-300">
-              Callback URL override (optional)
+              回调 URL 覆盖值 (可选)
             </Label>
             <Input
               id="redirect-uri-override"
@@ -405,9 +405,8 @@ export function OIDCSettings() {
               className="font-mono text-sm"
             />
             <p className="text-xs text-gray-500">
-              Leave empty to detect the callback URL from the request. Set it when a reverse proxy
-              does not forward the public host, scheme, or port &mdash; for example when DockMon is
-              served on a non-standard port and the detected URL is missing it.
+              留空则根据请求自动检测回调 URL。当反向代理无法正确转发公网主机名、协议或端口时，请设置此值，
+              例如 DockMon 使用非标准端口提供服务，而自动检测到的 URL 中缺少此端口。
             </p>
           </div>
 

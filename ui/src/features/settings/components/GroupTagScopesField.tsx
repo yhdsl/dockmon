@@ -23,14 +23,14 @@ export function GroupTagScopesField({ tags, selectedIds, onChange, isLoading = f
 
   return (
     <div className="grid gap-2">
-      <Label>Host visibility</Label>
+      <Label>主机可见性</Label>
       <p className="text-xs text-muted-foreground">
-        Members see only hosts carrying a selected tag. Empty = unrestricted (members see all hosts).
+        成员只能看到带有已选择标签的主机。留空则视为无限制 (成员可以看到所有的主机)。
       </p>
       {isLoading ? (
-        <p className="text-sm text-muted-foreground">Loading host tags…</p>
+        <p className="text-sm text-muted-foreground">加载主机标签中…</p>
       ) : tags.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No host tags yet. Tag a host first to scope a group.</p>
+        <p className="text-sm text-muted-foreground">尚未添加任何主机标签，请先添加一个主机标签。</p>
       ) : (
         <ul className="max-h-48 overflow-y-auto rounded-md border p-2" role="group" aria-label="Host visibility tags">
           {tags.map((tag) => {

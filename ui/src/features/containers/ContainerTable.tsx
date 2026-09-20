@@ -1301,7 +1301,7 @@ export function ContainerTable({ hostId: propHostId, scrollElement }: ContainerT
               onClick={() => column.toggleSorting(sortDirection === 'asc')}
               className="h-8 px-2 hover:bg-surface-2"
             >
-              Network
+              网络
               <ArrowUpDown className={`ml-2 h-4 w-4 ${sortDirection ? 'text-primary' : 'text-muted-foreground'}`} />
             </Button>
           )
@@ -1321,7 +1321,7 @@ export function ContainerTable({ hostId: propHostId, scrollElement }: ContainerT
           }
 
           const lifetime = rx == null && tx == null ? undefined
-            : `Received ${formatBytes(rx)} / Sent ${formatBytes(tx)} since start`
+            : `启动后已接收 ${formatBytes(rx)} / 已发送 ${formatBytes(tx)}`
 
           return (
             <div

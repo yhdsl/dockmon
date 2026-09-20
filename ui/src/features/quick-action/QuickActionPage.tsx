@@ -64,15 +64,15 @@ type PageState = 'loading' | 'invalid' | 'ready' | 'executing' | 'success' | 'er
 function getErrorMessage(reason?: string): string {
   switch (reason) {
     case 'expired':
-      return 'This link has expired'
+      return '此链接已过期'
     case 'already_used':
-      return 'This link has already been used'
+      return '此链接已被使用'
     case 'revoked':
-      return 'This link has been revoked'
+      return '此链接已被吊销'
     case 'not_found':
-      return 'Invalid or unknown link'
+      return '无效或未知的链接'
     default:
-      return 'Invalid link'
+      return '链接不合法'
   }
 }
 

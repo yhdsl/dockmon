@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"sync"
 
-	"github.com/darthnorse/dockmon-agent/internal/client/statsmsg"
+	"github.com/yhdsl/dockmon-agent/internal/client/statsmsg"
 )
 
 // StatsServiceSender is the narrow interface the stats handlers use to ship

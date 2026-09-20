@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/darthnorse/dockmon-agent/internal/docker"
+	"github.com/yhdsl/dockmon-agent/internal/docker"
 )
 
 // The nightly get_system_info response and the registration message must

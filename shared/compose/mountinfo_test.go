@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/darthnorse/dockmon-shared/mountinfo"
+	"github.com/yhdsl/dockmon-shared/mountinfo"
 )
 
 func TestParseMountInfoLine(t *testing.T) {

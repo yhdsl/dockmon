@@ -1,6 +1,6 @@
 package client
 
-import "github.com/darthnorse/dockmon-agent/internal/docker"
+import "github.com/yhdsl/dockmon-agent/internal/docker"
 
 // systemInfoPayload is the host-facts shape the backend applies to its
 // DockerHostDB row, shared by registration and the get_system_info command.

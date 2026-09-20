@@ -38,7 +38,7 @@ docker run -d \
   ghcr.io/yhdsl/dockmon-agent:2.2.0
 ```
 
-Or with Docker Compose:
+或者使用如下 Docker Compose 文件:
 
 ```yaml
 services:
@@ -65,21 +65,33 @@ volumes:
 
 请**不要**使用绑定挂载或者忽略该命名卷，否则会导致代理令牌持久化和自动更新功能失效。
 
-`-v /proc:/host/proc:ro` is what lets a containerized agent read real host CPU and
-memory. Without it the agent reports container stats only, host-scope metric alert
-rules on that host can never fire, and the agent logs a warning at startup.
-Systemd agents read `/proc` directly and need no mount.
+`-v /proc:/host/proc:ro` 能让容器化的代理读取真实主机 CPU 和内存数据。
 
-`-v /:/hostfs:ro` is what lets a containerized agent measure host disk usage
-(`disk_percent`, the "Low Disk Space" rule). The agent measures the filesystem
-holding Docker's data-root (`/var/lib/docker` by default) and falls back to the host
-root; `disk_source` in the sample says which. It needs `/host/proc` as well, because
-disk rides on the same host sample. Without the mount the agent reports no disk at all
-(never a zero) and logs a warning at startup. Note that this exposes the whole host
-filesystem read-only to the agent container, and on kernels before 5.12 the `:ro` flag
-does not propagate to submounts; use
-`--mount type=bind,src=/,dst=/hostfs,readonly,bind-recursive=readonly` (Docker 25+)
-where the kernel supports it.
+如果不进行挂载，代理只能报告容器自身的统计数据，针对主机范围指标的告警规则将永远无法触发，
+
+并且代理会在启动时记录一条警告日志。
+
+系统代理会直接读取 `/proc`，因此不需要挂载此文件。
+
+`-v /:/hostfs:ro` 能让容器化的代理测量主机磁盘使用情况 (`disk_percent`，即 &quot;磁盘剩余空间不足&quot; 规则)。
+
+代理会测量 Docker 数据根目录 (默认是 `/var/lib/docker`) 的文件系统，
+
+如果无法确定，则回退到主机根文件系统；
+
+示例中的 `disk_source` 会说明实际使用的是哪个文件系统。
+
+这同样需要挂载 `/host/proc`，因为磁盘数据依赖于同一个主机的采样数据。
+
+如果没有挂载，代理将不会报告任何磁盘数据 (绝不会报告为 0)，并且会在启动时记录一条警告日志。
+
+需要注意的是，这会将整个主机文件系统以只读的方式暴露给代理容器。
+
+而且在 5.12 之前的内核上，`:ro` 标志不会传递到子挂载 (submounts) 中；
+
+如果已使用 Docker 25+，并且内核支持，则可以改用：
+
+`--mount type=bind,src=/,dst=/hostfs,readonly,bind-recursive=readonly`
 
 3. 代理将自动注册到指定 DockMon 实例，并出现在主机列表中
 

@@ -6,7 +6,7 @@
 // WebSocket client, so a direct reverse import would create a cycle.
 package statsmsg
 
-import "github.com/darthnorse/dockmon-shared/hostdisk"
+import "github.com/yhdsl/dockmon-shared/hostdisk"
 
 // Message types carried in AgentStatsMsg.Type. A stats-service predating the
 // typed format ignores the field and drops host samples on their empty

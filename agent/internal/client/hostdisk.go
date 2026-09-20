@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/darthnorse/dockmon-agent/internal/docker"
-	"github.com/darthnorse/dockmon-shared/hostdisk"
+	"github.com/yhdsl/dockmon-agent/internal/docker"
+	"github.com/yhdsl/dockmon-shared/hostdisk"
 	"github.com/sirupsen/logrus"
 )
 

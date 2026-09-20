@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/darthnorse/dockmon-shared/mountinfo"
+	"github.com/yhdsl/dockmon-shared/mountinfo"
 )
 
 // procMountInfoPath is the canonical location of mountinfo for the current

@@ -35,7 +35,7 @@ export function PortConflictBanner({
         <div className="flex items-start gap-3 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" aria-hidden="true" />
           <div className="space-y-0.5">
-            <p className="font-medium text-destructive">Compose file is invalid</p>
+            <p className="font-medium text-destructive">Compose 文件不合法</p>
             <p className="text-muted-foreground">{error.message}</p>
           </div>
         </div>

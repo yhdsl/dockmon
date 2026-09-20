@@ -12,8 +12,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/darthnorse/dockmon-agent/internal/client/statsmsg"
-	"github.com/darthnorse/dockmon-shared/hostdisk"
+	"github.com/yhdsl/dockmon-agent/internal/client/statsmsg"
+	"github.com/yhdsl/dockmon-shared/hostdisk"
 	"github.com/sirupsen/logrus"
 )
 
