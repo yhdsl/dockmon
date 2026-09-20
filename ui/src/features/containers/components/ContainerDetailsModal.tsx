@@ -199,7 +199,7 @@ export function ContainerDetailsModal({
     setIsPerformingAction(true)
     try {
       // CRITICAL: Use current tracked containerId, not container.id which may be stale from fallback
-      const { hostId, containerId: currentId } = parseCompositeKey(containerId!)
+      const { hostId, containerId: currentId } = parseCompositeKey(containerId)
       await apiClient.post(`/hosts/${hostId}/containers/${currentId}/${action}`)
       const labels = { start: '启动', stop: '停止', restart: '重启' } as const
       toast.success(`已${labels[action]} ${container.name}`)
@@ -213,7 +213,7 @@ export function ContainerDetailsModal({
   const handleDelete = async (removeVolumes: boolean) => {
     setIsPerformingAction(true)
     try {
-      const { hostId, containerId: currentId } = parseCompositeKey(containerId!)
+      const { hostId, containerId: currentId } = parseCompositeKey(containerId)
       await apiClient.delete(`/hosts/${hostId}/containers/${currentId}`, {
         params: { removeVolumes },
       })
@@ -230,7 +230,7 @@ export function ContainerDetailsModal({
   const handleKill = async () => {
     setIsPerformingAction(true)
     try {
-      const { hostId, containerId: currentId } = parseCompositeKey(containerId!)
+      const { hostId, containerId: currentId } = parseCompositeKey(containerId)
       await apiClient.post(`/hosts/${hostId}/containers/${currentId}/kill`)
       toast.success(`已杀死容器 ${container.name}`)
     } catch (error) {
@@ -259,7 +259,7 @@ export function ContainerDetailsModal({
     }
     setIsPerformingAction(true)
     try {
-      const { hostId, containerId: currentId } = parseCompositeKey(containerId!)
+      const { hostId, containerId: currentId } = parseCompositeKey(containerId)
       await apiClient.post(`/hosts/${hostId}/containers/${currentId}/rename`, { name: trimmed })
       toast.success(`已重命名容器名称为 ${trimmed}`)
       setShowRenameDialog(false)
@@ -507,7 +507,7 @@ export function ContainerDetailsModal({
                   setRenameError(validateContainerName(e.target.value.trim()))
                 }}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !renameError) handleRename()
+                  if (e.key === 'Enter' && !renameError) void handleRename()
                   if (e.key === 'Escape') setShowRenameDialog(false)
                 }}
                 className={`w-full px-3 py-2 bg-background border rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-primary ${renameError ? 'border-red-500' : 'border-border'}`}
@@ -546,7 +546,7 @@ export function ContainerDetailsModal({
         onClose={() => setShowKillConfirm(false)}
         onConfirm={() => {
           setShowKillConfirm(false)
-          handleKill()
+          void handleKill()
         }}
         title="杀死容器"
         description={`这将向 ${container.name} 容器发送 SIGKILL 信号，这会立即中止该容器，不会有任何优雅关闭的机会。可能导致数据丢失或损坏`}

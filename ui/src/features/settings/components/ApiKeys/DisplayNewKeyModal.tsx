@@ -130,7 +130,7 @@ print(response.json())`
                 <div className="p-3 rounded bg-gray-800/50 border border-gray-700">
                   <p className="text-gray-300 mb-2">将 API 密钥保存至环境变量中:</p>
                   <code className="text-green-400 text-xs">
-                    export DOCKMON_API_KEY="{keyData.key}"
+                    export DOCKMON_API_KEY=&quot;{keyData.key}&quot;
                   </code>
                 </div>
                 <p className="text-gray-400">稍后可在脚本或自动化工具中使用。</p>
@@ -143,7 +143,7 @@ print(response.json())`
                   {curlExample}
                 </div>
                 <p className="text-xs text-gray-400">
-                  将 API 密钥复制到 Authorization 请求头中，并添加 "Bearer" 前缀。
+                  将 API 密钥复制到 Authorization 请求头中，并添加 &quot;Bearer&quot; 前缀。
                 </p>
               </div>
             )}

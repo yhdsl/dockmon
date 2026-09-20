@@ -46,10 +46,10 @@ export function AgentUpdateBanner({ isCollapsed }: AgentUpdateBannerProps) {
     }
 
     // Initial fetch
-    fetchData()
+    void fetchData()
 
     // Poll every 30 seconds
-    const interval = setInterval(fetchData, 30000)
+    const interval = setInterval(() => void fetchData(), 30000)
     return () => clearInterval(interval)
   }, [])
 

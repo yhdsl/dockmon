@@ -40,7 +40,7 @@ export function ApiKeysSettings() {
 
   const handleCopyKeyToClipboard = () => {
     if (newKey?.key) {
-      navigator.clipboard.writeText(newKey.key)
+      void navigator.clipboard.writeText(newKey.key)
       toast.success('已复制 API 密钥至剪切板!')
     }
   }

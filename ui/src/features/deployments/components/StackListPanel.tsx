@@ -81,7 +81,7 @@ export function StackListPanel({
 
         {filteredStacks.length === 0 && stacks && stacks.length > 0 && (
           <p className="text-sm text-muted-foreground p-2">
-            暂无匹配 "{searchQuery}" 的堆栈
+            暂无匹配 &quot;{searchQuery}&quot; 的堆栈
           </p>
         )}
 

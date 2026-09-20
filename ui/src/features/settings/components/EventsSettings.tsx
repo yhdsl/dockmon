@@ -54,7 +54,7 @@ export function EventsSettings() {
       setPatterns(updatedPatterns)
       setNewPattern('')
       toast.success(`已添加模式 "${trimmedPattern}"`)
-    } catch (error) {
+    } catch {
       toast.error('无法添加模式')
     } finally {
       setIsUpdating(false)
@@ -68,7 +68,7 @@ export function EventsSettings() {
       await updateSettings.mutateAsync({ event_suppression_patterns: updatedPatterns })
       setPatterns(updatedPatterns)
       toast.success(`已删除模式 "${patternToRemove}"`)
-    } catch (error) {
+    } catch {
       toast.error('无法删除模式')
     } finally {
       setIsUpdating(false)
@@ -78,7 +78,7 @@ export function EventsSettings() {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !isUpdating) {
       e.preventDefault()
-      handleAddPattern()
+      void handleAddPattern()
     }
   }
 
@@ -101,9 +101,9 @@ export function EventsSettings() {
               允许使用带通配符的 glob 模式:
             </p>
             <ul className="text-xs text-gray-400 space-y-1 ml-4 list-disc">
-              <li><code className="text-blue-400">runner-*</code> - 可以匹配以 "runner-" 开头的容器名称</li>
-              <li><code className="text-blue-400">*-tmp</code> - 可以匹配以 "-tmp" 结尾的容器名称</li>
-              <li><code className="text-blue-400">*cronjob*</code> - 可以匹配包含 "cronjob" 的容器名称</li>
+              <li><code className="text-blue-400">runner-*</code> - 可以匹配以 &quot;runner-&quot; 开头的容器名称</li>
+              <li><code className="text-blue-400">*-tmp</code> - 可以匹配以 &quot;-tmp&quot; 结尾的容器名称</li>
+              <li><code className="text-blue-400">*cronjob*</code> - 可以匹配包含 &quot;cronjob&quot; 的容器名称</li>
             </ul>
           </div>
 

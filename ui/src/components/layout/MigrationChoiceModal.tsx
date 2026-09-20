@@ -59,8 +59,8 @@ export function MigrationChoiceModal() {
         description: `已完成 ${migratedFrom?.host_name || '之前的主机'} 的设置迁移`,
       })
       // Invalidate queries to refresh data
-      queryClient.invalidateQueries({ queryKey: ['hosts'] })
-      queryClient.invalidateQueries({ queryKey: ['containers'] })
+      void queryClient.invalidateQueries({ queryKey: ['hosts'] })
+      void queryClient.invalidateQueries({ queryKey: ['containers'] })
       // Close modal
       setChoiceData(null)
       setSelectedHostId(null)

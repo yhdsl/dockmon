@@ -392,15 +392,13 @@ export function ImportStackModal({
 
     setIsBatchImporting(false)
 
+    if (errors.length > 0) {
+      setError(errors.join('; '))
+    }
     if (allDeployments.length > 0) {
       setCreatedDeployments(allDeployments)
-      if (errors.length > 0) {
-        setError(`已导入 ${allDeployments.length} 个堆栈。但存在错误: ${errors.join('; ')}`)
-      }
       setStep('success')
       onSuccess?.(allDeployments)
-    } else if (errors.length > 0) {
-      setError(errors.join('; '))
     }
   }
 
@@ -1051,7 +1049,7 @@ export function ImportStackModal({
           <fieldset disabled={!canDeploy} className="space-y-4 disabled:opacity-60">
             <Alert>
               <AlertDescription>
-                一个名为 <strong>"{existingStackName}"</strong> 的堆栈已存在于文件系统中。
+                一个名为 <strong>&quot;{existingStackName}&quot;</strong> 的堆栈已存在于文件系统中。
                 你希望如何处理?
               </AlertDescription>
             </Alert>
@@ -1144,6 +1142,12 @@ export function ImportStackModal({
                 </li>
               ))}
             </ul>
+
+            {error && (
+              <Alert variant="destructive">
+                <AlertDescription>Not imported: {error}</AlertDescription>
+              </Alert>
+            )}
 
             <DialogFooter>
               <Button onClick={handleClose}>完成</Button>

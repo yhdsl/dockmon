@@ -58,7 +58,7 @@ export function AlertTemplateSettings() {
       })
       setHasChanges(false)
       toast.success('已成功保存告警消息模板')
-    } catch (error) {
+    } catch {
       toast.error('无法保存告警消息模板')
     }
   }
@@ -86,7 +86,7 @@ export function AlertTemplateSettings() {
   }
 
   const handleCopyVariable = (variable: string) => {
-    navigator.clipboard.writeText(variable)
+    void navigator.clipboard.writeText(variable)
     setCopiedVar(variable)
     setTimeout(() => setCopiedVar(null), 2000)
     toast.success('已复制变量至剪切板')

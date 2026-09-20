@@ -66,11 +66,12 @@ export function HostOverviewTab({ hostId, host }: HostOverviewTabProps) {
   })
 
   // Reset updateTriggered when agent reconnects with new version (update_available becomes false)
+  const agentUpdateAvailable = agent?.update_available
   useEffect(() => {
-    if (updateTriggered && agent && !agent.update_available) {
+    if (updateTriggered && agentUpdateAvailable === false) {
       setUpdateTriggered(false)
     }
-  }, [agent?.update_available, updateTriggered])
+  }, [agentUpdateAvailable, updateTriggered])
 
   // Trigger agent update mutation
   const triggerUpdate = useMutation({
@@ -79,7 +80,7 @@ export function HostOverviewTab({ hostId, host }: HostOverviewTabProps) {
     },
     onSuccess: () => {
       setUpdateTriggered(true)
-      queryClient.invalidateQueries({ queryKey: ['host-agent', hostId] })
+      void queryClient.invalidateQueries({ queryKey: ['host-agent', hostId] })
     },
   })
 
@@ -261,7 +262,7 @@ export function HostOverviewTab({ hostId, host }: HostOverviewTabProps) {
                     <span className="text-sm text-muted-foreground">暂无标签</span>
                   ) : (
                     <div className="flex flex-wrap gap-2">
-                      {(currentTags as string[]).map((tag) => (
+                      {currentTags.map((tag) => (
                         <TagChip key={tag} tag={tag} size="sm" />
                       ))}
                     </div>

@@ -70,7 +70,7 @@ import { DeploymentProgress } from './DeploymentProgress'
 import { PortConflictBanner } from './PortConflictBanner'
 import { validateStackName, MAX_STACK_NAME_LENGTH } from '../types'
 import type { DeployedHost, PortConflict } from '../types'
-import { handleApiError, getErrorMessage, envFilesEqual, validateEnvFileName, normalizeEnvFileName } from '../utils'
+import { handleApiError, getErrorMessage, envFilesEqual, validateEnvFileName, normalizeEnvFileName, blockingComposeErrorMessage } from '../utils'
 import { useAuth } from '@/features/auth/AuthContext'
 
 // Base path for stack storage (matches backend STACKS_DIR)
@@ -463,7 +463,15 @@ export function StackEditor({
     let fresh: PortConflict[] = []
     try {
       fresh = await recheckPorts()
-    } catch {
+    } catch (err) {
+      const blockingMessage = blockingComposeErrorMessage(err, hasChanges)
+      if (blockingMessage !== null) {
+        setErrors({ compose: blockingMessage })
+        setActiveTab('compose')
+        toast.error(blockingMessage)
+        return
+      }
+      // Unreachable/network or unsaved edits — proceed; Docker is the final gate.
       await executeDeploy()
       return
     }
@@ -922,7 +930,7 @@ export function StackEditor({
           <AlertDialogHeader>
             <AlertDialogTitle>删除堆栈</AlertDialogTitle>
             <AlertDialogDescription>
-              确定要删除堆栈 "<strong>{selectedStackName}</strong>" 吗?
+              确定要删除堆栈 &quot;<strong>{selectedStackName}</strong>&quot; 吗?
               这将从文件系统中删除 compose.yaml 和 .env 文件，以及所有的部署记录。
               正在运行的容器不会受到影响。
               该操作将无法撤销。
@@ -987,7 +995,7 @@ export function StackEditor({
           <DialogHeader>
             <DialogTitle>克隆堆栈</DialogTitle>
             <DialogDescription>
-              创建一个 "<strong>{selectedStackName}</strong>" 堆栈的副本，使用指定的新名称。
+              创建一个 &quot;<strong>{selectedStackName}</strong>&quot; 堆栈的副本，使用指定的新名称。
             </DialogDescription>
           </DialogHeader>
 
@@ -1091,7 +1099,7 @@ export function StackEditor({
             <AlertDialogTitle>删除堆栈</AlertDialogTitle>
             <AlertDialogDescription>
               确定要从 <strong>{sortedHosts.find((h) => h.id === hostId)?.name || hostId}</strong>
-              中移除堆栈 "<strong>{selectedStackName}</strong>" 吗?
+              中移除堆栈 &quot;<strong>{selectedStackName}</strong>&quot; 吗?
               这将停止并删除所有的容器、网络以及<strong>卷</strong>。
               存储在卷中的数据将永久删除。该操作将无法撤销。
             </AlertDialogDescription>
@@ -1101,7 +1109,7 @@ export function StackEditor({
             <AlertDialogAction
               onClick={() => {
                 setActiveDialog(null)
-                executeDeployment(selectedStackName, 'down', true)
+                void executeDeployment(selectedStackName, 'down', true)
               }}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >

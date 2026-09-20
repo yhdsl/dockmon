@@ -85,8 +85,8 @@ export function useAddHost() {
   return useMutation({
     mutationFn: addHost,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['hosts'] })
-      queryClient.invalidateQueries({ queryKey: ['tags'] }) // Invalidate tags cache
+      void queryClient.invalidateQueries({ queryKey: ['hosts'] })
+      void queryClient.invalidateQueries({ queryKey: ['tags'] })
       toast.success(`已成功添加主机 "${data.name}"`)
     },
     onError: (error: unknown) => {
@@ -110,8 +110,8 @@ export function useUpdateHost() {
   return useMutation({
     mutationFn: ({ id, config }: { id: string; config: HostConfig }) => updateHost(id, config),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['hosts'] })
-      queryClient.invalidateQueries({ queryKey: ['tags'] })
+      void queryClient.invalidateQueries({ queryKey: ['hosts'] })
+      void queryClient.invalidateQueries({ queryKey: ['tags'] })
       toast.success(`已成功更新主机 "${data.name}"`)
     },
     onError: (error: unknown) => {
@@ -135,8 +135,8 @@ export function useDeleteHost() {
   return useMutation({
     mutationFn: deleteHost,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['hosts'] })
-      queryClient.invalidateQueries({ queryKey: ['tags'] })
+      void queryClient.invalidateQueries({ queryKey: ['hosts'] })
+      void queryClient.invalidateQueries({ queryKey: ['tags'] })
       toast.success('已成功删除主机')
     },
     onError: (error: unknown) => {

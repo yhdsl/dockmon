@@ -55,7 +55,7 @@ export function useCreateStack() {
       return apiClient.post<Stack>('/stacks', request)
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['stacks'] })
+      void queryClient.invalidateQueries({ queryKey: ['stacks'] })
       toast.success('已成功创建堆栈')
     },
     onError: (error: Error) => {
@@ -75,8 +75,8 @@ export function useUpdateStack() {
       return apiClient.put<Stack>(`/stacks/${encodeURIComponent(name)}`, request)
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['stacks'] })
-      queryClient.invalidateQueries({ queryKey: ['stacks', variables.name] })
+      void queryClient.invalidateQueries({ queryKey: ['stacks'] })
+      void queryClient.invalidateQueries({ queryKey: ['stacks', variables.name] })
       toast.success('已成功更新堆栈')
     },
     onError: (error: Error) => {
@@ -96,7 +96,7 @@ export function useDeleteStack() {
       return apiClient.delete<{ success: boolean }>(`/stacks/${encodeURIComponent(name)}`)
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['stacks'] })
+      void queryClient.invalidateQueries({ queryKey: ['stacks'] })
       toast.success('已成功删除堆栈')
     },
     onError: (error: Error) => {
@@ -118,7 +118,7 @@ export function useDeleteEnvFile() {
       )
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['stacks', variables.name] })
+      void queryClient.invalidateQueries({ queryKey: ['stacks', variables.name] })
     },
   })
 }
@@ -140,12 +140,12 @@ export function useRenameStack() {
       )
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['stacks'] })
+      void queryClient.invalidateQueries({ queryKey: ['stacks'] })
       // Invalidate old and new name
-      queryClient.invalidateQueries({ queryKey: ['stacks', variables.name] })
-      queryClient.invalidateQueries({ queryKey: ['stacks', variables.new_name] })
+      void queryClient.invalidateQueries({ queryKey: ['stacks', variables.name] })
+      void queryClient.invalidateQueries({ queryKey: ['stacks', variables.new_name] })
       // Also invalidate deployments since they reference stack_name
-      queryClient.invalidateQueries({ queryKey: ['deployments'] })
+      void queryClient.invalidateQueries({ queryKey: ['deployments'] })
       toast.success(`已重命名堆栈为 '${variables.new_name}'`)
     },
     onError: (error: Error) => {
@@ -168,7 +168,7 @@ export function useCopyStack() {
       )
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['stacks'] })
+      void queryClient.invalidateQueries({ queryKey: ['stacks'] })
       toast.success(`已克隆堆栈为 '${variables.dest_name}'`)
     },
     onError: (error: Error) => {

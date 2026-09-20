@@ -27,7 +27,7 @@ export function useCreateRegistryCredential() {
     mutationFn: (data: RegistryCredentialCreate) =>
       apiClient.post<RegistryCredential>('/registry-credentials', data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['registry-credentials'] })
+      void queryClient.invalidateQueries({ queryKey: ['registry-credentials'] })
       toast.success('已成功创建注册表凭证')
     },
     onError: (error: Error) => {
@@ -46,7 +46,7 @@ export function useUpdateRegistryCredential() {
     mutationFn: ({ id, data }: { id: number; data: RegistryCredentialUpdate }) =>
       apiClient.put<RegistryCredential>(`/registry-credentials/${id}`, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['registry-credentials'] })
+      void queryClient.invalidateQueries({ queryKey: ['registry-credentials'] })
       toast.success('已成功更新注册表凭证')
     },
     onError: (error: Error) => {
@@ -64,7 +64,7 @@ export function useDeleteRegistryCredential() {
   return useMutation({
     mutationFn: (id: number) => apiClient.delete(`/registry-credentials/${id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['registry-credentials'] })
+      void queryClient.invalidateQueries({ queryKey: ['registry-credentials'] })
       toast.success('已成功删除注册表凭证')
     },
     onError: (error: Error) => {

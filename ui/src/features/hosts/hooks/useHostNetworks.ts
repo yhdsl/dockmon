@@ -94,7 +94,7 @@ export function useCreateNetwork(hostId: string) {
   return useMutation({
     mutationFn: (params: CreateNetworkParams) => createNetwork(hostId, params),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['host-networks', hostId] })
+      void queryClient.invalidateQueries({ queryKey: ['host-networks', hostId] })
       toast.success(`已成功创建网络 '${data.name}'`)
     },
     onError: (error: unknown) => {
@@ -140,7 +140,7 @@ export function useDeleteNetwork() {
     },
     onSettled: (_data, _error, variables) => {
       // Refetch to sync with actual state
-      queryClient.invalidateQueries({ queryKey: ['host-networks', variables.hostId] })
+      void queryClient.invalidateQueries({ queryKey: ['host-networks', variables.hostId] })
     },
   })
 }
@@ -181,7 +181,7 @@ export function usePruneNetworks(hostId: string) {
     },
     onSettled: () => {
       // Refetch to sync with actual state
-      queryClient.invalidateQueries({ queryKey: ['host-networks', hostId] })
+      void queryClient.invalidateQueries({ queryKey: ['host-networks', hostId] })
     },
   })
 }
@@ -236,7 +236,7 @@ export function useDeleteNetworks() {
     },
     onSettled: (_data, _error, variables) => {
       // Refetch to sync with actual state
-      queryClient.invalidateQueries({ queryKey: ['host-networks', variables.hostId] })
+      void queryClient.invalidateQueries({ queryKey: ['host-networks', variables.hostId] })
     },
   })
 }

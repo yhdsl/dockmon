@@ -102,7 +102,7 @@ export function ContainerUpdatesSettings() {
       try {
         await updateSettings.mutateAsync({ update_check_time: trimmed })
         toast.success('已成功更新更新调度')
-      } catch (error) {
+      } catch {
         toast.error('无法更新更新调度')
       }
     }
@@ -113,7 +113,7 @@ export function ContainerUpdatesSettings() {
     try {
       await updateSettings.mutateAsync({ skip_compose_containers: checked })
       toast.success(checked ? '由 Compose 创建的容器将会被跳过' : '由 Compose 创建的容器将一同更新')
-    } catch (error) {
+    } catch {
       toast.error('无法更新更新设置')
       setSkipComposeContainers(!checked) // Revert on error
     }
@@ -130,7 +130,7 @@ export function ContainerUpdatesSettings() {
       try {
         await updateSettings.mutateAsync({ health_check_timeout_seconds: healthCheckTimeout })
         toast.success('已成功更新健康检查超时时长')
-      } catch (error) {
+      } catch {
         toast.error('无法更新健康检查超时时长')
       }
     }
@@ -165,7 +165,7 @@ export function ContainerUpdatesSettings() {
     try {
       await updateSettings.mutateAsync({ prune_images_enabled: checked })
       toast.success(checked ? '镜像清理已启用' : '镜像清理已禁用')
-    } catch (error) {
+    } catch {
       toast.error('无法更新镜像清理设置')
       setPruneImagesEnabled(!checked) // Revert on error
     }
@@ -182,7 +182,7 @@ export function ContainerUpdatesSettings() {
       try {
         await updateSettings.mutateAsync({ image_retention_count: imageRetentionCount })
         toast.success('已成功更新镜像保留数目')
-      } catch (error) {
+      } catch {
         toast.error('无法更新镜像保留数目')
         setImageRetentionCount(settings?.image_retention_count ?? 2) // Rollback on error
       }
@@ -200,7 +200,7 @@ export function ContainerUpdatesSettings() {
       try {
         await updateSettings.mutateAsync({ image_prune_grace_hours: imagePruneGraceHours })
         toast.success('已成功更新暂缓期')
-      } catch (error) {
+      } catch {
         toast.error('无法更新暂缓期')
         setImagePruneGraceHours(settings?.image_prune_grace_hours ?? 48) // Rollback on error
       }

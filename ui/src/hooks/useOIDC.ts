@@ -61,7 +61,7 @@ export function useUpdateOIDCConfig() {
     },
     onSuccess: (data) => {
       queryClient.setQueryData(QUERY_KEYS.config, data)
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.status })
+      void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.status })
       toast.success('配置已保存', {
         description: 'OIDC 设置已更新。',
       })
@@ -85,7 +85,7 @@ export function useSetLocalLogin() {
       )
     },
     onSuccess: (_data, disabled) => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.status })
+      void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.status })
       toast.success(disabled ? '本地登录已禁用' : '本地登录已启用', {
         description: disabled
           ? '仅允许使用 SSO 登录，现有的会话将继续保持有效。'
@@ -130,7 +130,7 @@ export function useCreateOIDCGroupMapping() {
       return apiClient.post<OIDCGroupMapping>('/v2/oidc/group-mappings', data)
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.groupMappings })
+      void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.groupMappings })
       toast.success('已创建映射', {
         description: 'OIDC 用户群组映射已创建。',
       })
@@ -151,7 +151,7 @@ export function useUpdateOIDCGroupMapping() {
       return apiClient.put<OIDCGroupMapping>(`/v2/oidc/group-mappings/${id}`, data)
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.groupMappings })
+      void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.groupMappings })
       toast.success('已更新映射', {
         description: 'OIDC 用户群组映射已更新。',
       })
@@ -172,7 +172,7 @@ export function useDeleteOIDCGroupMapping() {
       return apiClient.delete(`/v2/oidc/group-mappings/${id}`)
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.groupMappings })
+      void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.groupMappings })
       toast.success('已删除映射', {
         description: 'OIDC 用户群组映射已删除。',
       })

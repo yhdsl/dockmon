@@ -317,7 +317,7 @@ export function UpdatePoliciesSettings() {
               onChange={(e) => setCustomPatternInput(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
-                  handleAddCustomPattern()
+                  void handleAddCustomPattern()
                 }
               }}
               disabled={createPattern.isPending}
@@ -406,7 +406,7 @@ export function UpdatePoliciesSettings() {
           <br /><br />
           <strong>警告操作:</strong> 匹配的容器在自动更新前需要用户确认。
           <br />
-          <strong>忽略操作:</strong> 匹配的容器将完全不会被自动更新，但仍可以在容器的 "更新" 页面手动检查和更新。
+          <strong>忽略操作:</strong> 匹配的容器将完全不会被自动更新，但仍可以在容器的 &quot;更新&quot; 页面手动检查和更新。
         </p>
       </div>
     </fieldset>

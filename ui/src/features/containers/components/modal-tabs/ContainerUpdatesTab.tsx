@@ -473,7 +473,7 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
                   <li className="flex flex-col gap-1">
                     <span>• 此容器由 Docker Compose 创建，但该功能已被 DockMon 设置阻止。</span>
                     <span className="text-xs text-yellow-200/70 ml-4">
-                      请更改设置 → 容器更新 → "跳过 Docker Compose 容器"
+                      请更改设置 → 容器更新 → &quot;跳过 Docker Compose 容器&quot;
                     </span>
                   </li>
                 )}
@@ -501,7 +501,7 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
                 )}
               </ul>
               <p className="text-xs text-yellow-200/70 mt-3">
-                注意，仍然可使用上方的 "立即更新" 按钮进行手动更新。
+                注意，仍然可使用上方的 &quot;立即更新&quot; 按钮进行手动更新。
               </p>
             </div>
           </div>
@@ -512,9 +512,7 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
       {isUpdating && container.host_id && (
         <LayerProgressDisplay
           hostId={container.host_id}
-          entityId={containerShortId}
-          eventType="container_update_layer_progress"
-          simpleProgressEventType="container_update_progress"
+          containerId={containerShortId}
           initialProgress={0}
           initialMessage="初始化更新中..."
         />
@@ -925,7 +923,7 @@ function ContainerUpdatesTabInternal({ container }: ContainerUpdatesTabProps) {
         <p className="font-medium">关于容器更新</p>
         <ul className="list-disc list-inside space-y-1 text-xs">
           <li>DockMon 会根据配置的时间每天自动检查更新</li>
-          <li>点击 "立即检查" 按钮可用手动检查更新</li>
+          <li>点击 &quot;立即检查&quot; 按钮可用手动检查更新</li>
           <li>启用自动更新后，在有可用更新时会自动拉取并重建容器</li>
           <li>更新后会验证容器的健康状态，以确保更新成功</li>
           <li>更新检查基于镜像的摘要进行比较，而非仅根据标签</li>

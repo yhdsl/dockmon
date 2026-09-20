@@ -101,7 +101,7 @@ export function UpgradeWelcomeModal({
                   </h4>
                   <div className="space-y-4 text-sm">
                     <p>
-                      你的主机、容器和事件历史已被迁移，但 v2 版本中存在一些破坏性变更，需要你手动采取相应的操作: 
+                      你的主机、容器和事件历史已被迁移，但 v2 版本中存在一些破坏性变更，需要你手动采取相应的操作:
                     </p>
 
                     <div>
@@ -118,13 +118,13 @@ export function UpgradeWelcomeModal({
                       </p>
                       <ol className="list-decimal list-inside space-y-2 pl-2">
                         <li>
-                          在每个远程主机上，下载更新后的脚本: 
+                          在每个远程主机上，下载更新后的脚本:
                           <div className="mt-1 bg-background/50 p-2 rounded font-mono text-xs overflow-x-auto">
                             curl -O https://raw.githubusercontent.com/yhdsl/dockmon/main/scripts/setup-docker-mtls.sh
                           </div>
                         </li>
                         <li>
-                          将其设为可执行并运行: 
+                          将其设为可执行并运行:
                           <div className="mt-1 bg-background/50 p-2 rounded font-mono text-xs overflow-x-auto">
                             chmod +x setup-docker-mtls.sh && ./setup-docker-mtls.sh
                           </div>

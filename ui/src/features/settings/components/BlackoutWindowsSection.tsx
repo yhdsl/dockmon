@@ -51,7 +51,7 @@ export function BlackoutWindowsSection() {
         days: [0, 1, 2, 3, 4],
       })
       toast.success('已创建黑窗期')
-    } catch (error) {
+    } catch {
       toast.error('无法创建黑窗期')
     }
   }
@@ -65,7 +65,7 @@ export function BlackoutWindowsSection() {
       setView('list')
       setEditIndex(null)
       toast.success('已更新黑窗期')
-    } catch (error) {
+    } catch {
       toast.error('无法更新黑窗期')
     }
   }
@@ -75,7 +75,7 @@ export function BlackoutWindowsSection() {
       const newWindows = windows.filter((_, i) => i !== index)
       await updateSettings.mutateAsync({ blackout_windows: newWindows })
       toast.success('已删除黑窗期')
-    } catch (error) {
+    } catch {
       toast.error('无法删除黑窗期')
     }
   }
@@ -88,7 +88,7 @@ export function BlackoutWindowsSection() {
       newWindows[index] = { ...window, enabled: !window.enabled }
       await updateSettings.mutateAsync({ blackout_windows: newWindows })
       toast.success(newWindows[index].enabled ? '黑窗期已启用' : '黑窗期')
-    } catch (error) {
+    } catch {
       toast.error('无法切换黑窗期状态')
     }
   }

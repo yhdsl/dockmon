@@ -31,9 +31,32 @@ docker run -d \
   --restart unless-stopped \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v dockmon-agent-data:/data \
+  -v /proc:/host/proc:ro \
+  -v /:/hostfs:ro \
   -e DOCKMON_URL=wss://your-dockmon-instance.com \
   -e REGISTRATION_TOKEN=your-token-here \
   ghcr.io/yhdsl/dockmon-agent:2.2.0
+```
+
+Or with Docker Compose:
+
+```yaml
+services:
+  dockmon-agent:
+    image: ghcr.io/darthnorse/dockmon-agent:latest
+    container_name: dockmon-agent
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - dockmon-agent-data:/data
+      - /proc:/host/proc:ro
+      - /:/hostfs:ro
+    environment:
+      - DOCKMON_URL=wss://your-dockmon-instance.com
+      - REGISTRATION_TOKEN=your-token-here
+
+volumes:
+  dockmon-agent-data:
 ```
 
 **重要提示**: 命令中创建的 `-v dockmon-agent-data:/data` 命名卷是**必须**的，将用于:
@@ -41,6 +64,22 @@ docker run -d \
 - 启用远程自动更新功能 (允许代理原地自更新)
 
 请**不要**使用绑定挂载或者忽略该命名卷，否则会导致代理令牌持久化和自动更新功能失效。
+
+`-v /proc:/host/proc:ro` is what lets a containerized agent read real host CPU and
+memory. Without it the agent reports container stats only, host-scope metric alert
+rules on that host can never fire, and the agent logs a warning at startup.
+Systemd agents read `/proc` directly and need no mount.
+
+`-v /:/hostfs:ro` is what lets a containerized agent measure host disk usage
+(`disk_percent`, the "Low Disk Space" rule). The agent measures the filesystem
+holding Docker's data-root (`/var/lib/docker` by default) and falls back to the host
+root; `disk_source` in the sample says which. It needs `/host/proc` as well, because
+disk rides on the same host sample. Without the mount the agent reports no disk at all
+(never a zero) and logs a warning at startup. Note that this exposes the whole host
+filesystem read-only to the agent container, and on kernels before 5.12 the `:ro` flag
+does not propagate to submounts; use
+`--mount type=bind,src=/,dst=/hostfs,readonly,bind-recursive=readonly` (Docker 25+)
+where the kernel supports it.
 
 3. 代理将自动注册到指定 DockMon 实例，并出现在主机列表中
 

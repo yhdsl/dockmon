@@ -72,7 +72,7 @@ export function SystemSettings() {
       try {
         await updateSettings.mutateAsync({ polling_interval: pollingInterval })
         toast.success('已成功更新轮询间隔')
-      } catch (error) {
+      } catch {
         toast.error('无法更新轮询间隔')
       }
     }
@@ -83,7 +83,7 @@ export function SystemSettings() {
       try {
         await updateSettings.mutateAsync({ connection_timeout: connectionTimeout })
         toast.success('已成功更新连接超时时长')
-      } catch (error) {
+      } catch {
         toast.error('无法更新连接超时时长')
       }
     }
@@ -94,7 +94,7 @@ export function SystemSettings() {
       try {
         await updateSettings.mutateAsync({ max_retries: maxRetries })
         toast.success('已成功更新最大重试次数')
-      } catch (error) {
+      } catch {
         toast.error('无法更新最大重试次数')
       }
     }
@@ -105,7 +105,7 @@ export function SystemSettings() {
       try {
         await updateSettings.mutateAsync({ retry_delay: retryDelay })
         toast.success('已成功更新重试间隔')
-      } catch (error) {
+      } catch {
         toast.error('无法更新重试间隔')
       }
     }
@@ -116,7 +116,7 @@ export function SystemSettings() {
       try {
         await updateSettings.mutateAsync({ unused_tag_retention_days: unusedTagRetentionDays })
         toast.success('已成功更新标签保留时长')
-      } catch (error) {
+      } catch {
         toast.error('无法更新标签保留时长')
       }
     }
@@ -127,7 +127,7 @@ export function SystemSettings() {
       try {
         await updateSettings.mutateAsync({ event_retention_days: eventRetentionDays })
         toast.success('已成功更新事件保留时长')
-      } catch (error) {
+      } catch {
         toast.error('无法更新事件保留时长')
       }
     }
@@ -138,7 +138,7 @@ export function SystemSettings() {
       try {
         await updateSettings.mutateAsync({ alert_retention_days: alertRetentionDays })
         toast.success('已成功更新告警保留时长')
-      } catch (error) {
+      } catch {
         toast.error('无法更新告警保留时长')
       }
     }
@@ -150,7 +150,7 @@ export function SystemSettings() {
     try {
       await updateSettings.mutateAsync({ default_auto_restart: checked })
       toast.success(checked ? '默认自动重启已启用' : '默认自动重启已禁用')
-    } catch (error) {
+    } catch {
       toast.error('无法更新默认自动重启设置')
       setDefaultAutoRestart(!checked) // Revert on error
     }
@@ -161,7 +161,7 @@ export function SystemSettings() {
     try {
       await updateSettings.mutateAsync({ stats_persistence_enabled: checked })
       toast.success(checked ? '统计持久化储存已启用' : '统计持久化储存已禁用')
-    } catch (error) {
+    } catch {
       toast.error('无法更新统计持久化储存状态')
       setStatsPersistenceEnabled(!checked)
     }
@@ -172,7 +172,7 @@ export function SystemSettings() {
       try {
         await updateSettings.mutateAsync({ stats_retention_days: statsRetentionDays })
         toast.success('已更新统计保留策略')
-      } catch (error) {
+      } catch {
         toast.error('无法更新统计保留策略')
       }
     }
@@ -183,7 +183,7 @@ export function SystemSettings() {
       try {
         await updateSettings.mutateAsync({ stats_points_per_view: statsPointsPerView })
         toast.success('已更新图表分辨率 - 请重启容器以应用更新')
-      } catch (error) {
+      } catch {
         toast.error('无法更新图表分辨率')
       }
     }
@@ -198,7 +198,7 @@ export function SystemSettings() {
         await updateSettings.mutateAsync({ external_url: normalizedUrl || null })
         setExternalUrl(normalizedUrl)
         toast.success('已成功更新外部 URL')
-      } catch (error) {
+      } catch {
         toast.error('无法更新外部 URL')
       }
     }
@@ -259,7 +259,7 @@ export function SystemSettings() {
                 try {
                   await updateSettings.mutateAsync({ session_timeout_hours: value })
                   toast.success('已成功更新会话有效期')
-                } catch (error) {
+                } catch {
                   toast.error('无法更新会话有效期')
                 }
               }}
@@ -472,7 +472,7 @@ export function SystemSettings() {
                 try {
                   await updateSettings.mutateAsync({ live_chart_window_seconds: value })
                   toast.success('已成功更新实时图表窗口')
-                } catch (error) {
+                } catch {
                   toast.error('更新实时图表窗口时失败')
                 }
               }}

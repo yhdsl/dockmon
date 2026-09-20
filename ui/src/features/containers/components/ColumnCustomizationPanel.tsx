@@ -121,6 +121,7 @@ const COLUMN_LABELS: Record<string, string> = {
   created: '运行时长',
   cpu: 'CPU %',
   memory: 'RAM',
+  network: '网络',
   actions: '容器操作',
 }
 
