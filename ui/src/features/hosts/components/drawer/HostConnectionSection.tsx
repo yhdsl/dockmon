@@ -8,6 +8,7 @@ import { Shield, CheckCircle2, XCircle, AlertCircle } from 'lucide-react'
 import { DrawerSection } from '@/components/ui/drawer'
 import { formatDistanceToNow } from 'date-fns'
 import type { Host } from '@/types/api'
+import { zhCN } from 'date-fns/locale'
 
 interface HostConnectionSectionProps {
   host: Host
